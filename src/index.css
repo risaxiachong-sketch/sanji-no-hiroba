@@ -1,0 +1,41 @@
+:root {
+  font-family:
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    Meiryo,
+    sans-serif;
+
+  color: #403c4a;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(242, 166, 160, 0.28),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(131, 191, 176, 0.3),
+      transparent 40%
+    ),
+    #fff8f1;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
