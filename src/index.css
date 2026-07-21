@@ -34,6 +34,12 @@ body {
   min-height: 100vh;
 }
 
+button:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(113, 102, 181, 0.35);
+  outline-offset: 3px;
+}
+
 button,
 input,
 textarea {
