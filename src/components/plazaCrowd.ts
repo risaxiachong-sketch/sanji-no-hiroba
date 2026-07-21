@@ -156,6 +156,18 @@ export class PlazaCrowd {
         })
       }
     })
+
+    // Without this, every visitor starts settled and the plaza reads as a still
+    // image for up to three minutes before the first walker's timer runs out.
+    // Starting a few people already mid-walk makes the square feel alive right
+    // from the first frame.
+    for (let index = 0; index < MAX_WALKERS && index < this.visitors.length; index += 1) {
+      const visitor = this.visitors[Math.floor(this.random() * this.visitors.length)]
+      if (visitor.mode === 'wander') continue
+      this.beginWander(visitor)
+      // Partway through its walk already, not just setting off.
+      visitor.modeTimer *= this.random()
+    }
   }
 
   /** Where a topic is currently meeting, so the user avatar can walk to the same spot. */
