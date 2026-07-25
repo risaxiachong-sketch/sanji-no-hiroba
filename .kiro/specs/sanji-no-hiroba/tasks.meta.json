@@ -1,0 +1,1497 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "モノレポ構成を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947037759
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947069720
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947221019
+      }
+    ],
+    "`frontend/package.json` を作成する（既存の依存関係を移行）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038112
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947233077
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947271312
+      }
+    ],
+    "`backend/package.json` を作成する（`@aws-sdk/*`、`ulid`）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038322
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947285259
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947320903
+      }
+    ],
+    "`infra/package.json` を作成する（`aws-cdk-lib`、`constructs`）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038444
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947327246
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947357242
+      }
+    ],
+    "ルートに `package.json`（workspaces設定）を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038579
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947363083
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947409116
+      }
+    ],
+    "`.gitignore` にCDK出力（`cdk.out/`）を追加する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038697
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947415537
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947454670
+      }
+    ],
+    "`infra/` でCDKプロジェクトを初期化する（TypeScript）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038788
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947463379
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947847242
+      }
+    ],
+    "Cognito User Poolを定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038869
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947855285
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948418205
+      }
+    ],
+    "User Pool Clientを定義する（SRPフロー）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947038943
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948418990
+      }
+    ],
+    "スタック出力としてUser Pool IDとClient IDをエクスポートする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039027
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948420114
+      }
+    ],
+    "DynamoDBテーブル `SanjiHiroba` を定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039182
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948488325
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948709694
+      }
+    ],
+    "GSI1を定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039266
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948710505
+      }
+    ],
+    "スタック出力としてテーブル名とARNをエクスポートする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039355
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948711576
+      }
+    ],
+    "REST API（API Gateway）を定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039427
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784948736161
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949018376
+      }
+    ],
+    "Cognito User Pool Authorizerを設定する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039502
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949019401
+      }
+    ],
+    "以下のLambda関数を定義する（NodejsFunction、バンドル設定）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039607
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949020989
+      }
+    ],
+    "各Lambda関数にDynamoDBテーブルへのアクセス権限を付与する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039683
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949022258
+      }
+    ],
+    "`api-ai-search` にBedrock InvokeModel権限を付与する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039760
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949023546
+      }
+    ],
+    "CORS設定を追加する（CloudFrontオリジンのみ許可）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039838
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949030429
+      }
+    ],
+    "APIエンドポイントURLをスタック出力としてエクスポートする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039911
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949031917
+      }
+    ],
+    "S3バケットを定義する（パブリックアクセスブロック有効）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947039996
+      },
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784949040869
+      }
+    ],
+    "CloudFront Distributionを定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040105
+      }
+    ],
+    "S3バケットポリシーでCloudFrontからのアクセスのみ許可する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040197
+      }
+    ],
+    "CloudFront URLをスタック出力としてエクスポートする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040287
+      }
+    ],
+    "collector Lambda関数を定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040363
+      }
+    ],
+    "EventBridge Schedulerルールを定義する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040446
+      }
+    ],
+    "collector LambdaにDynamoDB書き込み権限を付与する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040523
+      }
+    ],
+    "collector LambdaにBedrock InvokeModel権限を付与する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040598
+      }
+    ],
+    "`backend/shared/types.ts` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040701
+      }
+    ],
+    "`backend/shared/dynamo.ts` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040780
+      }
+    ],
+    "`POST /users/profile` — プロフィール登録": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040868
+      }
+    ],
+    "`GET /users/profile` — 自分のプロフィール取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947040948
+      }
+    ],
+    "`PUT /users/profile` — プロフィール更新": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041030
+      }
+    ],
+    "`POST /users/avatar` — アバター登録": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041110
+      }
+    ],
+    "`GET /users/avatar` — アバター取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041190
+      }
+    ],
+    "`PUT /users/avatar` — アバター更新": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041264
+      }
+    ],
+    "userId はCognito JWT claims.subから取得する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041345
+      }
+    ],
+    "`POST /plaza/visit` — 訪問記録": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041419
+      }
+    ],
+    "`GET /plaza/today-count` — 今日の訪問者数取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041492
+      }
+    ],
+    "`GET /plaza/avatars` — 広場表示用アバター一覧": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041561
+      }
+    ],
+    "`POST /posts` — 投稿作成": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041630
+      }
+    ],
+    "`GET /posts` — 投稿一覧取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041709
+      }
+    ],
+    "`DELETE /posts/{postId}` — 自分の投稿を削除": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041781
+      }
+    ],
+    "`POST /posts/{postId}/reactions` — リアクション送信": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041860
+      }
+    ],
+    "`DELETE /posts/{postId}/reactions/{type}` — リアクション取消": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947041942
+      }
+    ],
+    "`GET /posts/{postId}/reactions/counts` — 種類別合計数取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042016
+      }
+    ],
+    "`GET /posts/{postId}/reactions/mine` — 自分の送信済みリアクション取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042114
+      }
+    ],
+    "`GET /events` — 一覧取得（絞り込み）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042209
+      }
+    ],
+    "`GET /events/{eventId}` — 詳細取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042281
+      }
+    ],
+    "`POST /saved-events/{eventId}` — 保存": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042347
+      }
+    ],
+    "`DELETE /saved-events/{eventId}` — 保存取消": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042429
+      }
+    ],
+    "`GET /saved-events` — 保存一覧取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042499
+      }
+    ],
+    "`POST /ai-search/manual` — 手動条件検索": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042572
+      }
+    ],
+    "`POST /ai-search/natural` — AI自然文検索": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042681
+      }
+    ],
+    "**Step 1: 深刻・緊急入力の検出**（Bedrock呼び出し前に実行）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042761
+      }
+    ],
+    "**Step 2: Bedrockによる条件抽出**": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042835
+      }
+    ],
+    "**Step 3: DynamoDB検索**": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042913
+      }
+    ],
+    "**Step 4: 紹介理由の生成**": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947042990
+      }
+    ],
+    "**Step 5: 0件時の一般的育児情報（FR-AI-04）**": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043076
+      }
+    ],
+    "EventBridgeからの起動を受けて処理を開始する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043278
+      }
+    ],
+    "情報源定義をDynamoDBまたは環境変数から取得する（3件）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043382
+      }
+    ],
+    "各情報源について以下を実行する（1つの失敗で他は中断しない）:": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043510
+      }
+    ],
+    "収集ログをDynamoDBに記録する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043618
+      }
+    ],
+    "CloudWatch Logsに詳細ログを出力する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043706
+      }
+    ],
+    "`@aws-amplify/auth` をインストールする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043798
+      }
+    ],
+    "`frontend/src/auth/AuthProvider.tsx` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043897
+      }
+    ],
+    "`frontend/src/auth/LoginPage.tsx` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947043989
+      }
+    ],
+    "`frontend/src/auth/RegisterPage.tsx` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044092
+      }
+    ],
+    "`frontend/src/hooks/useAuth.ts` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044183
+      }
+    ],
+    "`frontend/src/api/client.ts` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044269
+      }
+    ],
+    "環境変数ファイル `.env.production` のテンプレートを作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044353
+      }
+    ],
+    "`frontend/src/types/index.ts` を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044431
+      }
+    ],
+    "`frontend/src/index.css` のCSS変数を更新する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044520
+      }
+    ],
+    "`:focus-visible` スタイル、最大幅ラッパー、ベースリセットを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044597
+      }
+    ],
+    "AuthProviderで全体をラップする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044668
+      }
+    ],
+    "認証状態に応じた画面振り分けを実装する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044743
+      }
+    ],
+    "AppContextを作成する（`profile`、`avatar`、`currentPage`、`previousPage`、`selectedEventId`）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044866
+      }
+    ],
+    "`currentPage` に応じた条件レンダリングの骨格を作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947044954
+      }
+    ],
+    "ログアウト後にブラウザの戻るボタンで認証済みページに戻れない制御を実装する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045036
+      }
+    ],
+    "ニックネーム入力フォーム（1〜20文字バリデーション、0文字/21文字以上は不可）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045113
+      }
+    ],
+    "子どもの年齢区分選択（0〜1歳 / 2〜3歳 / 4歳〜小学校入学前）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045191
+      }
+    ],
+    "未入力・未選択状態では「次へ」ボタンを `disabled` にする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045268
+      }
+    ],
+    "注意書き:「本名・住所・園名などを書かないようにしてください」": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045330
+      }
+    ],
+    "送信時に `POST /users/profile` を呼び出す": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045403
+      }
+    ],
+    "成功後にアバター選択画面へ遷移する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045465
+      }
+    ],
+    "6種類の基本アバターをグリッド表示する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045529
+      }
+    ],
+    "選択状態を `aria-pressed` で表現する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045597
+      }
+    ],
+    "カスタマイズ項目を実装する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045672
+      }
+    ],
+    "「おまかせ」ボタンで全項目ランダム組み合わせ": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045749
+      }
+    ],
+    "送信時に `POST /users/avatar` を呼び出す": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045814
+      }
+    ],
+    "成功後に広場へ遷移する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045880
+      }
+    ],
+    "広場入室時に `POST /plaza/visit` を呼び出す": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947045960
+      }
+    ],
+    "`GET /plaza/today-count` で今日の訪問者数を取得・表示する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046027
+      }
+    ],
+    "`GET /plaza/avatars` で他ユーザーのアバター＋ニックネームを取得する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046096
+      }
+    ],
+    "自分を含む最大8体のアバターを広場内に配置する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046161
+      }
+    ],
+    "各アバターの下にニックネームを表示する（12px、overflow省略記号）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046239
+      }
+    ],
+    "デモ用アバターで不足分を補完する（`isDemo` フラグで管理者が区別可能）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046311
+      }
+    ],
+    "以下の導線を配置する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046379
+      }
+    ],
+    "デモモード時: ランダム訪問者数 + 「デモ表示」表記": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046450
+      }
+    ],
+    "投稿フォーム": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046548
+      }
+    ],
+    "投稿一覧表示": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046699
+      }
+    ],
+    "リアクションUI": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046773
+      }
+    ],
+    "分類タブ: 全て / イベント / 常設公共施設 / 公的支援": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046846
+      }
+    ],
+    "絞り込みパネル": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947046922
+      }
+    ],
+    "`GET /events` にクエリパラメータを渡して結果を取得する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047023
+      }
+    ],
+    "イベントカード表示（名称、日時、地域、年齢、料金、属性タグ）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047096
+      }
+    ],
+    "0件時: 「該当する情報がありません」メッセージ": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047168
+      }
+    ],
+    "カードタップで EventDetail へ遷移": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047234
+      }
+    ],
+    "「AI検索」タブへの切り替え": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047310
+      }
+    ],
+    "`GET /events/{eventId}` でイベント詳細を取得する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047382
+      }
+    ],
+    "以下の全項目を表示する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047447
+      }
+    ],
+    "属性タグをバッジ表示する（「初参加歓迎」「途中入退室可能」含む）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047518
+      }
+    ],
+    "公式URLタップで新しいタブで開く": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047594
+      }
+    ],
+    "「行ってみたい」ボタン": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047664
+      }
+    ],
+    "`GET /saved-events` で保存済み一覧を取得する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047728
+      }
+    ],
+    "カード形式で表示する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047803
+      }
+    ],
+    "0件時:「まだ保存したイベントはありません」メッセージ": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047883
+      }
+    ],
+    "カードタップでEventDetailへ遷移する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947047950
+      }
+    ],
+    "保存取消操作を実装する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048017
+      }
+    ],
+    "手動条件検索タブ": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048096
+      }
+    ],
+    "AI自然文検索タブ（Should）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048177
+      }
+    ],
+    "相談窓口データを表示する（名称、説明、電話番号、受付時間、URL）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048249
+      }
+    ],
+    "「本サービスは緊急相談・医療相談・心理診断の代替ではありません」と記載する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048379
+      }
+    ],
+    "外部リンクは `target=\"_blank\" rel=\"noopener noreferrer\"` で開く": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048446
+      }
+    ],
+    "`GET /admin/reports` — 通報一覧取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048520
+      }
+    ],
+    "`POST /admin/posts/{postId}/hide` — 投稿の全利用者向け非表示": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048600
+      }
+    ],
+    "`GET /admin/events/review` — review_required一覧取得": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048690
+      }
+    ],
+    "`POST /admin/events/{eventId}/publish` — 公開に変更": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048780
+      }
+    ],
+    "`POST /admin/events/{eventId}/hide` — 非公開に変更": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048878
+      }
+    ],
+    "`GET /admin/collect-logs` — 収集ログ一覧": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947048964
+      }
+    ],
+    "Cognitoグループ `admin` のチェックを実装する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049047
+      }
+    ],
+    "各投稿に通報ボタンを追加する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049125
+      }
+    ],
+    "利用者が自分の画面で投稿を非表示にできる機能を追加する（他の利用者には影響しない）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049200
+      }
+    ],
+    "通報成功時のフィードバック表示": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049276
+      }
+    ],
+    "デモデータ投入スクリプトを作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049353
+      }
+    ],
+    "デモイベントデータ20件以上を生成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049426
+      }
+    ],
+    "日付はスクリプト実行日を基準とした相対日付で生成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049498
+      }
+    ],
+    "DynamoDBへ一括書き込み（BatchWriteItem）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049584
+      }
+    ],
+    "デモ用アバターデータ7体を投入する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049665
+      }
+    ],
+    "`cdk deploy --all` でAWSリソースを作成する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049738
+      }
+    ],
+    "CDK出力からCognito ID、API URL、CloudFront URLを取得する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049820
+      }
+    ],
+    "`frontend/.env.production` に環境変数を設定する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049899
+      }
+    ],
+    "`npm run build` でフロントエンドをビルドする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947049984
+      }
+    ],
+    "S3にビルド成果物をアップロードする": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050094
+      }
+    ],
+    "CloudFrontキャッシュを無効化する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050204
+      }
+    ],
+    "デモデータ投入スクリプトを実行する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050280
+      }
+    ],
+    "1. AWS上の公開URLへ実機スマートフォンからHTTPSでアクセスできる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050363
+      }
+    ],
+    "2. メールアドレスとパスワードで新規登録・ログインできる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050443
+      }
+    ],
+    "3. ニックネームと子どもの年齢区分を登録できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050521
+      }
+    ],
+    "4. ニックネームが広場内でアバターの近くに表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050608
+      }
+    ],
+    "5. 6種類の基本アバターからアバターを作成できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050688
+      }
+    ],
+    "6. 登録開始から広場入室まで3分以内を目標に完了できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050772
+      }
+    ],
+    "7. 広場に自分を含む最大8体のアバターが表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050852
+      }
+    ],
+    "8. 最大60文字の投稿を作成できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947050932
+      }
+    ],
+    "9. 投稿がAWS上へ保存され、ページ更新後も表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051025
+      }
+    ],
+    "10. 投稿が作成から24時間後に公開対象外となる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051108
+      }
+    ],
+    "11. 8種類の定型リアクションを送信できる（絵文字＋文章セットで表示される）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051190
+      }
+    ],
+    "12. 1投稿に複数種類のリアクションを送信でき、種類ごとの合計数が表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051277
+      }
+    ],
+    "13. リアクションボタンにスクリーンリーダー対応のaria-labelが付与されている": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051366
+      }
+    ],
+    "14. コメント・個別チャット・DMへ進む操作が存在しない": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051450
+      }
+    ],
+    "15. 地域情報一覧を分類（イベント/常設公共施設/公的支援）・日付・地域・年齢・料金で絞り込める": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051533
+      }
+    ],
+    "16. イベント詳細に公式URLと最終確認日時が表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051599
+      }
+    ],
+    "17. イベントを「行ってみたい」に保存できる（AWS保存・再ログイン後も保持）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051676
+      }
+    ],
+    "18. 登録済みの3つの公式情報源に対して自動収集処理を実行できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051753
+      }
+    ],
+    "19. 少なくとも1件の新規イベントをイベントDBへ登録できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051880
+      }
+    ],
+    "20. 同じ収集処理を2回行っても同一イベントが重複登録されない": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947051951
+      }
+    ],
+    "21. 元情報に変更がある場合、既存イベントを更新できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052016
+      }
+    ],
+    "22. 1つの情報源の取得に失敗しても他の情報源の処理が継続する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052088
+      }
+    ],
+    "1. AI案内所でテキスト入力から条件を抽出し、登録済みデータから最大3件を紹介できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052159
+      }
+    ],
+    "2. 紹介理由が登録済みデータの属性のみに基づき、推測表現を含まない": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052238
+      }
+    ],
+    "3. 深刻・緊急入力（6カテゴリ）を検出した場合に公的相談窓口が優先表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052308
+      }
+    ],
+    "4. 登録済みデータの検索結果が0件の場合に一般的育児情報が最大2件表示される": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052384
+      }
+    ],
+    "5. 通報された投稿を管理者が全利用者向けに非表示にできる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052459
+      }
+    ],
+    "6. `review_required` 状態のイベントを管理者が公開・棄却できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052534
+      }
+    ],
+    "7. 開催終了イベントが通常の利用者向け一覧に表示されない": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052598
+      }
+    ],
+    "8. 自動収集の成功・失敗・処理件数・実行日時を確認できる": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052675
+      }
+    ],
+    "画面幅375px〜428pxでレイアウト崩れがないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052745
+      }
+    ],
+    "iOS Safari最新版で主要操作が完了できることを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052817
+      }
+    ],
+    "Android Chrome最新版で主要操作が完了できることを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052882
+      }
+    ],
+    "ボタンのタップ領域が44×44px以上であることを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947052954
+      }
+    ],
+    "リアクションボタンのaria-labelが正しく読み上げられることを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053023
+      }
+    ],
+    "色だけで状態を示している箇所がないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053101
+      }
+    ],
+    "フォームの入力フィールドが16px以上であることを確認する（iOSズーム防止）": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053172
+      }
+    ],
+    "AWSアクセスキーがフロントエンドソースに含まれないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053311
+      }
+    ],
+    "認証なしのリクエストが保護APIエンドポイントへアクセスできないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053381
+      }
+    ],
+    "本名・顔写真・子どもの名前・正確な住所の入力フィールドが存在しないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053447
+      }
+    ],
+    "GPS位置情報の取得許可を要求しないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053516
+      }
+    ],
+    "URL・メールアドレス・電話番号・SNS IDを含む投稿が拒否されることを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053582
+      }
+    ],
+    "DM・写真投稿・フォロー・決済UIが存在しないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053667
+      }
+    ],
+    "「本サービスは緊急相談・医療相談・心理診断の代替ではありません」が記載されていることを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053746
+      }
+    ],
+    "ログアウト後にブラウザ戻るボタンで認証済みページに戻れないことを確認する": [
+      {
+        "executionId": "3a1b6359-c8a9-44e4-bf26-865490470fad",
+        "chatSessionId": "sess_04a3e867-d7ae-4b51-a0ba-9cd92d777311",
+        "timestamp": 1784947053828
+      }
+    ]
+  }
+}

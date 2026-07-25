@@ -1,0 +1,218 @@
+/* ===================================================
+   デザイントークン（CSS カスタムプロパティ）
+=================================================== */
+:root {
+  /* フォント */
+  font-family:
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    Meiryo,
+    sans-serif;
+
+  /* カラーパレット */
+  --color-primary:        #7166b5;
+  --color-primary-dark:   #6257a6;
+  --color-primary-light:  #ece8f5;
+  --color-accent-pink:    #f2a6a0;
+  --color-accent-green:   #83bfb0;
+  --color-text-main:      #403c4a;
+  --color-text-sub:       #6c6678;
+  --color-surface:        rgba(255, 255, 255, 0.88);
+  --color-border:         rgba(113, 102, 181, 0.14);
+
+  /* タイポグラフィ */
+  --font-size-xs:   0.75rem;   /* 12px */
+  --font-size-sm:   0.875rem;  /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg:   1.125rem;  /* 18px */
+  --font-size-xl:   1.5rem;    /* 24px */
+  --font-size-2xl:  2rem;      /* 32px */
+
+  /* スペーシング */
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  36px;
+
+  /* ボタン最小タップサイズ */
+  --tap-min: 44px;
+
+  /* 角丸 */
+  --radius-sm:   8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-xl:  32px;
+  --radius-full: 999px;
+
+  /* シャドウ */
+  --shadow-sm: 0 2px 8px rgba(73, 63, 112, 0.08);
+  --shadow-md: 0 8px 18px rgba(113, 102, 181, 0.15);
+  --shadow-lg: 0 20px 50px rgba(73, 63, 112, 0.12), 0 4px 12px rgba(73, 63, 112, 0.08);
+
+  color: var(--color-text-main);
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(242, 166, 160, 0.28),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(131, 191, 176, 0.3),
+      transparent 40%
+    ),
+    #fff8f1;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* ===================================================
+   ベースリセット
+=================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+/* ===================================================
+   フォーカスリング（アクセシビリティ）
+=================================================== */
+:focus-visible {
+  outline: 3px solid rgba(113, 102, 181, 0.5);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===================================================
+   共通ユーティリティ
+=================================================== */
+
+/* ページラッパー：スマートフォン最大幅 */
+.page-wrapper {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* カード */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+}
+
+/* 共通ボタン */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(113, 102, 181, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  background: #c5c1dc;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  padding: 10px 20px;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary-light);
+}
+
+/* 戻るボタン */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: var(--tap-min);
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-sub);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  color: var(--color-primary);
+}
+
+/* ===================================================
+   広場背景画像（plaza-bg.png を差し替えるだけで変わる）
+   使い方：src/assets/plaza-bg.png を置いたあと
+           App.tsx で import し、style 属性に渡す
+=================================================== */
+/* 現時点ではフォールバック（CSS 背景）を使用 */

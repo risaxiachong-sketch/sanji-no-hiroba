@@ -1,0 +1,101 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.inputRow {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.input {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  min-height: var(--tap-min);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: #fff;
+  font-size: var(--font-size-base);
+  color: var(--color-text-main);
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.input::placeholder {
+  color: #b8b4c4;
+  font-size: var(--font-size-sm);
+}
+
+.searchBtn {
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-md);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.searchBtn:hover {
+  background: var(--color-primary-dark);
+}
+
+.searchBtn:disabled {
+  background: #c5c1dc;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-sub);
+  line-height: 1.6;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.chip {
+  padding: 4px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: #fff;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-sub);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.chip:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.resultLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-sub);
+  font-weight: 600;
+}
+
+.notice {
+  background: #fffbf0;
+  border: 1px solid #f5e4a0;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: #7a6f3a;
+  line-height: 1.6;
+}

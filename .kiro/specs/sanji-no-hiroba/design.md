@@ -1,438 +1,872 @@
 # 技術設計書：さんじのひろば
 
-**バージョン：** 1.0  
-**作成日：** 2026年7月17日  
-**対象：** 発表用プロトタイプ（MVP）
+**バージョン：** 2.0
+**作成日：** 2026年7月17日
+**最終更新：** 2026年7月24日
+**対象：** AWS本番環境へデプロイするMVP
 
 ---
 
-## 1. 技術スタック
+## 1. 文書情報
 
-既存プロジェクトの構成をそのまま使用する。外部UIライブラリは導入しない。
+本文書は requirements.md v4.0 に基づく技術設計書である。
 
-| 項目 | 採用技術 | バージョン |
+すべてのコンポーネントはAWS上へデプロイし、実機スマートフォンからHTTPSでアクセスできる状態を前提とする。
+
+**v2.0での主な変更点：**
+- localStorage前提からAWS本番環境前提へ全面移行
+- 認証をAWS Cognitoへ移行
+- データ永続化をDynamoDBへ移行
+- リアクション設計を複数種類送信・合計数表示・aria-label対応に更新
+- イベントデータを「イベント／常設公共施設／公的支援」の3分類に対応
+- 属性タグに「初参加歓迎」「途中入退室可能」を追加
+- AI案内所設計を追加（対応表・入力例・紹介理由制約・検出カテゴリ・一般育児情報）
+- 自動収集パイプライン設計を追加
+- セキュリティ・デプロイ・運用設計を追加
+
+---
+
+## 2. 技術スタック
+
+| 項目 | 採用技術 | 備考 |
 |---|---|---|
-| フレームワーク | React | ^19.2.7 |
-| 言語 | TypeScript | ~6.0.2 |
-| ビルドツール | Vite | ^8.1.1 |
-| スタイリング | CSS Modules | — |
-| ルーティング | React組み込みの状態管理（画面遷移） | — |
-| データ永続化 | localStorage（ブラウザ標準） | — |
-| パッケージ管理 | npm | — |
+| フレームワーク | React 19 + TypeScript | Vite 8 でビルド |
+| スタイリング | CSS Modules | 外部UIライブラリ不使用 |
+| 認証 | Amazon Cognito User Pools | メール＋パスワード認証 |
+| API | Amazon API Gateway (REST) | Lambda統合 |
+| バックエンド | AWS Lambda (Node.js 20) | TypeScript |
+| データベース | Amazon DynamoDB | シングルテーブル設計 |
+| ファイル配信 | Amazon S3 + CloudFront | HTTPS配信 |
+| AI | Amazon Bedrock (Claude) | FR-AI-02/03/04、FR-COLLECT-02 |
+| スケジューラ | Amazon EventBridge Scheduler | 日次自動収集 |
+| ログ | Amazon CloudWatch Logs | バックエンドエラー＋収集ログ |
+| IaC | AWS CDK (TypeScript) | インフラ定義 |
+| パッケージ管理 | npm | モノレポ構成 |
 
-**ルーティングの方針：** 発表用MVPではページ数が少なく、外部ルーターを追加しない。`App.tsx` 内でグローバルな `page` 状態を管理し、状態に応じてコンポーネントを切り替える方式（フラットなシングルページ構成）とする。
 
 ---
 
-## 2. ディレクトリ構成
+## 3. AWSアーキテクチャ
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        CloudFront                            │
+│  (HTTPS配信 + カスタムドメイン or *.cloudfront.net)          │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+      ┌───────▼────────┐         ┌────────▼────────┐
+      │   S3 Bucket    │         │  API Gateway    │
+      │ (React SPA)    │         │  (REST API)     │
+      └────────────────┘         └────────┬────────┘
+                                          │ Cognito Authorizer
+                                 ┌────────▼────────┐
+                                 │   Lambda群       │
+                                 │ (Node.js 20)    │
+                                 └────────┬────────┘
+                                          │
+                    ┌─────────────────────┼─────────────────────┐
+                    │                     │                     │
+           ┌────────▼────────┐   ┌────────▼────────┐  ┌────────▼────────┐
+           │   DynamoDB      │   │   Bedrock       │  │  CloudWatch     │
+           │ (シングルテーブル) │   │ (Claude)        │  │  Logs           │
+           └─────────────────┘   └─────────────────┘  └─────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  EventBridge Scheduler → Lambda (自動収集)                   │
+│  毎日JST 03:00実行                                           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 3-1. Cognito User Pools
+
+| 設定項目 | 値 |
+|---|---|
+| サインイン属性 | メールアドレス |
+| パスワードポリシー | 最小8文字 |
+| MFA | 無効（MVP） |
+| メール検証 | 有効 |
+| トークン有効期限 | アクセストークン 1時間、リフレッシュトークン 30日 |
+
+フロントエンドは `@aws-amplify/auth` を使用してCognitoと通信する。
+
+### 3-2. API Gateway
+
+- REST API（リージョナルエンドポイント）
+- Cognito User Pool Authorizer で全保護エンドポイントを認証
+- CORS設定：CloudFrontのオリジンのみ許可
+- スロットリング：1000 req/sec（MVP）
+
+### 3-3. Lambda関数群
+
+| 関数名 | 役割 | トリガー |
+|---|---|---|
+| api-user | プロフィール登録・取得・更新 | API Gateway |
+| api-post | 投稿CRUD・24時間制御 | API Gateway |
+| api-reaction | リアクション送信・取消・集計取得 | API Gateway |
+| api-event | イベント一覧・詳細・絞り込み | API Gateway |
+| api-saved | 「行ってみたい」保存・削除・一覧 | API Gateway |
+| api-ai-search | AI案内所（手動検索＋AI条件抽出） | API Gateway |
+| api-admin | 管理者操作（通報・非表示・review） | API Gateway |
+| collector | 日次自動収集処理 | EventBridge |
+| collector-structurize | AI構造化処理 | collector内部呼出 |
+
+### 3-4. DynamoDB
+
+シングルテーブル設計。パーティションキー `PK`、ソートキー `SK`、GSI1（`GSI1PK` / `GSI1SK`）を使用する。
+
+### 3-5. S3 + CloudFront
+
+- S3バケット：React SPAの静的ファイルを格納
+- CloudFront：HTTPS配信、OAC（Origin Access Control）でS3直接アクセスを禁止
+- キャッシュ：HTML = no-cache、JS/CSS/画像 = 1年（ハッシュ付きファイル名）
+
+### 3-6. EventBridge Scheduler
+
+- スケジュール：`cron(0 18 * * ? *)`（UTC 18:00 = JST 03:00）
+- ターゲット：collector Lambda
+- リトライ：最大2回
+
+
+---
+
+## 4. データモデル設計
+
+### 4-1. DynamoDBテーブル設計（シングルテーブル）
+
+**テーブル名：** `SanjiHiroba`
+
+| PK | SK | 用途 |
+|---|---|---|
+| `USER#<userId>` | `PROFILE` | ユーザープロフィール |
+| `USER#<userId>` | `AVATAR` | アバター設定 |
+| `USER#<userId>` | `SAVED#<eventId>` | 行ってみたい保存 |
+| `POST#<postId>` | `META` | 投稿本文・メタ情報 |
+| `POST#<postId>` | `REACTION#<userId>#<type>` | 個別リアクション記録 |
+| `POST#<postId>` | `REACTION_COUNT` | リアクション種類別合計 |
+| `EVENT#<eventId>` | `META` | イベント・施設・支援データ |
+| `SOURCE#<sourceId>` | `META` | 情報源定義 |
+| `COLLECT_LOG#<date>` | `<sourceId>` | 収集ログ |
+| `REPORT#<reportId>` | `META` | 通報データ |
+| `VISIT#<date>` | `<userId>` | 広場訪問記録（日次） |
+
+**GSI1（グローバルセカンダリインデックス）：**
+
+| GSI1PK | GSI1SK | 用途 |
+|---|---|---|
+| `POSTS` | `<timestamp>` | 投稿の時系列取得 |
+| `EVENTS#<classification>` | `<date>#<eventId>` | 分類別イベント日付順取得 |
+| `EVENTS#AREA#<city>` | `<date>#<eventId>` | 地域別イベント取得 |
+| `USER_POSTS#<userId>` | `<timestamp>` | ユーザー別投稿取得 |
+| `VISIT_DATE#<date>` | `<userId>` | 日別訪問者集計 |
+
+### 4-2. ユーザープロフィール
+
+```typescript
+interface UserProfile {
+  userId: string;          // Cognito sub
+  nickname: string;        // 1〜20文字
+  childAgeGroup: '0-1' | '2-3' | '4-preschool';
+  createdAt: string;       // ISO 8601
+  updatedAt: string;
+}
+```
+
+### 4-3. アバター
+
+```typescript
+interface UserAvatar {
+  userId: string;
+  baseType: string;        // 6種類の基本アバターID
+  hairStyle: string;
+  hairColor: string;
+  outfit: string;
+  outfitColor: string;
+  accessory: string;
+  updatedAt: string;
+}
+```
+
+### 4-4. 投稿
+
+```typescript
+interface Post {
+  postId: string;          // ULID
+  userId: string;
+  text: string;            // 1〜60文字
+  theme: PostTheme | null; // 11種類のテーマ（任意）
+  createdAt: string;       // ISO 8601
+  expiresAt: number;       // TTL（作成から24時間後のUnixタイムスタンプ）
+  isDeleted: boolean;
+  isHidden: boolean;       // 管理者非表示
+}
+
+type PostTheme =
+  | 'feeling' | 'sleep' | 'meal' | 'terrible-twos'
+  | 'development' | 'nursery' | 'siblings' | 'work-life'
+  | 'parent-fatigue' | 'outing' | 'pre-school';
+```
+
+### 4-5. リアクション
+
+```typescript
+type ReactionType =
+  | 'wakaru'       // 🫶 わかるよ
+  | 'otsukare'     // ☕ おつかれさま
+  | 'koko'         // 🌿 ここにいるよ
+  | 'watashi-mo'   // 🙋 私も同じ
+  | 'ouen'         // 📣 応援してるよ
+  | 'oyasumi'      // 🌙 今日もおつかれさま
+  | 'yokattane'    // 🎉 よかったね
+  | 'hitoiki';     // 🍀 ひと息ついてね
+
+// 個別リアクション記録
+interface ReactionRecord {
+  postId: string;
+  userId: string;
+  type: ReactionType;
+  createdAt: string;
+}
+
+// 投稿ごとのリアクション合計（種類別）
+interface ReactionCounts {
+  postId: string;
+  counts: Record<ReactionType, number>;
+}
+```
+
+### 4-6. イベント・施設・支援（3分類統合）
+
+```typescript
+type EventClassification = 'event' | 'facility' | 'support';
+
+type EventCategory =
+  | 'childcare-center' | 'community-center' | 'library'
+  | 'museum' | 'play-experience' | 'consultation' | 'other';
+
+type EventStatus =
+  | 'candidate' | 'review_required' | 'published' | 'updated'
+  | 'canceled' | 'postponed' | 'closed' | 'expired'
+  | 'hidden' | 'source_unavailable';
+
+type AttributeTag =
+  | 'free' | 'no-reservation' | 'indoor' | 'outdoor'
+  | 'rainy-day' | 'stroller-ok' | 'nursing-room'
+  | 'diaper-change' | 'siblings-ok'
+  | 'beginner-welcome' | 'mid-entry-exit-ok';
+
+interface EventRecord {
+  eventId: string;             // ULID
+  classification: EventClassification;
+  title: string;
+  description: string;
+  organizer: string;
+  category: EventCategory;
+  attributeTags: AttributeTag[];
+  city: string;                // 市区町村
+  venueName: string;
+  address: string;
+  startDate: string | null;    // ISO 8601（施設・支援はnull可）
+  endDate: string | null;
+  applicationDeadline: string | null;
+  targetAgeMin: number | null; // 歳
+  targetAgeMax: number | null;
+  price: 'free' | 'paid';
+  priceLabel: string;
+  reservationRequired: boolean | null;
+  capacity: number | null;
+  officialUrl: string;
+  sourceId: string;
+  sourceUrl: string;
+  contactInfo: string;
+  status: EventStatus;
+  lastConfirmedAt: string;     // ISO 8601
+  manualOverrideFields: string[]; // 手動修正済みフィールド名
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+
+---
+
+## 5. API設計
+
+### 5-1. 認証
+
+すべてのAPIエンドポイントはCognito User Pool Authorizerで保護する（公開エンドポイントは存在しない）。
+
+ベースURL: `https://<api-id>.execute-api.<region>.amazonaws.com/prod`
+
+### 5-2. エンドポイント一覧
+
+#### ユーザー
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/users/profile` | プロフィール登録 |
+| GET | `/users/profile` | 自分のプロフィール取得 |
+| PUT | `/users/profile` | プロフィール更新 |
+| POST | `/users/avatar` | アバター登録 |
+| GET | `/users/avatar` | 自分のアバター取得 |
+| PUT | `/users/avatar` | アバター更新 |
+
+#### 投稿
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/posts` | 投稿作成（60文字制限・禁止パターン検証） |
+| GET | `/posts` | 投稿一覧取得（24時間以内、ページネーション） |
+| DELETE | `/posts/{postId}` | 自分の投稿を削除 |
+
+#### リアクション
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/posts/{postId}/reactions` | リアクション送信（type指定） |
+| DELETE | `/posts/{postId}/reactions/{type}` | リアクション取消 |
+| GET | `/posts/{postId}/reactions/counts` | 種類別合計数取得 |
+| GET | `/posts/{postId}/reactions/mine` | 自分の送信済みリアクション取得 |
+
+#### イベント（3分類統合）
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| GET | `/events` | 一覧取得（クエリパラメータで絞り込み） |
+| GET | `/events/{eventId}` | 詳細取得 |
+
+**絞り込みクエリパラメータ：**
+- `classification`: `event` / `facility` / `support`
+- `date`: `today` / `tomorrow` / `this-week`
+- `city`: 市区町村名
+- `ageGroup`: `0-1` / `2-3` / `4-preschool`
+- `category`: EventCategory値
+- `price`: `free` / `paid`
+- `reservationRequired`: `true` / `false`
+- `indoor`: `true` / `false`
+- `limit`: 件数（デフォルト20、最大50）
+- `nextToken`: ページネーション用
+
+#### 行ってみたい
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/saved-events/{eventId}` | 保存 |
+| DELETE | `/saved-events/{eventId}` | 保存取消 |
+| GET | `/saved-events` | 保存一覧取得 |
+
+#### AI案内所
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/ai-search/manual` | 手動条件検索（FR-AI-01） |
+| POST | `/ai-search/natural` | AI自然文検索（FR-AI-02、Should） |
+
+#### 広場
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/plaza/visit` | 訪問記録 |
+| GET | `/plaza/today-count` | 今日の訪問者数取得 |
+| GET | `/plaza/avatars` | 広場内表示用アバター一覧（最大7体） |
+
+#### 管理者（Should）
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| GET | `/admin/reports` | 通報一覧 |
+| POST | `/admin/posts/{postId}/hide` | 投稿非表示 |
+| GET | `/admin/events/review` | review_required一覧 |
+| POST | `/admin/events/{eventId}/publish` | 公開 |
+| POST | `/admin/events/{eventId}/hide` | 非公開 |
+| GET | `/admin/collect-logs` | 収集ログ一覧 |
+
+
+---
+
+## 6. フロントエンド設計
+
+### 6-1. ディレクトリ構成
 
 ```
 src/
-├── App.tsx                   # ルート：画面切り替えロジック
-├── App.css                   # ルートの最小スタイル
+├── App.tsx                   # ルート：ルーティング＋認証ガード
+├── App.css
 ├── index.css                 # グローバルスタイル・CSS変数
 ├── main.tsx                  # エントリポイント
 │
-├── assets/
-│   └── hero.png              # 既存のヒーロー画像（流用）
+├── auth/
+│   ├── AuthProvider.tsx      # Cognito認証コンテキスト
+│   ├── LoginPage.tsx
+│   ├── RegisterPage.tsx
+│   └── auth.module.css
 │
-├── components/               # 各画面コンポーネント
+├── components/
 │   ├── TopPage/
-│   │   ├── TopPage.tsx
-│   │   └── TopPage.module.css
+│   ├── ProfileSetup/         # ニックネーム＋年齢区分登録
 │   ├── AvatarSelect/
-│   │   ├── AvatarSelect.tsx
-│   │   └── AvatarSelect.module.css
-│   ├── MoodSelect/
-│   │   ├── MoodSelect.tsx
-│   │   └── MoodSelect.module.css
 │   ├── Plaza/
-│   │   ├── Plaza.tsx
-│   │   └── Plaza.module.css
 │   ├── PostArea/
-│   │   ├── PostArea.tsx
-│   │   └── PostArea.module.css
 │   ├── BulletinBoard/
-│   │   ├── BulletinBoard.tsx
-│   │   └── BulletinBoard.module.css
 │   ├── EventDetail/
-│   │   ├── EventDetail.tsx
-│   │   └── EventDetail.module.css
 │   ├── SavedEvents/
-│   │   ├── SavedEvents.tsx
-│   │   └── SavedEvents.module.css
 │   ├── AiSearch/
-│   │   ├── AiSearch.tsx
-│   │   └── AiSearch.module.css
 │   ├── SupportInfo/
-│   │   ├── SupportInfo.tsx
-│   │   └── SupportInfo.module.css
 │   └── ExitResult/
-│       ├── ExitResult.tsx
-│       └── ExitResult.module.css
 │
 ├── data/
-│   ├── avatars.ts            # アバター定義（6種類）
-│   ├── events.ts             # ダミーイベントデータ
-│   ├── dummyUsers.ts         # ダミーアバター・吹き出しデータ
-│   └── supportLinks.ts       # 相談・支援機関データ
+│   ├── avatars.ts            # 6種類の基本アバター定義
+│   ├── reactions.ts          # 8種類のリアクション定義
+│   ├── themes.ts             # 11種類の投稿テーマ定義
+│   ├── demoEvents.ts         # デモイベントデータ（20件以上）
+│   ├── demoAvatars.ts        # デモ用アバターデータ
+│   └── supportLinks.ts      # 相談窓口データ
 │
 ├── hooks/
-│   └── useSavedEvents.ts     # localStorageとの同期フック
+│   ├── useAuth.ts            # 認証状態フック
+│   ├── useApi.ts             # API呼び出し共通フック
+│   ├── usePosts.ts           # 投稿CRUD
+│   ├── useReactions.ts       # リアクション操作
+│   ├── useEvents.ts          # イベント検索
+│   └── useSavedEvents.ts    # 行ってみたい
+│
+├── api/
+│   └── client.ts             # API Gateway通信クライアント（Cognito JWT付与）
 │
 └── types/
     └── index.ts              # 共通型定義
 ```
 
----
-
-## 3. 画面遷移フロー
+### 6-2. 画面遷移フロー
 
 ```
-TopPage
-  └─[ひろばに入る]─→ AvatarSelect
-                         └─[次へ]─→ MoodSelect
-                                       └─[ひろばへ入る]─→ Plaza（メイン広場）
-                                                              ├─[掲示板]─→ BulletinBoard
-                                                              │               ├─[カードタップ]─→ EventDetail
-                                                              │               │                    └─[行ってみたい]─（保存）
-                                                              │               └─[AI検索タブ]─→ AiSearch
-                                                              ├─[保存一覧]─→ SavedEvents
-                                                              │               └─[カードタップ]─→ EventDetail
-                                                              ├─[案内所]─→ SupportInfo
-                                                              ├─[投稿]─→ PostArea（モーダル or 下部シート）
-                                                              └─[退出]─→ ExitResult
-                                                                             └─[もう一度/終わる]─→ TopPage
+[未認証]
+  LoginPage ←→ RegisterPage
+      │（ログイン成功）
+      ▼
+[初回のみ]
+  ProfileSetup → AvatarSelect → Plaza
+      │
+[認証済み・登録済み]
+      ▼
+  Plaza（メイン広場）
+    ├─[投稿]─→ PostArea（モーダル）
+    ├─[掲示板]─→ BulletinBoard
+    │               ├─[カードタップ]─→ EventDetail
+    │               └─[AI検索タブ]─→ AiSearch
+    ├─[保存一覧]─→ SavedEvents
+    │               └─[カードタップ]─→ EventDetail
+    ├─[案内所]─→ SupportInfo
+    └─[退出]─→ ExitResult → TopPage
 ```
 
-各画面への遷移はすべて `App.tsx` の `page` 状態の切り替えで実現する。
+### 6-3. 状態管理
 
----
-
-## 4. グローバル状態の設計
-
-`App.tsx` で以下の状態を保持し、各コンポーネントへ `props` で渡す。
+React Contextを使用する。外部状態管理ライブラリは導入しない。
 
 ```typescript
-// 現在の画面
+// AuthContext（認証）
+interface AuthState {
+  isAuthenticated: boolean;
+  user: CognitoUser | null;
+  accessToken: string | null;
+}
+
+// AppContext（アプリ状態）
+interface AppState {
+  profile: UserProfile | null;
+  avatar: UserAvatar | null;
+  currentPage: Page;
+  previousPage: Page | null;
+  selectedEventId: string | null;
+}
+
 type Page =
-  | 'top'
-  | 'avatarSelect'
-  | 'moodSelect'
-  | 'plaza'
-  | 'bulletinBoard'
-  | 'eventDetail'
-  | 'savedEvents'
-  | 'aiSearch'
-  | 'supportInfo'
-  | 'postArea'
-  | 'exitResult';
+  | 'login' | 'register'
+  | 'profileSetup' | 'avatarSelect'
+  | 'plaza' | 'postArea' | 'bulletinBoard'
+  | 'eventDetail' | 'savedEvents'
+  | 'aiSearch' | 'supportInfo' | 'exitResult';
+```
 
-// セッション情報
-interface SessionState {
-  selectedAvatar: Avatar | null;      // FR-02
-  selectedMood: Mood | null;          // FR-03
-  currentPage: Page;                  // 画面管理
-  selectedEventId: string | null;     // 詳細表示中のイベントID
-  previousPage: Page | null;          // 戻るボタン用
+### 6-4. ニックネーム表示
+
+- 広場内で各アバターの下にニックネームを表示する（FR-PROFILE-01）
+- 自分のニックネームも他の利用者のニックネームも同様に表示する
+- フォントサイズ: 12px、最大幅: アバター幅と同等、overflow時は省略記号
+
+
+---
+
+## 7. リアクション設計
+
+### 7-1. リアクション定義
+
+```typescript
+const REACTIONS = [
+  { type: 'wakaru',     emoji: '🫶', label: 'わかるよ' },
+  { type: 'otsukare',   emoji: '☕', label: 'おつかれさま' },
+  { type: 'koko',       emoji: '🌿', label: 'ここにいるよ' },
+  { type: 'watashi-mo', emoji: '🙋', label: '私も同じ' },
+  { type: 'ouen',       emoji: '📣', label: '応援してるよ' },
+  { type: 'oyasumi',    emoji: '🌙', label: '今日もおつかれさま' },
+  { type: 'yokattane',  emoji: '🎉', label: 'よかったね' },
+  { type: 'hitoiki',    emoji: '🍀', label: 'ひと息ついてね' },
+] as const;
+```
+
+### 7-2. 動作仕様
+
+- 1投稿に対して同一利用者が**複数種類**のリアクションを送信できる
+- 同一種類は1回まで。再度押すと取り消し（トグル動作）
+- 自分の投稿にはリアクションボタンを非活性にする
+- 各投稿の下に種類ごとの合計送信数を表示する
+
+### 7-3. 表示形式
+
+```
+[🫶 3] [☕ 5] [🌿 1] [🙋 2] ...
+```
+
+- 合計数0の種類も表示する（押下可能であることを示す）
+- 自分が送信済みの種類はボタンをハイライト（`aria-pressed="true"`）
+
+### 7-4. アクセシビリティ
+
+- 各リアクションボタンに `aria-label` を付与する
+- 形式: `"{label} リアクション {count}件"`
+- 例: `aria-label="わかるよ リアクション 3件"`
+- 自分が送信済みの場合: `aria-label="わかるよ リアクション 3件 送信済み"`
+
+### 7-5. バックエンド処理
+
+- リアクション送信: `POST /posts/{postId}/reactions` body: `{ type: "wakaru" }`
+- DynamoDBトランザクション: 個別記録の書き込み＋合計数のアトミック更新（`ADD`）
+- 取り消し: `DELETE /posts/{postId}/reactions/{type}`
+- DynamoDBトランザクション: 個別記録の削除＋合計数のアトミック減算
+
+---
+
+## 8. イベント3分類・属性タグ・自動収集パイプライン
+
+### 8-1. 3分類の定義
+
+| classification | 説明 | 日付の扱い |
+|---|---|---|
+| `event` | 開催日時が定められた単発・期間限定の催し | startDate必須 |
+| `facility` | 常時利用可能な公共施設 | startDate = null（常設） |
+| `support` | 行政が提供する制度的支援 | startDate = null（通年） |
+
+### 8-2. 属性タグ（11種類）
+
+| タグキー | 表示名 |
+|---|---|
+| `free` | 無料 |
+| `no-reservation` | 予約不要 |
+| `indoor` | 屋内 |
+| `outdoor` | 屋外 |
+| `rainy-day` | 雨の日対応 |
+| `stroller-ok` | ベビーカー可 |
+| `nursing-room` | 授乳室あり |
+| `diaper-change` | おむつ交換設備あり |
+| `siblings-ok` | きょうだい参加可 |
+| `beginner-welcome` | 初参加歓迎 |
+| `mid-entry-exit-ok` | 途中入退室可能 |
+
+### 8-3. 自動収集パイプライン
+
+```
+EventBridge (JST 03:00)
+  → collector Lambda
+      ├─ 情報源1: fetch → parse → structurize (Bedrock)
+      ├─ 情報源2: fetch → parse → structurize (Bedrock)
+      └─ 情報源3: fetch → parse → structurize (Bedrock)
+          │
+          ▼
+      検証ロジック
+          ├─ 全条件Pass → status: published
+          ├─ 曖昧・矛盾あり → status: review_required
+          └─ 重複検出 → スキップ
+          │
+          ▼
+      DynamoDB書き込み + ログ記録
+```
+
+### 8-4. 重複判定ロジック
+
+1. `officialUrl` が既存レコードと完全一致 → 重複
+2. `title` + `startDate` + `venueName` がすべて既存と一致 → 重複
+3. 重複判定されたデータは新規登録しない
+
+### 8-5. 変更検知と更新
+
+- 再収集時、既存レコードのURL一致で同定
+- `startDate`、`endDate`、`venueName`、`price`、`reservationRequired`、`status` に差分があれば更新
+- `manualOverrideFields` に含まれるフィールドは上書きしない
+- 更新時に `status` を `updated` に変更
+
+### 8-6. 収集ログ
+
+```typescript
+interface CollectLog {
+  date: string;             // "YYYY-MM-DD"
+  sourceId: string;
+  status: 'success' | 'failure';
+  fetchedCount: number;
+  newCount: number;
+  updatedCount: number;
+  skippedCount: number;
+  reviewRequiredCount: number;
+  errorMessage: string | null;
+  executedAt: string;       // ISO 8601
 }
 ```
 
-`savedEvents`（行ってみたいリスト）は `useSavedEvents` フックで管理し、`localStorage` と同期する。
 
 ---
 
-## 5. 型定義（`src/types/index.ts`）
+## 9. AI案内所設計
 
-```typescript
-export interface Avatar {
-  id: string;
-  emoji: string;       // アバターを絵文字で表現
-  label: string;       // アクセシビリティ用のラベル
-  color: string;       // アバター背景色（パステル）
-}
+### 9-1. FR-AI-01 手動条件検索
 
-export type Mood =
-  | 'tired'
-  | 'presence'
-  | 'outing'
-  | 'talk'
-  | 'observe';
+手動検索はLambda内でDynamoDBクエリを実行する。AIは使用しない。
 
-export interface MoodOption {
-  value: Mood;
-  label: string;
-  emoji: string;
-}
+**悩みと紹介先の基本対応表（検索ロジック内蔵）：**
 
-export interface Event {
-  id: string;
-  title: string;
-  date: string;              // "YYYY-MM-DD"
-  time: string;              // "HH:MM〜HH:MM"
-  ageRange: string;          // "0〜3歳" など
-  ageMin: number;            // 絞り込み用（歳）
-  ageMax: number;
-  location: string;
-  address: string;
-  facilityType: FacilityType;
-  price: 'free' | 'paid';
-  priceLabel: string;        // "無料" / "500円" など
-  indoor: boolean;
-  reservationRequired: boolean;
-  nursingRoom: boolean;
-  diaperChange: boolean;
-  strollerOk: boolean;
-  source: string;            // 情報提供元
-  officialUrl: string;
-  lastConfirmed: string;     // "YYYY-MM-DD"
-  description: string;
-}
+| 悩み・希望カテゴリ | 優先検索対象のcategory / classification |
+|---|---|
+| 孤独・話し相手がほしい | `childcare-center`, `community-center` |
+| 子どもの遊び場を探したい | `play-experience`, `library`, `museum` |
+| 発達・言葉が気になる | `consultation`, classification=`support` |
+| 一時預かり・休息がほしい | classification=`support`, `childcare-center` |
+| 経済的に困っている | classification=`support` |
+| 引っ越し・転入したばかり | `childcare-center`, `community-center`, classification=`support` |
+| 食事・栄養が心配 | `consultation`, classification=`support` |
+| 就学前の準備が不安 | `consultation`, classification=`support` |
 
-export type FacilityType =
-  | 'community-center'   // 公民館
-  | 'library'            // 図書館
-  | 'museum'             // 博物館・科学館
-  | 'childcare-center'   // 子育て支援施設・児童館
-  | 'other';
+この対応表をLambda内の定数として実装し、選択されたカテゴリに応じてDynamoDBのフィルタ条件を組み立てる。
 
-export interface DummyUser {
-  id: string;
-  avatar: Avatar;
-  message: string;           // 吹き出しテキスト
-  x: number;                 // 広場内の横位置（%）
-  y: number;                 // 広場内の縦位置（%）
-}
+### 9-2. FR-AI-02 AIによる条件抽出と紹介
 
-export interface Post {
-  id: string;
-  avatar: Avatar;
-  text: string;
-  reactions: Record<ReactionType, number>;
-  timestamp: string;
-}
+**処理フロー：**
 
-export type ReactionType =
-  | 'otsukare'     // おつかれさま
-  | 'wakaru'       // わかるよ
-  | 'koko'         // ここにいるよ
-  | 'sotto';       // そっと見守る
-
-export interface SupportLink {
-  id: string;
-  name: string;
-  description: string;
-  phone?: string;
-  url: string;
-}
+```
+利用者入力（最大200文字）
+  → Lambda (api-ai-search)
+    → Bedrock (Claude) に条件抽出を依頼
+      プロンプト:
+        - 入力テキストから条件を抽出する
+        - 抽出する条件: 悩みカテゴリ、年齢区分、地域、日時、活動種類、
+          屋内/屋外、料金、予約条件、施設カテゴリ
+    → 抽出した条件でDynamoDBを検索
+    → 最大3件の結果を取得
+    → Bedrock (Claude) に紹介理由の生成を依頼
+      プロンプト制約:
+        - 登録済みデータの属性のみに基づいて理由を記述する
+        - データに記載のない情報を推測しない
+        - 「おそらく」「かもしれません」を使用しない
+        - 根拠のない属性に言及しない
+    → レスポンス返却
 ```
 
----
+**入力例（UIヒント表示用）：**
 
-## 6. コンポーネント設計
+1. 「1歳の子どもと雨の日に室内で遊べる場所を探しています」
+2. 「引っ越してきたばかりで近所にママ友がいません。気軽に行ける場所はありますか」
+3. 「2歳の子が言葉が遅いかもしれず不安です。相談できるところを知りたい」
+4. 「無料で予約なしで行ける子育て広場を博多区で探しています」
+5. 「3歳のきょうだいも一緒に参加できるイベントはありますか」
+6. 「来年小学校に上がるので就学前に準備できることを知りたい」
 
-### 6-1. TopPage
+### 9-3. FR-AI-03 深刻・緊急入力の検出
 
-- 役割：FR-01。既存の `App.tsx` の内容を移植・整理する。
-- Props：`onEnter: () => void`
-- ヒーロー画像、サービス名、キャッチコピー、概要文、「ひろばに入る」ボタンを表示。
-
-### 6-2. AvatarSelect
-
-- 役割：FR-02。6種類のアバターをグリッド表示。
-- Props：`onSelect: (avatar: Avatar) => void`
-- 選択済みアバターは枠線・スケールで強調表示。「次へ」ボタンは未選択時に `disabled`。
-
-### 6-3. MoodSelect
-
-- 役割：FR-03。5種類の気分・目的をカード選択。
-- Props：`avatar: Avatar; onSelect: (mood: Mood) => void`
-- 選択済みはハイライト。「ひろばへ入る」ボタンは未選択時に `disabled`。
-
-### 6-4. Plaza
-
-- 役割：FR-04・FR-05・FR-06の入口。
-- Props：`avatar: Avatar; mood: Mood; onNavigate: (page: Page) => void; onExit: () => void`
-- 広場の背景はCSSで草地・空をイメージした絵。アバターはabsolute配置。
-- 広場内に「まちの掲示板」「案内所」「投稿する」「退出する」「保存一覧」ボタンを配置。
-- ダミーユーザー（`dummyUsers.ts`）を読み込み、吹き出しと共に表示。
-- 在室人数＝ダミーユーザー数＋1（自分）で表示。
-
-### 6-5. PostArea
-
-- 役割：FR-05。投稿フォームとリアクション送信。
-- Props：`avatar: Avatar; onClose: () => void`
-- テキストエリア（`maxLength={60}`）、文字カウンター、送信ボタン。
-- 4種類のリアクションボタン。
-- 投稿後はフォームをリセットしてモーダルを閉じる。
-
-### 6-6. BulletinBoard
-
-- 役割：FR-07・FR-08。イベント一覧と絞り込み。
-- Props：`onSelectEvent: (id: string) => void; onNavigate: (page: Page) => void; onBack: () => void`
-- タブ：「イベント一覧」「AI検索」
-- 絞り込みパネル：今日・明日・対象年齢・無料・屋内・予約不要・施設の種類。
-- イベントリストは `events.ts` から読み込み、選択条件で `filter` する。
-- 0件時は専用メッセージを表示。
-
-### 6-7. EventDetail
-
-- 役割：FR-09・FR-10。
-- Props：`eventId: string; savedIds: string[]; onSave: (id: string) => void; onBack: () => void`
-- `events.ts` から対象IDのデータを取得して表示。
-- 「行ってみたい」ボタン：保存済みなら「保存済み ✓」のトグル表示。
-
-### 6-8. SavedEvents
-
-- 役割：FR-10。保存済みイベント一覧。
-- Props：`savedIds: string[]; onSelectEvent: (id: string) => void; onBack: () => void`
-- `savedIds` で `events.ts` を引き、カード一覧で表示。
-
-### 6-9. AiSearch
-
-- 役割：FR-11。自然文検索UI（モック実装）。
-- Props：`onSelectEvent: (id: string) => void; onBack: () => void`
-- テキスト入力 → モック関数が入力文字列を解析（キーワードマッチ）→ `events.ts` の該当イベントを返す。
-- 将来的にAmazon Bedrock APIへの差し替えを容易にするため、検索ロジックを `parseNaturalQuery(text: string): FilterCondition` という関数に切り出す。
-
-### 6-10. SupportInfo
-
-- 役割：FR-12。相談・支援機関の案内。
-- Props：`onBack: () => void`
-- `supportLinks.ts` から読み込み、機関名・説明・電話番号・リンクをカード表示。
-
-### 6-11. ExitResult
-
-- 役割：FR-06。すれ違い結果の表示。
-- Props：`onRestart: () => void`
-- ダミー人数（3〜8のランダム整数）を表示。
-- 「もう一度あそぶ」と「終わる（トップへ）」ボタンを表示。
-
----
-
-## 7. データ設計
-
-### 7-1. アバターデータ（`src/data/avatars.ts`）
-
-6種類のアバターを絵文字ベースで実装する。将来的に独自SVGへ差し替え可能な構造とする。
+**検出はBedrock呼び出し前にLambda内のキーワードマッチで実施する。**
 
 ```typescript
-export const AVATARS: Avatar[] = [
-  { id: 'bear',   emoji: '🐻', label: 'くまさん',   color: '#f5e6d3' },
-  { id: 'bunny',  emoji: '🐰', label: 'うさぎさん', color: '#fde8ec' },
-  { id: 'duck',   emoji: '🐥', label: 'ひよこさん', color: '#fdf6d3' },
-  { id: 'cat',    emoji: '🐱', label: 'ねこさん',   color: '#e8f4ec' },
-  { id: 'panda',  emoji: '🐼', label: 'ぱんださん', color: '#e8eef5' },
-  { id: 'koala',  emoji: '🐨', label: 'こあらさん', color: '#ece8f5' },
+const CRISIS_KEYWORDS: Record<string, string[]> = {
+  'self-harm': ['死にたい', '消えたい', '自分を傷つけたい'],
+  'abuse-self': ['子どもを叩いてしまう', '手が出そう', '怒りが止まらない'],
+  'abuse-report': ['虐待を見た', '泣き続けている'],
+  'dv': ['殴られる', '暴力を受けている', '逃げたい'],
+  'economic-crisis': ['食べるものがない', '電気が止まる', '住む場所がない'],
+  'mental-crisis': ['眠れない日が続く', '何も感じない', '限界'],
+};
+```
+
+検出時はAI検索を行わず、対応する相談窓口情報を即時返却する。
+
+| カテゴリ | 優先表示窓口 |
+|---|---|
+| self-harm | いのちの電話、よりそいホットライン |
+| abuse-self | 児童相談所虐待対応ダイヤル（189）、子育て支援相談 |
+| abuse-report | 児童相談所虐待対応ダイヤル（189） |
+| dv | DV相談ナビ（#8008）、配偶者暴力相談支援センター |
+| economic-crisis | 生活困窮者自立支援窓口、福祉事務所 |
+| mental-crisis | こころの健康相談統一ダイヤル、精神保健福祉センター |
+
+### 9-4. FR-AI-04 一般的育児情報の提供
+
+**条件：** DynamoDB検索結果が0件の場合のみ実行する。
+
+**処理フロー：**
+
+```
+DynamoDB検索結果 = 0件
+  → Bedrock (Claude) に一般的育児情報の提供を依頼
+    プロンプト制約:
+      - 情報源: 厚生労働省、こども家庭庁、福岡県・福岡市公式ガイドのみ
+      - 最大2件
+      - 各件に情報源URL・資料名を必ず付記
+      - 医療的助言・診断・治療法の提示は禁止
+  → 注記を付与:「この情報は一般的な育児情報であり、個別の相談・診断ではありません」
+  → レスポンス返却
+```
+
+
+---
+
+## 10. セキュリティ・認証・プライバシー設計
+
+### 10-1. 認証フロー
+
+```
+RegisterPage
+  → Cognito SignUp (email + password)
+  → メール検証コード送信
+  → 検証コード入力
+  → アカウント確認完了
+  → ログイン画面へ
+
+LoginPage
+  → Cognito SignIn (email + password)
+  → アクセストークン + リフレッシュトークン取得
+  → AuthContext にセット
+  → プロフィール有無を確認 → 広場 or 初回設定
+```
+
+### 10-2. API認可
+
+- API Gatewayの全エンドポイントにCognito Authorizerを設定
+- Lambda内で `event.requestContext.authorizer.claims.sub` からuserId取得
+- 管理者エンドポイントはCognitoグループ `admin` のメンバーのみアクセス可
+
+### 10-3. 投稿の禁止パターン検証（Lambda内）
+
+```typescript
+const BLOCKED_PATTERNS = [
+  /https?:\/\//i,                    // URL
+  /[\w.+-]+@[\w-]+\.[\w.]+/,        // メールアドレス
+  /\d{10,11}/,                       // 電話番号（10〜11桁連続数字）
+  /@[\w]+/,                          // SNS ID
 ];
 ```
 
-### 7-2. イベントダミーデータ（`src/data/events.ts`）
+- 投稿作成API内で全パターンを検査し、1つでも該当すればステータス400を返す
+- エラーメッセージ: `「連絡先情報を含む投稿は送信できません」`
 
-成功条件デモに必要な多様なデータを用意する。最低10件、各カテゴリから1件以上。
+### 10-4. データアクセス制御
 
-| 施設種別 | 件数の目安 |
+| 操作 | 制御 |
 |---|---|
-| 公民館（親子イベント） | 3件 |
-| 図書館（読み聞かせ） | 2件 |
-| 博物館・科学館 | 2件 |
-| 子育て支援施設・児童館 | 2件 |
-| 相談会 | 1件 |
+| 投稿削除 | 自分の投稿のみ（userId一致チェック） |
+| リアクション送信 | 自分の投稿には不可（postのuserId ≠ リクエストのuserId） |
+| プロフィール取得 | 自分のプロフィールのみ取得可（他者のニックネームは広場API経由で取得） |
+| 管理者操作 | Cognitoグループ `admin` のメンバーのみ |
 
-- 日付は「今日」「明日」「来週」など絞り込みテストが機能するよう分散させる。
-- `date` フィールドは実装時にシステム日付から相対計算した文字列を入れる。
+### 10-5. 収集しない個人情報
 
-### 7-3. ダミーユーザーデータ（`src/data/dummyUsers.ts`）
+以下の情報はCognito・DynamoDBのいずれにも保存しない。
+- 本名、子どもの実名、正確な住所、GPS位置情報、園名・学校名、子どもの正確な生年月日、医療・健康情報
 
-7体のダミーユーザーを定義する。吹き出しは子育て中の保護者が自然に発する短い一言とする。
+### 10-6. フロントエンドセキュリティ
 
-```
-例：
-・「おやすみなさい〜」
-・「今日もよく頑張った」
-・「眠れない夜は広場に来てます」
-・「離乳食、難しいな」
-・「図書館の読み聞かせ楽しかった！」
-```
+- AWSアクセスキーをフロントエンドに含めない
+- Cognitoのアクセストークンのみを使用してAPIを呼び出す
+- トークンはメモリ内保持（localStorageにリフレッシュトークンのみ保存、Amplifyデフォルト挙動）
 
-### 7-4. 相談・支援リンク（`src/data/supportLinks.ts`）
+---
 
-福岡県・市の公式機関を中心に5件程度を定義する。
+## 11. デプロイ・運用設計
 
-| 機関名（例） | 種別 |
+### 11-1. インフラ定義
+
+AWS CDK (TypeScript) で以下のスタックを定義する。
+
+| スタック | リソース |
 |---|---|
-| 福岡市子育て情報サイト「はぐはぐ」 | 総合情報 |
-| 福岡市子ども総合相談センター（えがお館） | 相談窓口 |
-| よりそいホットライン | 電話相談 |
-| 福岡県子育て支援センター | 支援施設 |
-| こども家庭庁 相談窓口まとめ | 国の案内 |
+| AuthStack | Cognito User Pool, User Pool Client |
+| DataStack | DynamoDB テーブル, GSI |
+| ApiStack | API Gateway, Lambda関数群, IAMロール |
+| FrontendStack | S3バケット, CloudFront Distribution, OAC |
+| CollectorStack | EventBridge Scheduler, collector Lambda, Bedrock権限 |
+| MonitoringStack | CloudWatch Log Groups, アラーム |
 
----
+### 11-2. デプロイフロー
 
-## 8. カスタムフック
-
-### `useSavedEvents`（`src/hooks/useSavedEvents.ts`）
-
-```typescript
-const STORAGE_KEY = 'sanji-saved-events';
-
-function useSavedEvents(): {
-  savedIds: string[];
-  toggleSave: (id: string) => void;
-  isSaved: (id: string) => boolean;
-}
+```
+1. CDK deploy (インフラ)
+2. Lambda コードをデプロイ（CDK内で自動バンドル）
+3. React ビルド (npm run build)
+4. S3 へアップロード (aws s3 sync)
+5. CloudFront キャッシュ無効化
 ```
 
-- 初期値は `localStorage.getItem(STORAGE_KEY)` から読み込む。
-- `toggleSave` でIDを追加または削除し、`localStorage.setItem` で保存する。
+### 11-3. 環境変数管理
+
+| 変数 | 格納先 |
+|---|---|
+| Cognito User Pool ID | CDK出力 → フロントエンド環境変数 |
+| Cognito Client ID | CDK出力 → フロントエンド環境変数 |
+| API Gateway URL | CDK出力 → フロントエンド環境変数 |
+| DynamoDB テーブル名 | Lambda環境変数 |
+| Bedrock モデルID | Lambda環境変数 |
+| 情報源URL一覧 | Lambda環境変数 or DynamoDB |
+
+フロントエンド環境変数は `VITE_` プレフィックスで `.env.production` に記載し、ビルド時に埋め込む。
+
+### 11-4. モニタリング
+
+- Lambda エラーログ → CloudWatch Logs
+- 自動収集ログ → DynamoDB + CloudWatch Logs
+- API Gateway 4xx/5xx → CloudWatch メトリクス
+- CloudWatch Alarm: 収集Lambda失敗時にメール通知（SNS）
+
+### 11-5. デモモード
+
+AWS未接続時（ローカル開発時）のデモモード実装方針：
+
+- 環境変数 `VITE_DEMO_MODE=true` でデモモードを有効化
+- デモモード時はAPIを呼ばず、`src/data/` のデモデータを使用する
+- 広場の訪問者数は3〜8のランダム整数を表示し、「デモ表示」と明記する
+- 投稿・リアクションはメモリ内で完結する（永続化しない）
 
 ---
 
-## 9. AIイベント検索モック（`src/components/AiSearch/AiSearch.tsx`）
+## 12. デザイントークン
 
-将来のBedrock接続を考慮し、検索ロジックを関数として分離する。
-
-```typescript
-// 将来はこの関数をBedrock API呼び出しに差し替える
-function parseNaturalQuery(text: string): FilterCondition {
-  return {
-    date: detectDate(text),        // "today" | "tomorrow" | null
-    childAge: detectAge(text),     // number | null
-    price: detectPrice(text),      // "free" | null
-    indoor: detectIndoor(text),    // boolean | null
-  };
-}
-```
-
-- `detectDate`：「今日」「明日」などのキーワードを検出する。
-- `detectAge`：「0歳」「1歳」「2歳」「3歳」などを検出する。
-- `detectPrice`：「無料」「タダ」などを検出する。
-- `detectIndoor`：「屋内」「室内」「雨の日」などを検出する。
-
----
-
-## 10. デザイントークン
-
-既存の `index.css` をベースに、CSS カスタムプロパティを追加して統一する。
+既存の `index.css` をベースに、CSS カスタムプロパティを統一する。
 
 ```css
 :root {
-  /* カラーパレット（パステル） */
-  --color-primary:        #7166b5;   /* メインアクション */
-  --color-primary-dark:   #6257a6;   /* ホバー */
-  --color-primary-light:  #ece8f5;   /* 背景・選択状態 */
-  --color-accent-pink:    #f2a6a0;   /* アクセント */
-  --color-accent-green:   #83bfb0;   /* アクセント */
-  --color-text-main:      #403c4a;   /* 本文 */
-  --color-text-sub:       #6c6678;   /* 補足テキスト */
-  --color-surface:        rgba(255, 255, 255, 0.88);  /* カード背景 */
-  --color-border:         rgba(113, 102, 181, 0.14);  /* 枠線 */
+  /* カラーパレット */
+  --color-primary:        #7166b5;
+  --color-primary-dark:   #6257a6;
+  --color-primary-light:  #ece8f5;
+  --color-accent-pink:    #f2a6a0;
+  --color-accent-green:   #83bfb0;
+  --color-text-main:      #403c4a;
+  --color-text-sub:       #6c6678;
+  --color-surface:        rgba(255, 255, 255, 0.88);
+  --color-border:         rgba(113, 102, 181, 0.14);
+  --color-danger:         #d94f4f;
 
   /* タイポグラフィ */
-  --font-size-base:    1rem;        /* 16px（NFR-02-1） */
-  --font-size-sm:      0.875rem;    /* 14px（補足） */
-  --font-size-lg:      1.125rem;    /* 18px */
-  --font-size-xl:      1.5rem;      /* 24px */
+  --font-size-base:    1rem;
+  --font-size-sm:      0.875rem;
+  --font-size-lg:      1.125rem;
+  --font-size-xl:      1.5rem;
+  --font-size-xs:      0.75rem;
 
   /* スペーシング */
   --space-xs:   4px;
@@ -441,7 +875,7 @@ function parseNaturalQuery(text: string): FilterCondition {
   --space-lg:  24px;
   --space-xl:  36px;
 
-  /* ボタン最小タップサイズ（NFR-01-2） */
+  /* ボタン最小タップサイズ */
   --tap-min: 44px;
 
   /* 角丸 */
@@ -454,29 +888,25 @@ function parseNaturalQuery(text: string): FilterCondition {
 
 ---
 
-## 11. スマートフォン対応方針
+## 13. アクセシビリティ方針
 
-- 最大幅 `min(100%, 430px)` のカードレイアウトをページ単位で適用する。
-- ボトムナビゲーション・固定フッターボタンは `position: sticky; bottom: 0` で実装する。
-- `font-size` は `clamp()` または固定値（16px以上）を使用し、OS設定の文字拡大に追従させる。
-- フォームの `input` / `textarea` は `font-size: 16px` 以上を必須とし、iOSの自動ズームを防ぐ。
-
----
-
-## 12. アクセシビリティ方針（NFR-02）
-
-- インタラクティブ要素には `aria-label` または可視テキストを必ず付与する。
-- 選択状態は `aria-pressed` または `aria-selected` で表現する。
-- 色だけで状態を表すことを避け、アイコン・テキストを必ず併用する。
-- フォーカスリングを `:focus-visible` で明示的に定義する（既存の `.enter-button` の実装に倣う）。
+- インタラクティブ要素に `aria-label` または可視テキストを必ず付与する
+- リアクションボタン: `aria-label="{label} リアクション {count}件"` 形式
+- 選択状態は `aria-pressed` または `aria-selected` で表現する
+- 色だけで状態を表さず、アイコン・テキストを必ず併用する
+- フォーカスリングを `:focus-visible` で明示する
+- フォームの `input` / `textarea` は `font-size: 16px` 以上（iOSズーム防止）
 
 ---
 
-## 13. 将来拡張への考慮
+## 14. 未決定事項
 
-| 将来機能 | 今回の準備 |
+| 事項 | 確定タイミング |
 |---|---|
-| Amazon Bedrockとの接続 | `parseNaturalQuery` 関数を差し替え可能な形で分離 |
-| DynamoDBへのデータ移行 | イベントデータを `events.ts` に集約し、APIレスポンスと同形の型を定義 |
-| AppSyncによるリアルタイム通信 | ダミーユーザー・投稿データを外部から注入できるPropsベース設計 |
-| 本格認証（Cognito等） | セッション情報をコンテキストで管理し、認証状態を差し込みやすい構造 |
+| AWSリージョン（ap-northeast-1想定） | デプロイ時に確定 |
+| カスタムドメイン名 | 運営側が別途決定 |
+| Bedrock使用モデルの具体バージョン | tasks.md作成時に確定 |
+| 承認済み公式情報源3件の具体的URL | 運営側が別途決定 |
+| 利用規約・プライバシーポリシー本文 | 運営側が別途作成 |
+| アバターの具体的ビジュアル（SVG/画像） | tasks.mdで確定 |
+| Cognito メール送信元ドメイン | デプロイ時に確定 |

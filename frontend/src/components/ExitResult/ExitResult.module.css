@@ -1,0 +1,123 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
+}
+
+.card {
+  width: min(100%, 420px);
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+/* ── アイコン ── */
+.iconArea {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bigIcon {
+  font-size: 4rem;
+  animation: bloom 0.6s ease-out;
+}
+
+@keyframes bloom {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.floatIcon {
+  position: absolute;
+  font-size: 1.2rem;
+  animation: floatUp 1s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0);   opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+/* ── タイトル ── */
+.title {
+  font-size: var(--font-size-xl);
+  color: #4d456f;
+  margin: 0;
+}
+
+/* ── すれ違いボックス ── */
+.encounterBox {
+  width: 100%;
+  background: var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.encounterLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+
+.encounterCount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 0;
+}
+
+.countNumber {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.countUnit {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.encounterMessage {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-sub);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ── プライバシー注記 ── */
+.privacyNote {
+  font-size: var(--font-size-xs);
+  color: #b0aab8;
+  margin: 0;
+}
+
+/* ── アクション ── */
+.actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}

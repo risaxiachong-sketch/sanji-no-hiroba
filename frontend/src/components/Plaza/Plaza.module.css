@@ -1,0 +1,458 @@
+/* ===================================================
+   Plaza — バーチャル広場（縦・横両対応）
+=================================================== */
+
+/* ── ページ全体 ── */
+.page {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff8f1;
+  position: relative;
+}
+
+/* ── トップバー ── */
+.topBar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(255, 252, 246, 0.93);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(113, 102, 181, 0.1);
+  z-index: 30;
+  gap: 8px;
+}
+
+.sunIcon { font-size: 1.1rem; }
+
+.topTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #4d456f;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.exitBtn {
+  border: none;
+  background: transparent;
+  font-size: 0.75rem;
+  color: #9e96b8;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 8px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+.exitBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
+
+/* ── 在室バナー ── */
+.presenceBanner {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 3px 12px;
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid rgba(113, 102, 181, 0.07);
+  font-size: 0.75rem;
+  color: #6c6678;
+  font-weight: 500;
+  z-index: 30;
+}
+
+.presenceDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #83bfb0;
+  flex-shrink: 0;
+  animation: pulseDot 2.4s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* ── 広場シーン ── */
+.plazaScene {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+
+  /* 背景画像（plaza-bg.png を差し替えるだけで変わる） */
+  background-image: var(--plaza-bg, none);
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+
+  /* 画像がない場合のフォールバック */
+  background-color: #c8ecf5;
+}
+
+/* 背景画像がないとき用の CSS 景色 */
+.plazaBgFallback {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(180deg,
+      #b8e0f5 0%,
+      #caedf8 20%,
+      #d8f0d8 38%,
+      #c8e8b8 54%,
+      #d8c89a 72%,
+      #e8d8a8 100%
+    );
+}
+
+/* 空のオーバーレイ（画像がある場合は非表示） */
+.skyOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+}
+.cloud::before { width: 50%; height: 200%; top: -60%; left: 15%; }
+.cloud::after  { width: 35%; height: 170%; top: -50%; right: 18%; }
+
+/* 木 */
+.tree {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+.treeTop {
+  width: 44px; height: 50px;
+  border-radius: 50% 50% 44% 44%;
+  background: radial-gradient(circle at 40% 35%, #a0d090, #5aaf5a);
+  box-shadow: inset -3px -3px 8px rgba(0,0,0,0.1);
+}
+.treeTrunk {
+  width: 9px; height: 16px;
+  background: #b07840;
+  border-radius: 4px;
+}
+
+/* 地面 */
+.ground {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 22%;
+  background: linear-gradient(180deg, #d4c88a 0%, #c8b870 100%);
+  border-top-left-radius:  60% 16px;
+  border-top-right-radius: 60% 16px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 支援センター看板 */
+.buildingSign {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(113, 102, 181, 0.22);
+  border-radius: 10px;
+  padding: 4px 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #4d7050;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+/* 噴水 */
+.fountain {
+  position: absolute;
+  bottom: 28%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 2;
+  text-align: center;
+}
+.fountainBase {
+  width: 32px; height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #b8d8f0, #8ab8e0);
+  margin: 0 auto;
+}
+
+/* ── 施設カード（右端縦並び） ── */
+.facilityColumn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 20;
+}
+
+.facilityCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 5px;
+  width: 54px;
+  min-height: 54px;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(113, 102, 181, 0.18);
+  backdrop-filter: blur(6px);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.facilityCard:hover,
+.facilityCard:focus-visible {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(113, 102, 181, 0.28);
+}
+.facilityCardIcon  { font-size: 1.25rem; }
+.facilityCardLabel {
+  font-size: 0.58rem;
+  color: #4d456f;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ── キャラクター ── */
+.charWrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  transform: translateX(-50%);
+}
+.myChar  { z-index: 8; }
+.myLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #7166b5;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-top: -2px;
+  border: 1px solid rgba(113, 102, 181, 0.25);
+}
+
+/* ── 吹き出し ── */
+.speechBubble {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(200, 190, 230, 0.5);
+  border-radius: 16px 16px 16px 4px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  color: #4d456f;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 3px 12px rgba(113, 102, 181, 0.14);
+  pointer-events: none;
+  font-weight: 500;
+  z-index: 10;
+}
+.speechBubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  border: 5px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.95);
+  margin-top: -1px;
+}
+.mySpeech {
+  background: rgba(236, 232, 245, 0.97);
+  border-color: rgba(113, 102, 181, 0.35);
+  font-weight: 700;
+  border-radius: 16px 16px 4px 16px;
+}
+.mySpeech::after {
+  left: auto;
+  right: 12px;
+  border-top-color: rgba(236, 232, 245, 0.97);
+}
+
+/* ── 浮かぶハート ── */
+.floatHeart {
+  position: absolute;
+  font-size: 0.9rem;
+  pointer-events: none;
+  z-index: 4;
+  animation: floatBob 3.2s ease-in-out infinite;
+}
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-9px); }
+}
+
+/* ── ボトムナビ ── */
+.bottomNav {
+  flex-shrink: 0;
+  display: flex;
+  background: rgba(255, 252, 246, 0.97);
+  border-top: 1px solid rgba(113, 102, 181, 0.12);
+  padding: 4px 0 env(safe-area-inset-bottom, 4px);
+  z-index: 30;
+}
+.navBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 0 2px;
+  color: #9e96b8;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.navBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
+.navActive          { background: #7166b5 !important; color: #fff !important; }
+.navActive:hover    { background: #6257a6 !important; }
+.navIcon  { font-size: 1.15rem; line-height: 1; }
+.navLabel { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.03em; }
+
+/* =====================================================
+   横画面（landscape）レイアウト
+===================================================== */
+@media (orientation: landscape) {
+
+  .page {
+    flex-direction: row;    /* 横並びに変える */
+    max-width: none;
+  }
+
+  /* トップバーを左側の縦帯に変える */
+  .topBar {
+    flex-direction: column;
+    width: 52px;
+    height: 100%;
+    border-bottom: none;
+    border-right: 1px solid rgba(113, 102, 181, 0.1);
+    padding: 12px 4px;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .sunIcon { font-size: 1rem; }
+
+  .topTitle {
+    writing-mode: vertical-rl;
+    font-size: 0.78rem;
+    flex: 1;
+    text-align: center;
+  }
+
+  .exitBtn {
+    flex-direction: column;
+    min-width: 40px;
+    min-height: 44px;
+    padding: 4px 2px;
+    font-size: 0.65rem;
+  }
+
+  /* 在室バナーを広場上部に重ねる */
+  .presenceBanner {
+    position: absolute;
+    top: 0;
+    left: 52px;   /* 左帯の幅分ずらす */
+    right: 52px;  /* 右ナビ幅分ずらす */
+    border-bottom: 1px solid rgba(113, 102, 181, 0.07);
+    z-index: 25;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+  }
+
+  /* 広場：残りの幅すべて使う */
+  .plazaScene {
+    flex: 1;
+    height: 100%;
+  }
+
+  /* ボトムナビを右側の縦帯に変える */
+  .bottomNav {
+    flex-direction: column;
+    width: 52px;
+    height: 100%;
+    border-top: none;
+    border-left: 1px solid rgba(113, 102, 181, 0.12);
+    padding: 8px 2px;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .navBtn {
+    width: 44px;
+    margin: 0 auto;
+    padding: 8px 2px;
+  }
+
+  /* 施設カードを左端（左帯の右側）に寄せる */
+  .facilityColumn {
+    right: auto;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* キャラクターを横広がりに配置するため位置調整 */
+  /* （bottom 基準の配置は縦横共通で機能する） */
+}
+
+/* =====================================================
+   縦画面（portrait）— 最大幅制限
+===================================================== */
+@media (orientation: portrait) {
+  .page {
+    max-width: 430px;
+    margin: 0 auto;
+  }
+}
