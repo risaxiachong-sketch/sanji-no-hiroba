@@ -56,3 +56,24 @@
   font-size: var(--font-size-base);
   line-height: 1.8;
 }
+
+/* ── 施設担当者リンク ── */
+.adminLink {
+  margin-top: var(--space-lg);
+  text-align: center;
+}
+
+.adminBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-sub);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: var(--space-sm);
+  min-height: var(--tap-min);
+}
+
+.adminBtn:hover {
+  color: var(--color-primary);
+}

@@ -1,16 +1,15 @@
 import { useState, useCallback } from 'react'
-import type { Page, Avatar, Mood } from './types'
+import type { Page, Avatar } from './types'
 import { useSavedEvents } from './hooks/useSavedEvents'
 import { TopPage } from './components/TopPage/TopPage'
+import { ProfileSetup } from './components/ProfileSetup/ProfileSetup'
 import { AvatarSelect } from './components/AvatarSelect/AvatarSelect'
-import { MoodSelect } from './components/MoodSelect/MoodSelect'
 import { Plaza } from './components/Plaza/Plaza'
 import { PostArea } from './components/PostArea/PostArea'
 import { BulletinBoard } from './components/BulletinBoard/BulletinBoard'
 import { EventDetail } from './components/EventDetail/EventDetail'
 import { SavedEvents } from './components/SavedEvents/SavedEvents'
-import { SupportInfo } from './components/SupportInfo/SupportInfo'
-import { ExitResult } from './components/ExitResult/ExitResult'
+import { AdminEventForm } from './components/AdminEventForm/AdminEventForm'
 import './App.css'
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
 
   // ── セッション情報 ────────────────────────────
   const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null)
-  const [selectedMood, setSelectedMood] = useState<Mood | null>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
 
   // ── 保存済みイベント ──────────────────────────
@@ -48,7 +46,23 @@ function App() {
   if (currentPage === 'top') {
     return (
       <TopPage
-        onEnter={() => navigate('avatarSelect')}
+        onEnter={() => {
+          const profile = localStorage.getItem('sanji-profile')
+          if (profile) {
+            navigate('avatarSelect')
+          } else {
+            navigate('profileSetup')
+          }
+        }}
+        onAdminAccess={() => navigate('adminEvent', 'top')}
+      />
+    )
+  }
+
+  if (currentPage === 'profileSetup') {
+    return (
+      <ProfileSetup
+        onComplete={() => navigate('avatarSelect')}
       />
     )
   }
@@ -58,18 +72,6 @@ function App() {
       <AvatarSelect
         onSelect={(avatar) => {
           setSelectedAvatar(avatar)
-          navigate('moodSelect')
-        }}
-      />
-    )
-  }
-
-  if (currentPage === 'moodSelect') {
-    return (
-      <MoodSelect
-        avatar={selectedAvatar!}
-        onSelect={(mood) => {
-          setSelectedMood(mood)
           navigate('plaza')
         }}
       />
@@ -80,9 +82,8 @@ function App() {
     return (
       <Plaza
         avatar={selectedAvatar!}
-        mood={selectedMood!}
         onNavigate={(page) => navigate(page, 'plaza')}
-        onExit={() => navigate('exitResult')}
+        onExit={() => navigate('top')}
       />
     )
   }
@@ -126,27 +127,10 @@ function App() {
     )
   }
 
-  if (currentPage === 'supportInfo') {
+  if (currentPage === 'adminEvent') {
     return (
-      <SupportInfo
-        onBack={() => navigate('plaza')}
-      />
-    )
-  }
-
-  if (currentPage === 'exitResult') {
-    return (
-      <ExitResult
-        onRestart={() => {
-          setSelectedAvatar(null)
-          setSelectedMood(null)
-          navigate('avatarSelect')
-        }}
-        onHome={() => {
-          setSelectedAvatar(null)
-          setSelectedMood(null)
-          navigate('top')
-        }}
+      <AdminEventForm
+        onBack={() => navigate('top')}
       />
     )
   }

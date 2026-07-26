@@ -5,16 +5,14 @@
 /** 画面名 */
 export type Page =
   | 'top'
+  | 'profileSetup'
   | 'avatarSelect'
-  | 'moodSelect'
   | 'plaza'
   | 'bulletinBoard'
   | 'eventDetail'
   | 'savedEvents'
-  | 'aiSearch'
-  | 'supportInfo'
   | 'postArea'
-  | 'exitResult';
+  | 'adminEvent';
 
 /** アバター */
 export interface Avatar {
@@ -24,21 +22,6 @@ export interface Avatar {
   color: string; // パステル背景色
 }
 
-/** 気分・目的 */
-export type Mood =
-  | 'tired'      // ちょっと疲れた
-  | 'presence'   // 誰かの気配を感じたい
-  | 'outing'     // お出かけ先を探したい
-  | 'talk'       // 少し話したい
-  | 'observe';   // 見るだけ
-
-export interface MoodOption {
-  value: Mood;
-  label: string;
-  emoji: string;
-  description: string;
-}
-
 /** 施設種別 */
 export type FacilityType =
   | 'community-center'  // 公民館
@@ -46,6 +29,23 @@ export type FacilityType =
   | 'museum'            // 博物館・科学館
   | 'childcare-center'  // 子育て支援施設・児童館
   | 'other';
+
+/** イベント開催状態 */
+export type EventStatus =
+  | 'scheduled'   // 開催予定
+  | 'canceled'    // 中止
+  | 'postponed'   // 延期
+  | 'closed'      // 受付終了
+  | 'ended';      // 開催終了
+
+/** イベント開催状態の日本語ラベル */
+export const EVENT_STATUS_LABELS: Record<EventStatus, string> = {
+  scheduled: '開催予定',
+  canceled: '中止',
+  postponed: '延期',
+  closed: '受付終了',
+  ended: '開催終了',
+};
 
 /** イベント */
 export interface Event {
@@ -70,6 +70,8 @@ export interface Event {
   officialUrl: string;
   lastConfirmed: string;       // "YYYY-MM-DD"
   description: string;
+  status: EventStatus;         // 開催状態
+  imageUrl?: string;           // イベント画像URL（任意）
 }
 
 /** 絞り込み条件（AI検索・手動フィルター共通） */
@@ -91,12 +93,16 @@ export interface DummyUser {
   y: number;         // 縦位置（%）
 }
 
-/** リアクション種別 */
+/** リアクション種別（8種類） */
 export type ReactionType =
-  | 'otsukare'  // おつかれさま
-  | 'wakaru'    // わかるよ
-  | 'koko'      // ここにいるよ
-  | 'sotto';    // そっと見守る
+  | 'wakaru'      // わかるよ
+  | 'otsukare'    // おつかれさま
+  | 'kokoniiruyo' // ここにいるよ
+  | 'watashimo'   // 私も同じ
+  | 'ouen'        // 応援してるよ
+  | 'kyoumo'      // 今日もおつかれさま
+  | 'yokattane'   // よかったね
+  | 'hitoiki';    // ひと息ついてね
 
 export interface ReactionOption {
   value: ReactionType;
@@ -104,21 +110,23 @@ export interface ReactionOption {
   emoji: string;
 }
 
+/** リアクションしたユーザー情報 */
+export interface ReactionUser {
+  id: string;
+  nickname: string;
+  avatarEmoji: string;
+  avatarColor: string;
+}
+
 /** 投稿 */
 export interface Post {
   id: string;
+  nickname: string;
   avatar: Avatar;
   text: string;
   reactions: Record<ReactionType, number>;
+  reactionUsers: Record<ReactionType, ReactionUser[]>;
+  myReactions: ReactionType[];
   timestamp: string;
 }
 
-/** 相談・支援リンク */
-export interface SupportLink {
-  id: string;
-  name: string;
-  description: string;
-  phone?: string;
-  url: string;
-  category: 'info' | 'consultation' | 'hotline' | 'facility';
-}

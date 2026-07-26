@@ -2,10 +2,7 @@ import { useState, useMemo } from 'react'
 import type { FacilityType, FilterCondition } from '../../types'
 import { EVENTS } from '../../data/events'
 import { EventCard } from '../EventCard/EventCard'
-import { AiSearch } from '../AiSearch/AiSearch'
 import styles from './BulletinBoard.module.css'
-
-type Tab = 'list' | 'ai'
 
 interface Props {
   onSelectEvent: (id: string) => void
@@ -46,7 +43,6 @@ function applyFilter(filter: FilterCondition) {
 }
 
 export function BulletinBoard({ onSelectEvent, onBack }: Props) {
-  const [tab, setTab] = useState<Tab>('list')
   const [filter, setFilter] = useState<FilterCondition>({})
 
   const filtered = useMemo(() => applyFilter(filter), [filter])
@@ -73,135 +69,103 @@ export function BulletinBoard({ onSelectEvent, onBack }: Props) {
           <h1 className={styles.title}>まちの掲示板</h1>
           <div style={{ width: '60px' }} />
         </div>
-
-        {/* タブ */}
-        <div className={styles.tabs} role="tablist">
-          <button
-            role="tab"
-            type="button"
-            className={`${styles.tab} ${tab === 'list' ? styles.active : ''}`}
-            aria-selected={tab === 'list'}
-            onClick={() => setTab('list')}
-          >
-            📋 イベント一覧
-          </button>
-          <button
-            role="tab"
-            type="button"
-            className={`${styles.tab} ${tab === 'ai' ? styles.active : ''}`}
-            aria-selected={tab === 'ai'}
-            onClick={() => setTab('ai')}
-          >
-            ✨ AI検索
-          </button>
-        </div>
       </header>
 
-      {tab === 'list' && (
-        <>
-          {/* フィルターパネル */}
-          <div className={styles.filterPanel}>
-            <div className={styles.filterGroup}>
-              <span className={styles.filterTitle}>日程</span>
-              <button
-                type="button"
-                className={`${styles.filterChip} ${filter.date === 'today' ? styles.active : ''}`}
-                aria-pressed={filter.date === 'today'}
-                onClick={() => toggle('date', 'today')}
-              >今日</button>
-              <button
-                type="button"
-                className={`${styles.filterChip} ${filter.date === 'tomorrow' ? styles.active : ''}`}
-                aria-pressed={filter.date === 'tomorrow'}
-                onClick={() => toggle('date', 'tomorrow')}
-              >明日</button>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <span className={styles.filterTitle}>対象年齢</span>
-              {AGE_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  className={`${styles.filterChip} ${filter.childAge === opt.value ? styles.active : ''}`}
-                  aria-pressed={filter.childAge === opt.value}
-                  onClick={() => toggle('childAge', opt.value)}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-
-            <div className={styles.filterGroup}>
-              <span className={styles.filterTitle}>条件</span>
-              <button
-                type="button"
-                className={`${styles.filterChip} ${filter.price === 'free' ? styles.active : ''}`}
-                aria-pressed={filter.price === 'free'}
-                onClick={() => toggle('price', 'free')}
-              >無料</button>
-              <button
-                type="button"
-                className={`${styles.filterChip} ${filter.indoor === true ? styles.active : ''}`}
-                aria-pressed={filter.indoor === true}
-                onClick={() => toggle('indoor', true)}
-              >屋内</button>
-              <button
-                type="button"
-                className={`${styles.filterChip} ${filter.reservationRequired === false ? styles.active : ''}`}
-                aria-pressed={filter.reservationRequired === false}
-                onClick={() => toggle('reservationRequired', false)}
-              >予約不要</button>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <span className={styles.filterTitle}>施設</span>
-              {FACILITY_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  className={`${styles.filterChip} ${filter.facilityType === opt.value ? styles.active : ''}`}
-                  aria-pressed={filter.facilityType === opt.value}
-                  onClick={() => toggle('facilityType', opt.value)}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-
-            {hasFilter && (
-              <button type="button" className={styles.clearBtn} onClick={clearAll}>
-                絞り込みをクリア
-              </button>
-            )}
-          </div>
-
-          {/* リスト */}
-          <div className={styles.list} role="tabpanel">
-            <p className={styles.resultCount}>{filtered.length}件のイベント</p>
-            {filtered.length === 0 ? (
-              <div className={styles.empty}>
-                <span className={styles.emptyIcon} aria-hidden="true">🔍</span>
-                <p className={styles.emptyText}>該当するイベントがありません</p>
-              </div>
-            ) : (
-              filtered.map(ev => (
-                <EventCard
-                  key={ev.id}
-                  event={ev}
-                  onClick={() => onSelectEvent(ev.id)}
-                />
-              ))
-            )}
-          </div>
-        </>
-      )}
-
-      {tab === 'ai' && (
-        <div className={styles.list} role="tabpanel">
-          <AiSearch onSelectEvent={onSelectEvent} />
+      {/* フィルターパネル */}
+      <div className={styles.filterPanel}>
+        <div className={styles.filterGroup}>
+          <span className={styles.filterTitle}>日程</span>
+          <button
+            type="button"
+            className={`${styles.filterChip} ${filter.date === 'today' ? styles.active : ''}`}
+            aria-pressed={filter.date === 'today'}
+            onClick={() => toggle('date', 'today')}
+          >今日</button>
+          <button
+            type="button"
+            className={`${styles.filterChip} ${filter.date === 'tomorrow' ? styles.active : ''}`}
+            aria-pressed={filter.date === 'tomorrow'}
+            onClick={() => toggle('date', 'tomorrow')}
+          >明日</button>
         </div>
-      )}
+
+        <div className={styles.filterGroup}>
+          <span className={styles.filterTitle}>対象年齢</span>
+          {AGE_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              type="button"
+              className={`${styles.filterChip} ${filter.childAge === opt.value ? styles.active : ''}`}
+              aria-pressed={filter.childAge === opt.value}
+              onClick={() => toggle('childAge', opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.filterGroup}>
+          <span className={styles.filterTitle}>条件</span>
+          <button
+            type="button"
+            className={`${styles.filterChip} ${filter.price === 'free' ? styles.active : ''}`}
+            aria-pressed={filter.price === 'free'}
+            onClick={() => toggle('price', 'free')}
+          >無料</button>
+          <button
+            type="button"
+            className={`${styles.filterChip} ${filter.indoor === true ? styles.active : ''}`}
+            aria-pressed={filter.indoor === true}
+            onClick={() => toggle('indoor', true)}
+          >屋内</button>
+          <button
+            type="button"
+            className={`${styles.filterChip} ${filter.reservationRequired === false ? styles.active : ''}`}
+            aria-pressed={filter.reservationRequired === false}
+            onClick={() => toggle('reservationRequired', false)}
+          >予約不要</button>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <span className={styles.filterTitle}>施設</span>
+          {FACILITY_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              type="button"
+              className={`${styles.filterChip} ${filter.facilityType === opt.value ? styles.active : ''}`}
+              aria-pressed={filter.facilityType === opt.value}
+              onClick={() => toggle('facilityType', opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {hasFilter && (
+          <button type="button" className={styles.clearBtn} onClick={clearAll}>
+            絞り込みをクリア
+          </button>
+        )}
+      </div>
+
+      {/* リスト */}
+      <div className={styles.list}>
+        <p className={styles.resultCount}>{filtered.length}件のイベント</p>
+        {filtered.length === 0 ? (
+          <div className={styles.empty}>
+            <span className={styles.emptyIcon} aria-hidden="true">🔍</span>
+            <p className={styles.emptyText}>該当するイベントがありません</p>
+          </div>
+        ) : (
+          filtered.map(ev => (
+            <EventCard
+              key={ev.id}
+              event={ev}
+              onClick={() => onSelectEvent(ev.id)}
+            />
+          ))
+        )}
+      </div>
     </div>
   )
 }

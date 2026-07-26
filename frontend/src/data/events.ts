@@ -31,6 +31,8 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/higashi-kominkan/',
     lastConfirmed: dateOffset(0),
     description: '音楽に合わせて体を動かし、親子でリズムを楽しむ初心者向けリトミック教室です。歩く前の赤ちゃんも参加できます。',
+    status: 'scheduled',
+    imageUrl: 'https://placehold.co/400x200/e8f5e9/2e7d32?text=リトミック教室',
   },
   {
     id: 'ev-02',
@@ -54,6 +56,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/minami-kuminkan/',
     lastConfirmed: dateOffset(0),
     description: '自由に遊べる子育て広場です。毎週開催しており、保育士が常駐しています。お気軽にどうぞ。',
+    status: 'scheduled',
   },
   {
     id: 'ev-03',
@@ -77,6 +80,8 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/nishi-kominkan/',
     lastConfirmed: dateOffset(0),
     description: '親子で簡単なおやつ作りを楽しむ料理教室です。事前予約が必要です。定員は8組です。',
+    status: 'canceled',
+    imageUrl: 'https://placehold.co/400x200/fff3e0/e65100?text=クッキング教室',
   },
 
   // ── 図書館 ──────────────────────────────────────
@@ -102,6 +107,8 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://toshokan.city.fukuoka.lg.jp/',
     lastConfirmed: dateOffset(0),
     description: '0〜1歳の赤ちゃんとその保護者を対象にした読み聞かせの会です。わらべうたや手遊びも行います。',
+    status: 'scheduled',
+    imageUrl: 'https://placehold.co/400x200/e3f2fd/1565c0?text=おはなし会',
   },
   {
     id: 'ev-05',
@@ -125,6 +132,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://toshokan.city.fukuoka.lg.jp/sawara/',
     lastConfirmed: dateOffset(0),
     description: 'ちょっぴりよちよち歩きが始まった子どもたちへの読み聞かせの会です。絵本3〜4冊と手遊びを楽しみます。',
+    status: 'postponed',
   },
 
   // ── 博物館・科学館 ───────────────────────────────
@@ -150,6 +158,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.fukuokacity-kagakukan.jp/',
     lastConfirmed: dateOffset(0),
     description: '水の不思議を体験する幼児向けサイエンスワークショップです。入館料は別途必要です。要予約（定員10組）。',
+    status: 'scheduled',
   },
   {
     id: 'ev-07',
@@ -173,6 +182,8 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://museum.city.fukuoka.jp/',
     lastConfirmed: dateOffset(0),
     description: '博物館スタッフが展示をわかりやすく案内する親子向けツアーです。子どもの目線で楽しめます。要予約。',
+    status: 'closed',
+    imageUrl: 'https://placehold.co/400x200/f3e5f5/6a1b9a?text=展示ツアー',
   },
 
   // ── 子育て支援施設・児童館 ────────────────────────
@@ -198,6 +209,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/momochi-kosodate/',
     lastConfirmed: dateOffset(0),
     description: '0〜1歳の赤ちゃんとその保護者が自由に集える場です。保育士が常駐し、子育ての不安や悩みも気軽に話せます。',
+    status: 'scheduled',
   },
   {
     id: 'ev-09',
@@ -221,6 +233,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/hakata-jidokaikan/',
     lastConfirmed: dateOffset(0),
     description: '室内で安心して遊べる親子の遊び場です。おもちゃや絵本が充実しており、天候に関わらず利用できます。',
+    status: 'scheduled',
   },
 
   // ── 子育て相談会 ─────────────────────────────────
@@ -246,6 +259,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/minami-hoken/',
     lastConfirmed: dateOffset(0),
     description: '保健師・栄養士・歯科衛生士などに子育てや発育・離乳食などを気軽に相談できます。予約不要で当日参加できます。',
+    status: 'scheduled',
   },
 
   // ── 無料・予約不要の追加イベント ───────────────────
@@ -271,6 +285,7 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://www.city.fukuoka.lg.jp/chuo-jidokaikan/',
     lastConfirmed: dateOffset(0),
     description: '大型遊具やおもちゃが充実した室内プレイスペースを自由に利用できます。雨の日も安心です。',
+    status: 'scheduled',
   },
   {
     id: 'ev-12',
@@ -294,5 +309,6 @@ export const EVENTS: Event[] = [
     officialUrl: 'https://toshokan.city.fukuoka.lg.jp/johnan/',
     lastConfirmed: dateOffset(0),
     description: '絵本の読み聞かせと音楽に合わせた手遊びを組み合わせた楽しいあそびじかんです。予約不要でご参加いただけます。',
+    status: 'scheduled',
   },
 ];

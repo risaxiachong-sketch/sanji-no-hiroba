@@ -1,4 +1,6 @@
 import { EVENTS } from '../../data/events'
+import { EVENT_STATUS_LABELS } from '../../types'
+import type { Event } from '../../types'
 import styles from './EventDetail.module.css'
 
 const FACILITY_LABEL: Record<string, string> = {
@@ -7,6 +9,16 @@ const FACILITY_LABEL: Record<string, string> = {
   'museum':           '博物館・科学館',
   'childcare-center': '子育て支援施設',
   'other':            'その他',
+}
+
+function getStatusStyle(status: Event['status']): string {
+  switch (status) {
+    case 'canceled':  return styles.statusCanceled
+    case 'postponed': return styles.statusPostponed
+    case 'closed':    return styles.statusClosed
+    case 'ended':     return styles.statusEnded
+    default:          return styles.statusScheduled
+  }
 }
 
 interface Props {
@@ -44,9 +56,26 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
       </header>
 
       <div className={styles.body}>
-        {/* タイトル */}
+        {/* イベント画像 */}
+        {event.imageUrl && (
+          <div className={styles.imageCard}>
+            <img
+              src={event.imageUrl}
+              alt={`${event.title}のイメージ`}
+              className={styles.eventImage}
+              loading="lazy"
+            />
+          </div>
+        )}
+
+        {/* タイトル + ステータス */}
         <div className={styles.titleCard}>
-          <h2 className={styles.eventTitle}>{event.title}</h2>
+          <div className={styles.titleRow}>
+            <h2 className={styles.eventTitle}>{event.title}</h2>
+            <span className={`${styles.statusBadge} ${getStatusStyle(event.status)}`}>
+              {EVENT_STATUS_LABELS[event.status]}
+            </span>
+          </div>
           <span className={styles.facilityBadge}>{FACILITY_LABEL[event.facilityType]}</span>
         </div>
 

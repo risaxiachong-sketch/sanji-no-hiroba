@@ -1,4 +1,4 @@
-import type { Avatar, Mood, Page } from '../../types'
+import type { Avatar, Page } from '../../types'
 import { DUMMY_USERS } from '../../data/dummyUsers'
 import styles from './Plaza.module.css'
 
@@ -9,17 +9,8 @@ const plazaBg: string | undefined = undefined
 
 interface Props {
   avatar: Avatar
-  mood: Mood
   onNavigate: (page: Page) => void
   onExit: () => void
-}
-
-const MOOD_BUBBLE: Record<Mood, string> = {
-  tired:    'お疲れさまです',
-  presence: 'ここにいます',
-  outing:   'お出かけ先さがし中',
-  talk:     'はじめまして〜',
-  observe:  '見守っています',
 }
 
 const CHAR_COLORS: Record<string, { body: string; ear: string }> = {
@@ -58,7 +49,7 @@ function CharacterFigure({
   )
 }
 
-export function Plaza({ avatar, mood, onNavigate, onExit }: Props) {
+export function Plaza({ avatar, onNavigate, onExit }: Props) {
   const totalCount = DUMMY_USERS.length + 1
 
   return (
@@ -126,11 +117,6 @@ export function Plaza({ avatar, mood, onNavigate, onExit }: Props) {
             <span className={styles.facilityCardIcon} aria-hidden="true">📋</span>
             <span className={styles.facilityCardLabel}>まちの<br />掲示板</span>
           </button>
-          <button type="button" className={styles.facilityCard}
-            onClick={() => onNavigate('supportInfo')} aria-label="相談・支援案内所を開く">
-            <span className={styles.facilityCardIcon} aria-hidden="true">🏠</span>
-            <span className={styles.facilityCardLabel}>案内所</span>
-          </button>
         </div>
 
         {/* ダミーアバター */}
@@ -146,7 +132,7 @@ export function Plaza({ avatar, mood, onNavigate, onExit }: Props) {
         <div className={`${styles.charWrapper} ${styles.myChar}`}
           style={{ left: '44%', bottom: '55px' }} aria-label="あなたのアバター">
           <div className={`${styles.speechBubble} ${styles.mySpeech}`} aria-hidden="true">
-            {MOOD_BUBBLE[mood]}
+            こんにちは
           </div>
           <CharacterFigure emoji={avatar.emoji} avatarId={avatar.id} size={66} isMe />
           <span className={styles.myLabel}>あなた</span>
@@ -175,10 +161,6 @@ export function Plaza({ avatar, mood, onNavigate, onExit }: Props) {
         <button type="button" className={styles.navBtn} onClick={() => onNavigate('savedEvents')} aria-label="保存イベント">
           <span className={styles.navIcon} aria-hidden="true">🔖</span>
           <span className={styles.navLabel}>Saved</span>
-        </button>
-        <button type="button" className={styles.navBtn} onClick={() => onNavigate('supportInfo')} aria-label="案内所">
-          <span className={styles.navIcon} aria-hidden="true">ℹ️</span>
-          <span className={styles.navLabel}>Info</span>
         </button>
       </nav>
     </div>

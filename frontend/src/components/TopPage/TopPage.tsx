@@ -3,9 +3,10 @@ import styles from './TopPage.module.css'
 
 interface Props {
   onEnter: () => void
+  onAdminAccess: () => void
 }
 
-export function TopPage({ onEnter }: Props) {
+export function TopPage({ onEnter, onAdminAccess }: Props) {
   return (
     <main className={styles.main}>
       <section className={styles.card}>
@@ -39,6 +40,17 @@ export function TopPage({ onEnter }: Props) {
           </button>
         </div>
       </section>
+
+      <div className={styles.adminLink}>
+        <button
+          type="button"
+          className={styles.adminBtn}
+          onClick={onAdminAccess}
+          aria-label="施設担当者向けイベント登録画面へ"
+        >
+          施設担当者はこちら
+        </button>
+      </div>
     </main>
   )
 }
