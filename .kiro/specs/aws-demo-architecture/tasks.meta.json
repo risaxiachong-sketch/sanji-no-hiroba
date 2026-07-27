@@ -1,0 +1,432 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 不要コンポーネントフォルダの削除": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576149
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053592185
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053716406
+      }
+    ],
+    "1.2 型定義の整理（types/index.ts）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576296
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053593185
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053717564
+      }
+    ],
+    "1.3 App.tsx の画面遷移整理": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576411
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053724673
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053922909
+      }
+    ],
+    "1.4 Plaza.tsx の修正": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576502
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053725649
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053923857
+      }
+    ],
+    "1.5 BulletinBoard.tsx の修正": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576598
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053726682
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053924615
+      }
+    ],
+    "1.6 プロフィール入力画面の追加": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576706
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053727724
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053925703
+      }
+    ],
+    "2. チェックポイント - フロントエンド整理の確認": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576801
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053933680
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785054354556
+      }
+    ],
+    "3.1 backend/package.json の更新とテストフレームワーク追加": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053576917
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785054364040
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055177417
+      }
+    ],
+    "3.2 backend/shared/dynamodb.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577012
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055184070
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055279447
+      }
+    ],
+    "3.3 backend/shared/response.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577125
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055185060
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055280562
+      }
+    ],
+    "3.4 backend/shared/validation.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577223
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055186121
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055281629
+      }
+    ],
+    "4.1 backend/functions/posts-handler/index.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577356
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055288836
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055403166
+      }
+    ],
+    "5.1 backend/functions/reactions-handler/index.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577453
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055289943
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055404161
+      }
+    ],
+    "6.1 backend/functions/events-handler/index.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577546
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055424721
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055557830
+      }
+    ],
+    "7.1 backend/functions/upload-url-handler/index.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577624
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055291169
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055405145
+      }
+    ],
+    "8. チェックポイント - バックエンド実装の確認": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577719
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055568925
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056152066
+      }
+    ],
+    "9.1 frontend/src/api/client.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577797
+      }
+    ],
+    "9.2 frontend/src/api/posts.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577873
+      }
+    ],
+    "9.3 frontend/src/api/reactions.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053577950
+      }
+    ],
+    "9.4 frontend/src/api/events.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578026
+      }
+    ],
+    "9.5 各コンポーネントのAPI呼び出し対応": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578105
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056157311
+      }
+    ],
+    "10. チェックポイント - API接続の確認": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578185
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056158400
+      }
+    ],
+    "11.1 amplify.yml の作成（プロジェクトルート）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578263
+      }
+    ],
+    "11.2 .env.example の作成（プロジェクトルート）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578381
+      }
+    ],
+    "11.3 backend/build.mjs の作成（esbuildビルドスクリプト）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578446
+      }
+    ],
+    "11.4 backend/tsconfig.json の作成": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578520
+      }
+    ],
+    "12. 最終チェックポイント": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053578597
+      },
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056163914
+      }
+    ],
+    "1. フロントエンド整理（不要機能の削除）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785053925818
+      }
+    ],
+    "3. バックエンド共通モジュールの実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055281741
+      }
+    ],
+    "4. Lambda関数の実装（posts-handler）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055403335
+      }
+    ],
+    "5. Lambda関数の実装（reactions-handler）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055404261
+      }
+    ],
+    "7. Lambda関数の実装（upload-url-handler）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055405287
+      }
+    ],
+    "6. Lambda関数の実装（events-handler）": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785055557961
+      }
+    ],
+    "9. フロントエンド API接続": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056157404
+      }
+    ],
+    "11. デプロイ設定ファイルの作成": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056184052
+      }
+    ],
+    "3.5 backend/__tests__/validation.test.ts の実装": [
+      {
+        "executionId": "f1d630e9-dafd-4d33-a923-0814a64097bd",
+        "chatSessionId": "sess_15297c53-bd44-4e97-bd12-0c2ab65e4328",
+        "timestamp": 1785056184883
+      }
+    ]
+  }
+}
