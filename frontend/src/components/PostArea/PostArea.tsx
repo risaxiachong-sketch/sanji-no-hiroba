@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { Avatar, ReactionType, ReactionOption, Post } from '../../types'
 import { INITIAL_POSTS } from '../../data/posts'
+import { classifyPostForPrototype } from '../../types/plaza'
+import { usePlazaJoin } from '../../hooks/usePlazaJoin'
 import styles from './PostArea.module.css'
 
 const MAX_LENGTH = 60
@@ -26,6 +28,7 @@ export function PostArea({ avatar, onClose }: Props) {
   const [posted, setPosted] = useState(false)
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS)
   const [expandedReaction, setExpandedReaction] = useState<{ postId: string; type: ReactionType } | null>(null)
+  const { setJoin } = usePlazaJoin()
 
   const handlePost = () => {
     if (!text.trim()) return
@@ -46,6 +49,7 @@ export function PostArea({ avatar, onClose }: Props) {
       timestamp: new Date().toISOString(),
     }
     setPosts(prev => [newPost, ...prev])
+    setJoin(classifyPostForPrototype(newPost.text), newPost.text)
     setPosted(true)
     setText('')
     setTimeout(() => setPosted(false), 2500)

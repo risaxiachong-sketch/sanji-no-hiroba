@@ -86,129 +86,12 @@
   50%       { opacity: 0.4; transform: scale(0.75); }
 }
 
-/* ── 広場シーン ── */
+/* ── 広場シーン（3D） ── */
 .plazaScene {
   flex: 1;
   position: relative;
   overflow: hidden;
-
-  /* 背景画像（plaza-bg.png を差し替えるだけで変わる） */
-  background-image: var(--plaza-bg, none);
-  background-size: cover;
-  background-position: center bottom;
-  background-repeat: no-repeat;
-
-  /* 画像がない場合のフォールバック */
-  background-color: #c8ecf5;
-}
-
-/* 背景画像がないとき用の CSS 景色 */
-.plazaBgFallback {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    linear-gradient(180deg,
-      #b8e0f5 0%,
-      #caedf8 20%,
-      #d8f0d8 38%,
-      #c8e8b8 54%,
-      #d8c89a 72%,
-      #e8d8a8 100%
-    );
-}
-
-/* 空のオーバーレイ（画像がある場合は非表示） */
-.skyOverlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.cloud {
-  position: absolute;
-  height: 20px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.75);
-}
-.cloud::before, .cloud::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
-}
-.cloud::before { width: 50%; height: 200%; top: -60%; left: 15%; }
-.cloud::after  { width: 35%; height: 170%; top: -50%; right: 18%; }
-
-/* 木 */
-.tree {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none;
-  z-index: 2;
-}
-.treeTop {
-  width: 44px; height: 50px;
-  border-radius: 50% 50% 44% 44%;
-  background: radial-gradient(circle at 40% 35%, #a0d090, #5aaf5a);
-  box-shadow: inset -3px -3px 8px rgba(0,0,0,0.1);
-}
-.treeTrunk {
-  width: 9px; height: 16px;
-  background: #b07840;
-  border-radius: 4px;
-}
-
-/* 地面 */
-.ground {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 22%;
-  background: linear-gradient(180deg, #d4c88a 0%, #c8b870 100%);
-  border-top-left-radius:  60% 16px;
-  border-top-right-radius: 60% 16px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* 支援センター看板 */
-.buildingSign {
-  position: absolute;
-  top: 12%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1.5px solid rgba(113, 102, 181, 0.22);
-  border-radius: 10px;
-  padding: 4px 12px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #4d7050;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 3;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-}
-
-/* 噴水 */
-.fountain {
-  position: absolute;
-  bottom: 28%;
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 2;
-  text-align: center;
-}
-.fountainBase {
-  width: 32px; height: 12px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #b8d8f0, #8ab8e0);
-  margin: 0 auto;
+  background-color: #b7d4e2;
 }
 
 /* ── 施設カード（右端縦並び） ── */
@@ -253,80 +136,61 @@
   line-height: 1.3;
 }
 
-/* ── キャラクター ── */
-.charWrapper {
+/* ── 投稿の吹き出し（3D空間から投影） ── */
+.bubbleLayer {
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 5;
-  transform: translateX(-50%);
-}
-.myChar  { z-index: 8; }
-.myLabel {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #7166b5;
-  background: rgba(255, 255, 255, 0.92);
-  padding: 1px 6px;
-  border-radius: 999px;
-  margin-top: -2px;
-  border: 1px solid rgba(113, 102, 181, 0.25);
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-/* ── 吹き出し ── */
 .speechBubble {
   position: absolute;
-  bottom: calc(100% + 2px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.95);
+  transform: translate(-50%, -100%);
+  max-width: 130px;
+  padding: 6px 12px;
   border: 1.5px solid rgba(200, 190, 230, 0.5);
   border-radius: 16px 16px 16px 4px;
-  padding: 6px 12px;
-  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-sm, 0 3px 12px rgba(113, 102, 181, 0.14));
   color: #4d456f;
-  white-space: nowrap;
-  max-width: 120px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.35;
   overflow: hidden;
   text-overflow: ellipsis;
-  box-shadow: 0 3px 12px rgba(113, 102, 181, 0.14);
-  pointer-events: none;
-  font-weight: 500;
-  z-index: 10;
-}
-.speechBubble::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 12px;
-  border: 5px solid transparent;
-  border-top-color: rgba(255, 255, 255, 0.95);
-  margin-top: -1px;
-}
-.mySpeech {
-  background: rgba(236, 232, 245, 0.97);
-  border-color: rgba(113, 102, 181, 0.35);
-  font-weight: 700;
-  border-radius: 16px 16px 4px 16px;
-}
-.mySpeech::after {
-  left: auto;
-  right: 12px;
-  border-top-color: rgba(236, 232, 245, 0.97);
+  white-space: nowrap;
 }
 
-/* ── 浮かぶハート ── */
-.floatHeart {
+/* ── あなたチップ ── */
+.youChip {
   position: absolute;
-  font-size: 0.9rem;
-  pointer-events: none;
-  z-index: 4;
-  animation: floatBob 3.2s ease-in-out infinite;
+  z-index: 20;
+  bottom: 11px;
+  left: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 5px;
+  border-radius: var(--radius-full, 999px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(73, 63, 112, 0.08));
+  backdrop-filter: blur(6px);
 }
-@keyframes floatBob {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-9px); }
+.youChipAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+.youChipLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-primary, #7166b5);
 }
 
 /* ── ボトムナビ ── */
@@ -442,9 +306,6 @@
     top: 50%;
     transform: translateY(-50%);
   }
-
-  /* キャラクターを横広がりに配置するため位置調整 */
-  /* （bottom 基準の配置は縦横共通で機能する） */
 }
 
 /* =====================================================
