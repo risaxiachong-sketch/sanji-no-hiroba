@@ -5,6 +5,7 @@ import { fetchPosts } from '../../api/posts'
 import { usePlazaJoin } from '../../hooks/usePlazaJoin'
 import { Plaza3D } from '../Plaza3D/Plaza3D'
 import type { BubblePosition, SpeechAssignment } from '../Plaza3D/PlazaSpeechBubbles3D'
+import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './Plaza.module.css'
 
 interface Props {
@@ -51,7 +52,6 @@ function assignPostsToVisitors(posts: Post[], totalVisitors: number): SpeechAssi
 }
 
 export function Plaza({ avatar, onNavigate, onExit }: Props) {
-  const totalCount = DUMMY_USERS.length + 1
   const { assignedCluster } = usePlazaJoin()
   const [posts, setPosts] = useState<Post[]>([])
   const [bubblePositions, setBubblePositions] = useState<BubblePosition[]>([])
@@ -80,18 +80,11 @@ export function Plaza({ avatar, onNavigate, onExit }: Props) {
 
       {/* トップバー */}
       <header className={styles.topBar}>
-        <span className={styles.sunIcon} aria-hidden="true">☀️</span>
         <h1 className={styles.topTitle}>さんじのひろば</h1>
         <button type="button" className={styles.exitBtn} onClick={onExit} aria-label="広場を退出する">
           <span aria-hidden="true">🚪</span>退出
         </button>
       </header>
-
-      {/* 在室バナー */}
-      <div className={styles.presenceBanner} role="status" aria-live="polite">
-        <span className={styles.presenceDot} aria-hidden="true" />
-        <span>いま{totalCount}人がひろばで過ごしています</span>
-      </div>
 
       {/* 広場シーン（3D） */}
       <div className={styles.plazaScene} role="region" aria-label="バーチャル広場">
@@ -136,25 +129,7 @@ export function Plaza({ avatar, onNavigate, onExit }: Props) {
         </div>
       </div>
 
-      {/* ボトムナビ */}
-      <nav className={styles.bottomNav} aria-label="メインナビゲーション">
-        <button type="button" className={`${styles.navBtn} ${styles.navActive}`} aria-current="page" aria-label="ひろば">
-          <span className={styles.navIcon} aria-hidden="true">🏠</span>
-          <span className={styles.navLabel}>Hiroba</span>
-        </button>
-        <button type="button" className={styles.navBtn} onClick={() => onNavigate('bulletinBoard')} aria-label="まちの掲示板">
-          <span className={styles.navIcon} aria-hidden="true">📋</span>
-          <span className={styles.navLabel}>Board</span>
-        </button>
-        <button type="button" className={styles.navBtn} onClick={() => onNavigate('postArea')} aria-label="つぶやく">
-          <span className={styles.navIcon} aria-hidden="true">💬</span>
-          <span className={styles.navLabel}>Post</span>
-        </button>
-        <button type="button" className={styles.navBtn} onClick={() => onNavigate('savedEvents')} aria-label="保存イベント">
-          <span className={styles.navIcon} aria-hidden="true">🔖</span>
-          <span className={styles.navLabel}>Saved</span>
-        </button>
-      </nav>
+      <BottomNav active="plaza" onNavigate={onNavigate} />
     </div>
   )
 }

@@ -1,14 +1,17 @@
+import type { Page } from '../../types'
 import { EVENTS } from '../../data/events'
 import { EventCard } from '../EventCard/EventCard'
+import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './SavedEvents.module.css'
 
 interface Props {
   savedIds: string[]
   onSelectEvent: (id: string) => void
   onBack: () => void
+  onNavigate: (page: Page) => void
 }
 
-export function SavedEvents({ savedIds, onSelectEvent, onBack }: Props) {
+export function SavedEvents({ savedIds, onSelectEvent, onBack, onNavigate }: Props) {
   const saved = EVENTS.filter(ev => savedIds.includes(ev.id))
 
   return (
@@ -43,6 +46,8 @@ export function SavedEvents({ savedIds, onSelectEvent, onBack }: Props) {
           </>
         )}
       </div>
+
+      <BottomNav active="savedEvents" onNavigate={onNavigate} />
     </div>
   )
 }

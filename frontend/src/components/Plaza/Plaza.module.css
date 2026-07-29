@@ -26,8 +26,6 @@
   gap: 8px;
 }
 
-.sunIcon { font-size: 1.1rem; }
-
 .topTitle {
   flex: 1;
   text-align: center;
@@ -55,36 +53,6 @@
   white-space: nowrap;
 }
 .exitBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
-
-/* ── 在室バナー ── */
-.presenceBanner {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 3px 12px;
-  background: rgba(255, 255, 255, 0.82);
-  border-bottom: 1px solid rgba(113, 102, 181, 0.07);
-  font-size: 0.75rem;
-  color: #6c6678;
-  font-weight: 500;
-  z-index: 30;
-}
-
-.presenceDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #83bfb0;
-  flex-shrink: 0;
-  animation: pulseDot 2.4s ease-in-out infinite;
-}
-
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.75); }
-}
 
 /* ── 広場シーン（3D） ── */
 .plazaScene {
@@ -167,7 +135,8 @@
 .youChip {
   position: absolute;
   z-index: 20;
-  bottom: 11px;
+  /* 固定表示のボトムナビの上に置く */
+  bottom: calc(var(--bottom-nav-height) + 11px);
   left: 11px;
   display: flex;
   align-items: center;
@@ -193,37 +162,6 @@
   color: var(--color-primary, #7166b5);
 }
 
-/* ── ボトムナビ ── */
-.bottomNav {
-  flex-shrink: 0;
-  display: flex;
-  background: rgba(255, 252, 246, 0.97);
-  border-top: 1px solid rgba(113, 102, 181, 0.12);
-  padding: 4px 0 env(safe-area-inset-bottom, 4px);
-  z-index: 30;
-}
-.navBtn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 2px;
-  min-height: 44px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 10px;
-  margin: 0 2px;
-  color: #9e96b8;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.navBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
-.navActive          { background: #7166b5 !important; color: #fff !important; }
-.navActive:hover    { background: #6257a6 !important; }
-.navIcon  { font-size: 1.15rem; line-height: 1; }
-.navLabel { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.03em; }
-
 /* =====================================================
    横画面（landscape）レイアウト
 ===================================================== */
@@ -246,8 +184,6 @@
     gap: 12px;
   }
 
-  .sunIcon { font-size: 1rem; }
-
   .topTitle {
     writing-mode: vertical-rl;
     font-size: 0.78rem;
@@ -263,40 +199,10 @@
     font-size: 0.65rem;
   }
 
-  /* 在室バナーを広場上部に重ねる */
-  .presenceBanner {
-    position: absolute;
-    top: 0;
-    left: 52px;   /* 左帯の幅分ずらす */
-    right: 52px;  /* 右ナビ幅分ずらす */
-    border-bottom: 1px solid rgba(113, 102, 181, 0.07);
-    z-index: 25;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(6px);
-  }
-
   /* 広場：残りの幅すべて使う */
   .plazaScene {
     flex: 1;
     height: 100%;
-  }
-
-  /* ボトムナビを右側の縦帯に変える */
-  .bottomNav {
-    flex-direction: column;
-    width: 52px;
-    height: 100%;
-    border-top: none;
-    border-left: 1px solid rgba(113, 102, 181, 0.12);
-    padding: 8px 2px;
-    justify-content: center;
-    gap: 4px;
-  }
-
-  .navBtn {
-    width: 44px;
-    margin: 0 auto;
-    padding: 8px 2px;
   }
 
   /* 施設カードを左端（左帯の右側）に寄せる */

@@ -38,6 +38,9 @@
   /* ボタン最小タップサイズ */
   --tap-min: 44px;
 
+  /* 常時表示のボトムナビの高さ（コンテンツの padding-bottom 確保用） */
+  --bottom-nav-height: 64px;
+
   /* 角丸 */
   --radius-sm:   8px;
   --radius-md:  16px;

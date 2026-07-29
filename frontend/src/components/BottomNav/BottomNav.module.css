@@ -1,0 +1,40 @@
+/* Fixed to the viewport, not the page flow, so it stays visible while the page
+   content underneath scrolls. Each page reserves --bottom-nav-height of space
+   at its own bottom edge so content never renders underneath it. */
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  background: rgba(255, 252, 246, 0.97);
+  border-top: 1px solid rgba(113, 102, 181, 0.12);
+  padding: 4px 0 env(safe-area-inset-bottom, 4px);
+  backdrop-filter: blur(8px);
+}
+
+.navBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 0 2px;
+  color: #9e96b8;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.navBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
+.navActive       { background: #7166b5 !important; color: #fff !important; }
+.navActive:hover { background: #6257a6 !important; }
+.navIcon  { font-size: 1.15rem; line-height: 1; }
+.navLabel { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.03em; }

@@ -93,6 +93,7 @@ function App() {
       <PostArea
         avatar={selectedAvatar!}
         onClose={() => navigate('plaza')}
+        onNavigate={(page) => navigate(page, 'postArea')}
       />
     )
   }
@@ -102,6 +103,7 @@ function App() {
       <BulletinBoard
         onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
         onBack={() => navigate('plaza')}
+        onNavigate={(page) => navigate(page, 'bulletinBoard')}
       />
     )
   }
@@ -123,6 +125,7 @@ function App() {
         savedIds={savedIds}
         onSelectEvent={(id) => openEvent(id, 'savedEvents')}
         onBack={() => navigate('plaza')}
+        onNavigate={(page) => navigate(page, 'savedEvents')}
       />
     )
   }

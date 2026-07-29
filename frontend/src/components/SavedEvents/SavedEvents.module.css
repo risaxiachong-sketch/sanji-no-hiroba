@@ -30,6 +30,7 @@
 .body {
   flex: 1;
   padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-md));
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

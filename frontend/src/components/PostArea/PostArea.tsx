@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import type { Avatar, ReactionType, ReactionOption, Post } from '../../types'
+import type { Avatar, Page, ReactionType, ReactionOption, Post } from '../../types'
 import { INITIAL_POSTS } from '../../data/posts'
 import { classifyPostForPrototype } from '../../types/plaza'
 import { usePlazaJoin } from '../../hooks/usePlazaJoin'
+import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './PostArea.module.css'
 
 const MAX_LENGTH = 60
@@ -21,9 +22,10 @@ const REACTIONS: ReactionOption[] = [
 interface Props {
   avatar: Avatar
   onClose: () => void
+  onNavigate: (page: Page) => void
 }
 
-export function PostArea({ avatar, onClose }: Props) {
+export function PostArea({ avatar, onClose, onNavigate }: Props) {
   const [text, setText] = useState('')
   const [posted, setPosted] = useState(false)
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS)
@@ -247,6 +249,8 @@ export function PostArea({ avatar, onClose }: Props) {
           広場に戻る
         </button>
       </div>
+
+      <BottomNav active="postArea" onNavigate={onNavigate} />
     </div>
   )
 }

@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react'
-import type { FacilityType, FilterCondition } from '../../types'
+import type { FacilityType, FilterCondition, Page } from '../../types'
 import { EVENTS } from '../../data/events'
 import { EventCard } from '../EventCard/EventCard'
+import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './BulletinBoard.module.css'
 
 interface Props {
   onSelectEvent: (id: string) => void
   onBack: () => void
+  onNavigate: (page: Page) => void
 }
 
 // 今日・明日の日付文字列
@@ -42,7 +44,7 @@ function applyFilter(filter: FilterCondition) {
   })
 }
 
-export function BulletinBoard({ onSelectEvent, onBack }: Props) {
+export function BulletinBoard({ onSelectEvent, onBack, onNavigate }: Props) {
   const [filter, setFilter] = useState<FilterCondition>({})
 
   const filtered = useMemo(() => applyFilter(filter), [filter])
@@ -166,6 +168,8 @@ export function BulletinBoard({ onSelectEvent, onBack }: Props) {
           ))
         )}
       </div>
+
+      <BottomNav active="bulletinBoard" onNavigate={onNavigate} />
     </div>
   )
 }
