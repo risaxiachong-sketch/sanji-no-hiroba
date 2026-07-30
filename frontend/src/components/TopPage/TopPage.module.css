@@ -1,79 +1,369 @@
 .main {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: var(--space-lg);
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  background: #fff6e3;
 }
 
-.card {
-  width: min(100%, 420px);
-  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+.screen {
+  position: relative;
+  width: min(100%, 430px);
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 14px;
+  color: #5d3623;
   text-align: center;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  background: #fff6e3;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .hero {
+  width: 100%;
+  flex: 0 1 auto;
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: center;
-  margin-bottom: var(--space-lg);
+  align-items: flex-start;
+  max-height: calc(100dvh - 245px);
+  overflow: hidden;
+  margin: 0;
+  line-height: 0;
+  background: #fff6e3;
 }
 
 .heroImg {
-  width: min(60vw, 220px);
+  display: block;
+  width: 100%;
   height: auto;
+  max-height: calc(100dvh - 245px);
   object-fit: contain;
-  filter: drop-shadow(0 12px 16px rgba(70, 60, 100, 0.14));
+  object-position: center top;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 88%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 88%, rgba(0, 0, 0, 0) 100%);
 }
 
-.welcome {
+.actions {
+  position: relative;
+  z-index: 2;
+  width: calc(100% - 44px);
+  max-width: 334px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  flex: 0 0 auto;
+  gap: 11px;
+  margin: -26px auto 0;
+  filter: drop-shadow(0 14px 22px rgba(130, 82, 54, 0.12));
 }
 
-.title {
-  margin: 0;
-  color: #4d456f;
-  font-size: clamp(2rem, 8vw, 2.8rem);
-  line-height: 1.2;
-  letter-spacing: 0.04em;
+.actionBtn {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 24px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 26px;
+  color: #613620;
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  cursor: pointer;
+  box-shadow:
+    0 0 18px rgba(255, 248, 229, 0.82),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.32),
+    0 8px 18px rgba(109, 71, 49, 0.16);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
-.catchcopy {
-  margin: 0;
-  color: var(--color-primary);
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  line-height: 1.6;
+.actionBtn::after {
+  position: absolute;
+  inset: 8px;
+  content: "";
+  border: 2px dashed rgba(255, 255, 255, 0.88);
+  border-radius: 20px;
+  pointer-events: none;
 }
 
-.description {
-  margin: 0;
-  color: var(--color-text-sub);
-  font-size: var(--font-size-base);
-  line-height: 1.8;
+.actionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 22px rgba(255, 248, 229, 0.9),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.35),
+    0 12px 22px rgba(109, 71, 49, 0.2);
 }
 
-/* ── 施設担当者リンク ── */
-.adminLink {
-  margin-top: var(--space-lg);
+.actionBtn:active {
+  transform: translateY(0);
+}
+
+.actionBtn:focus-visible,
+.adminBtn:focus-visible {
+  outline: 4px solid rgba(96, 132, 191, 0.46);
+  outline-offset: 4px;
+}
+
+.enterBtn {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 245, 236, 0.42), transparent 44%),
+    linear-gradient(180deg, #ffc8c4 0%, #f7aaa9 100%);
+}
+
+.boardBtn {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.44), transparent 44%),
+    linear-gradient(180deg, #e2dcff 0%, #c9c2f4 100%);
+}
+
+.buttonMark {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 40px;
+  justify-self: start;
+  border: 3px solid #8b5435;
+  background: rgba(255, 252, 244, 0.78);
+  box-shadow: 0 2px 0 rgba(121, 74, 48, 0.22);
+}
+
+.enterMark {
+  border-radius: 13px 13px 7px 7px;
+  background: linear-gradient(90deg, #d89861 0 48%, #efb478 49% 100%);
+}
+
+.enterMark::before {
+  position: absolute;
+  top: 8px;
+  left: 17px;
+  width: 2px;
+  height: 25px;
+  content: "";
+  background: rgba(124, 70, 39, 0.58);
+}
+
+.enterMark::after {
+  position: absolute;
+  top: 21px;
+  right: 7px;
+  width: 5px;
+  height: 5px;
+  content: "";
+  border-radius: 50%;
+  background: #fff4c9;
+}
+
+.boardMark {
+  border-radius: 50%;
+}
+
+.boardMark::before {
+  position: absolute;
+  top: 11px;
+  left: 10px;
+  width: 21px;
+  height: 3px;
+  content: "";
+  border-radius: 999px;
+  background: #9d6a8b;
+  box-shadow: 0 9px 0 #9d6a8b, 0 18px 0 #9d6a8b;
+}
+
+.boardMark::after {
+  position: absolute;
+  right: -8px;
+  bottom: 3px;
+  width: 14px;
+  height: 3px;
+  content: "";
+  border-radius: 999px;
+  background: #9d6a8b;
+  transform: rotate(45deg);
+}
+
+.buttonText {
+  min-width: 0;
   text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.82);
+}
+
+.buttonArrow {
+  color: rgba(111, 64, 42, 0.72);
+  font-size: 2rem;
+  line-height: 1;
 }
 
 .adminBtn {
-  background: none;
-  border: none;
-  color: var(--color-text-sub);
-  font-size: var(--font-size-sm);
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  margin-top: 12px;
+  padding: 7px 18px;
+  border: 1px solid rgba(139, 84, 53, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 252, 244, 0.76);
+  color: #6a3e27;
+  font-size: 0.93rem;
+  font-weight: 700;
   cursor: pointer;
-  text-decoration: underline;
-  padding: var(--space-sm);
-  min-height: var(--tap-min);
+  box-shadow:
+    0 0 14px rgba(255, 248, 229, 0.7),
+    0 5px 14px rgba(109, 71, 49, 0.1);
+  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .adminBtn:hover {
-  color: var(--color-primary);
+  background: rgba(255, 255, 250, 0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 7px 16px rgba(109, 71, 49, 0.14);
+}
+
+.adminIcon {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.adminIcon::before,
+.adminIcon::after {
+  position: absolute;
+  content: "";
+  background: currentColor;
+}
+
+.adminIcon::before {
+  left: 3px;
+  right: 3px;
+  top: -7px;
+  height: 6px;
+  border-radius: 2px 2px 0 0;
+}
+
+.adminIcon::after {
+  left: 4px;
+  bottom: 3px;
+  width: 3px;
+  height: 3px;
+  box-shadow: 6px 0 0 currentColor, 0 -6px 0 currentColor, 6px -6px 0 currentColor;
+}
+
+@media (max-height: 760px) {
+  .screen {
+    padding-bottom: 10px;
+  }
+
+  .hero,
+  .heroImg {
+    max-height: calc(100dvh - 224px);
+  }
+
+  .actions {
+    gap: 9px;
+    margin-top: -22px;
+  }
+
+  .actionBtn {
+    grid-template-columns: 44px minmax(0, 1fr) 22px;
+    min-height: 56px;
+    padding: 8px 14px;
+    border-radius: 23px;
+    font-size: 1.1rem;
+  }
+
+  .actionBtn::after {
+    inset: 7px;
+    border-radius: 18px;
+  }
+
+  .buttonMark {
+    width: 36px;
+    height: 36px;
+    border-width: 2px;
+  }
+
+  .enterMark::before {
+    left: 16px;
+    height: 23px;
+  }
+
+  .boardMark::before {
+    top: 9px;
+    left: 9px;
+    width: 18px;
+    box-shadow: 0 8px 0 #9d6a8b, 0 16px 0 #9d6a8b;
+  }
+
+  .adminBtn {
+    min-height: 40px;
+    margin-top: 10px;
+    padding-block: 6px;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-height: 699px) {
+  .main {
+    height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .screen {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .hero,
+  .heroImg {
+    max-height: calc(100dvh - 214px);
+  }
+
+  .actions {
+    margin-top: -18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .screen {
+    padding-bottom: 12px;
+  }
+
+  .actions {
+    width: calc(100% - 40px);
+  }
+
+  .actionBtn {
+    grid-template-columns: 46px minmax(0, 1fr) 22px;
+    padding-inline: 14px;
+    font-size: 1.12rem;
+  }
+
+  .buttonMark {
+    width: 36px;
+    height: 36px;
+  }
 }

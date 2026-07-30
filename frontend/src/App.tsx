@@ -10,7 +10,53 @@ import { BulletinBoard } from './components/BulletinBoard/BulletinBoard'
 import { EventDetail } from './components/EventDetail/EventDetail'
 import { SavedEvents } from './components/SavedEvents/SavedEvents'
 import { AdminEventForm } from './components/AdminEventForm/AdminEventForm'
+import { AVATARS } from './data/avatars'
 import './App.css'
+
+const PROFILE_STORAGE_KEY = 'sanji-profile'
+const AVATAR_STORAGE_KEY = 'sanji-avatar'
+
+function hasSavedProfile() {
+  try {
+    return localStorage.getItem(PROFILE_STORAGE_KEY) !== null
+  } catch {
+    return false
+  }
+}
+
+function getSavedAvatarId() {
+  try {
+    const raw = localStorage.getItem(AVATAR_STORAGE_KEY)
+    if (!raw) return null
+
+    const trimmed = raw.trim()
+    if (!trimmed) return null
+
+    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+      const parsed = JSON.parse(trimmed)
+      return typeof parsed === 'string' ? parsed : null
+    }
+
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) return null
+    return trimmed
+  } catch {
+    return null
+  }
+}
+
+function getSavedAvatar() {
+  const avatarId = getSavedAvatarId()
+  if (!avatarId) return null
+  return AVATARS.find((avatar) => avatar.id === avatarId) ?? null
+}
+
+function saveAvatarId(avatar: Avatar) {
+  try {
+    localStorage.setItem(AVATAR_STORAGE_KEY, avatar.id)
+  } catch {
+    // localStorage が使えない環境では、このセッション内の選択だけで進める
+  }
+}
 
 function App() {
   // ── 画面管理 ──────────────────────────────────
@@ -42,18 +88,38 @@ function App() {
     navigate('eventDetail', from)
   }, [navigate])
 
+  const navigateToMemberPage = useCallback((page: 'plaza' | 'postArea', from: Page) => {
+    if (!hasSavedProfile()) {
+      navigate('profileSetup', from)
+      return
+    }
+
+    const avatar = selectedAvatar ?? getSavedAvatar()
+    if (!avatar) {
+      navigate('avatarSelect', from)
+      return
+    }
+
+    if (selectedAvatar?.id !== avatar.id) {
+      setSelectedAvatar(avatar)
+    }
+    navigate(page, from)
+  }, [navigate, selectedAvatar])
+
+  const navigateFromPage = useCallback((page: Page, from: Page) => {
+    if (page === 'plaza' || page === 'postArea') {
+      navigateToMemberPage(page, from)
+      return
+    }
+    navigate(page, from)
+  }, [navigate, navigateToMemberPage])
+
   // ── レンダリング ──────────────────────────────
   if (currentPage === 'top') {
     return (
       <TopPage
-        onEnter={() => {
-          const profile = localStorage.getItem('sanji-profile')
-          if (profile) {
-            navigate('avatarSelect')
-          } else {
-            navigate('profileSetup')
-          }
-        }}
+        onEnter={() => navigateToMemberPage('plaza', 'top')}
+        onOpenBulletinBoard={() => navigate('bulletinBoard', 'top')}
         onAdminAccess={() => navigate('adminEvent', 'top')}
       />
     )
@@ -72,6 +138,7 @@ function App() {
       <AvatarSelect
         onSelect={(avatar) => {
           setSelectedAvatar(avatar)
+          saveAvatarId(avatar)
           navigate('plaza')
         }}
       />
@@ -82,7 +149,7 @@ function App() {
     return (
       <Plaza
         avatar={selectedAvatar!}
-        onNavigate={(page) => navigate(page, 'plaza')}
+        onNavigate={(page) => navigateFromPage(page, 'plaza')}
         onExit={() => navigate('top')}
       />
     )
@@ -92,8 +159,8 @@ function App() {
     return (
       <PostArea
         avatar={selectedAvatar!}
-        onClose={() => navigate('plaza')}
-        onNavigate={(page) => navigate(page, 'postArea')}
+        onClose={() => navigateToMemberPage('plaza', 'postArea')}
+        onNavigate={(page) => navigateFromPage(page, 'postArea')}
       />
     )
   }
@@ -102,8 +169,8 @@ function App() {
     return (
       <BulletinBoard
         onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
-        onBack={() => navigate('plaza')}
-        onNavigate={(page) => navigate(page, 'bulletinBoard')}
+        onBack={() => navigateToMemberPage('plaza', 'bulletinBoard')}
+        onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}
       />
     )
   }
@@ -124,8 +191,8 @@ function App() {
       <SavedEvents
         savedIds={savedIds}
         onSelectEvent={(id) => openEvent(id, 'savedEvents')}
-        onBack={() => navigate('plaza')}
-        onNavigate={(page) => navigate(page, 'savedEvents')}
+        onBack={() => navigateToMemberPage('plaza', 'savedEvents')}
+        onNavigate={(page) => navigateFromPage(page, 'savedEvents')}
       />
     )
   }
