@@ -1,17 +1,14 @@
 import { useState } from 'react'
+import { AGE_GROUPS } from '../../data/ageGroups'
+import { useProfile } from '../../hooks/useProfile'
 import styles from './ProfileSetup.module.css'
 
 interface Props {
   onComplete: () => void
 }
 
-const AGE_GROUPS = [
-  { value: '0〜1歳', label: '0〜1歳' },
-  { value: '2〜3歳', label: '2〜3歳' },
-  { value: '4歳〜就学前', label: '4歳〜就学前' },
-]
-
 export function ProfileSetup({ onComplete }: Props) {
+  const { saveProfile } = useProfile()
   const [nickname, setNickname] = useState('')
   const [childAgeGroup, setChildAgeGroup] = useState('')
 
@@ -19,10 +16,7 @@ export function ProfileSetup({ onComplete }: Props) {
 
   const handleSubmit = () => {
     if (!isValid) return
-    localStorage.setItem(
-      'sanji-profile',
-      JSON.stringify({ nickname: nickname.trim(), childAgeGroup })
-    )
+    saveProfile({ nickname: nickname.trim(), childAgeGroup })
     onComplete()
   }
 

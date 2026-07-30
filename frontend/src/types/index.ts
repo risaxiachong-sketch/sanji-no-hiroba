@@ -12,7 +12,17 @@ export type Page =
   | 'eventDetail'
   | 'savedEvents'
   | 'postArea'
+  | 'settings'
+  | 'settingsNickname'
+  | 'settingsChildAge'
+  | 'settingsAvatar'
   | 'adminEvent';
+
+/** プロフィール（ニックネーム・お子さんの年齢区分） */
+export interface Profile {
+  nickname: string;
+  childAgeGroup: string;
+}
 
 /** アバター */
 export interface Avatar {

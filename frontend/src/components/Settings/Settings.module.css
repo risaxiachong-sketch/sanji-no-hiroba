@@ -31,45 +31,64 @@
   flex: 1;
   padding: var(--space-md);
   padding-bottom: calc(var(--bottom-nav-height) + var(--space-md));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
 }
 
-.count {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-sub);
+/* ── メニューリスト ── */
+.menu {
+  list-style: none;
   margin: 0;
+  padding: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
-.empty {
-  flex: 1;
+.menu li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.menuRow {
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--space-xl);
-  text-align: center;
+  gap: var(--space-sm);
+  min-height: 56px;
+  padding: var(--space-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
 }
 
-.emptyIcon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: var(--space-md);
+.menuRow:hover {
+  background: var(--color-primary-light);
 }
 
-.emptyText {
+.menuLabel {
+  flex-shrink: 0;
   font-size: var(--font-size-base);
-  color: var(--color-text-main);
   font-weight: 600;
-  margin: 0 0 var(--space-sm);
+  color: var(--color-text-main);
 }
 
-.emptyHint {
+.menuValue {
+  flex: 1;
+  text-align: right;
   font-size: var(--font-size-sm);
   color: var(--color-text-sub);
-  line-height: 1.6;
-  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex-shrink: 0;
+  font-size: 1.3rem;
+  color: #c5c1dc;
+  line-height: 1;
 }
 
 /* 横画面ではボトムナビが右端の縦帯になるので、余白も右側に確保する */

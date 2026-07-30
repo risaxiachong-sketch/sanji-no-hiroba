@@ -284,3 +284,11 @@
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* 横画面ではボトムナビが右端の縦帯になるので、余白も右側に確保する */
+@media (orientation: landscape) {
+  .page {
+    padding-bottom: var(--space-md);
+    padding-right: calc(var(--bottom-nav-height) + var(--space-md));
+  }
+}

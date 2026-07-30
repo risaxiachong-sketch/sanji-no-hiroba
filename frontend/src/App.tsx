@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import type { Page, Avatar } from './types'
+import type { Page } from './types'
 import { useSavedEvents } from './hooks/useSavedEvents'
+import { useSelectedAvatar } from './hooks/useSelectedAvatar'
 import { TopPage } from './components/TopPage/TopPage'
 import { ProfileSetup } from './components/ProfileSetup/ProfileSetup'
 import { AvatarSelect } from './components/AvatarSelect/AvatarSelect'
@@ -9,6 +10,10 @@ import { PostArea } from './components/PostArea/PostArea'
 import { BulletinBoard } from './components/BulletinBoard/BulletinBoard'
 import { EventDetail } from './components/EventDetail/EventDetail'
 import { SavedEvents } from './components/SavedEvents/SavedEvents'
+import { Settings } from './components/Settings/Settings'
+import { SettingsNickname } from './components/SettingsNickname/SettingsNickname'
+import { SettingsChildAge } from './components/SettingsChildAge/SettingsChildAge'
+import { SettingsAvatar } from './components/SettingsAvatar/SettingsAvatar'
 import { AdminEventForm } from './components/AdminEventForm/AdminEventForm'
 import './App.css'
 
@@ -18,7 +23,7 @@ function App() {
   const [previousPage, setPreviousPage] = useState<Page | null>(null)
 
   // ── セッション情報 ────────────────────────────
-  const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null)
+  const { selectedAvatar, selectAvatar } = useSelectedAvatar()
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
 
   // ── 保存済みイベント ──────────────────────────
@@ -71,7 +76,7 @@ function App() {
     return (
       <AvatarSelect
         onSelect={(avatar) => {
-          setSelectedAvatar(avatar)
+          selectAvatar(avatar)
           navigate('plaza')
         }}
       />
@@ -126,6 +131,34 @@ function App() {
         onSelectEvent={(id) => openEvent(id, 'savedEvents')}
         onBack={() => navigate('plaza')}
         onNavigate={(page) => navigate(page, 'savedEvents')}
+      />
+    )
+  }
+
+  if (currentPage === 'settings') {
+    return (
+      <Settings
+        avatar={selectedAvatar!}
+        onBack={() => navigate('plaza')}
+        onNavigate={(page) => navigate(page, 'settings')}
+      />
+    )
+  }
+
+  if (currentPage === 'settingsNickname') {
+    return <SettingsNickname onBack={goBack} />
+  }
+
+  if (currentPage === 'settingsChildAge') {
+    return <SettingsChildAge onBack={goBack} />
+  }
+
+  if (currentPage === 'settingsAvatar') {
+    return (
+      <SettingsAvatar
+        avatar={selectedAvatar!}
+        onAvatarChange={selectAvatar}
+        onBack={goBack}
       />
     )
   }

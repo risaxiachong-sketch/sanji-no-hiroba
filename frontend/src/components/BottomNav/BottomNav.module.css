@@ -1,6 +1,7 @@
 /* Fixed to the viewport, not the page flow, so it stays visible while the page
    content underneath scrolls. Each page reserves --bottom-nav-height of space
-   at its own bottom edge so content never renders underneath it. */
+   at its own bottom edge (or right edge in landscape, see below) so content
+   never renders underneath it. */
 .bottomNav {
   position: fixed;
   bottom: 0;
@@ -38,3 +39,28 @@
 .navActive:hover { background: #6257a6 !important; }
 .navIcon  { font-size: 1.15rem; line-height: 1; }
 .navLabel { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.03em; }
+
+/* 横画面では下ではなく右端に縦帯として表示 */
+@media (orientation: landscape) {
+  .bottomNav {
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    width: var(--bottom-nav-height);
+    max-width: none;
+    margin: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    border-top: none;
+    border-left: 1px solid rgba(113, 102, 181, 0.12);
+    padding: 8px 2px env(safe-area-inset-right, 8px);
+  }
+
+  .navBtn {
+    flex: none;
+    width: 100%;
+    margin: 2px 0;
+  }
+}
