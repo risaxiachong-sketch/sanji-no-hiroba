@@ -133,8 +133,9 @@ function App() {
     return (
       <BulletinBoard
         onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
-        onBack={() => navigateToMemberPage('plaza', 'bulletinBoard')}
         onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}
+        isSaved={isSaved}
+        onToggleSave={toggleSave}
       />
     )
   }
