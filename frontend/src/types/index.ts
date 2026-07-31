@@ -30,6 +30,7 @@ export interface Avatar {
   emoji: string;
   label: string;
   color: string; // パステル背景色
+  selectionImageUrl?: string;
 }
 
 /** 施設種別 */
@@ -139,4 +140,3 @@ export interface Post {
   myReactions: ReactionType[];
   timestamp: string;
 }
-
