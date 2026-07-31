@@ -31,6 +31,7 @@ export interface Avatar {
   label: string;
   color: string; // パステル背景色
   selectionImageUrl?: string;
+  mapSpriteUrl?: string;
 }
 
 /** 施設種別 */

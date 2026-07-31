@@ -1,8 +1,3 @@
-/* ===================================================
-   Plaza — バーチャル広場（縦・横両対応）
-=================================================== */
-
-/* ── ページ全体 ── */
 .page {
   width: 100%;
   height: 100dvh;
@@ -13,7 +8,6 @@
   position: relative;
 }
 
-/* ── トップバー ── */
 .topBar {
   flex-shrink: 0;
   display: flex;
@@ -54,112 +48,13 @@
 }
 .exitBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
 
-/* ── 広場シーン（3D） ── */
 .plazaScene {
   flex: 1;
   position: relative;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
-  background-color: #b7d4e2;
-}
-
-/* ── 施設カード（右端縦並び） ── */
-.facilityColumn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 20;
-}
-
-.facilityCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 8px 5px;
-  width: 54px;
-  min-height: 54px;
-  border: 1.5px solid rgba(255, 255, 255, 0.75);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.88);
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(113, 102, 181, 0.18);
-  backdrop-filter: blur(6px);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.facilityCard:hover,
-.facilityCard:focus-visible {
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(113, 102, 181, 0.28);
-}
-.facilityCardIcon  { font-size: 1.25rem; }
-.facilityCardLabel {
-  font-size: 0.58rem;
-  color: #4d456f;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.3;
-}
-
-/* ── 投稿の吹き出し（3D空間から投影） ── */
-.bubbleLayer {
-  position: absolute;
-  inset: 0;
-  z-index: 15;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.speechBubble {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  max-width: 130px;
-  padding: 6px 12px;
-  border: 1.5px solid rgba(200, 190, 230, 0.5);
-  border-radius: 16px 16px 16px 4px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: var(--shadow-sm, 0 3px 12px rgba(113, 102, 181, 0.14));
-  color: #4d456f;
-  font-size: 0.68rem;
-  font-weight: 500;
-  line-height: 1.35;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ── あなたチップ ── */
-.youChip {
-  position: absolute;
-  z-index: 20;
-  /* 固定表示のボトムナビの上に置く */
-  bottom: calc(var(--bottom-nav-height) + 11px);
-  left: 11px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px 5px 5px;
-  border-radius: var(--radius-full, 999px);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(73, 63, 112, 0.08));
-  backdrop-filter: blur(6px);
-}
-.youChipAvatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-size: 1rem;
-}
-.youChipLabel {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--color-primary, #7166b5);
+  background-color: #8fca73;
 }
 
 /* =====================================================
@@ -199,23 +94,9 @@
     font-size: 0.65rem;
   }
 
-  /* 広場：残りの幅すべて使う */
   .plazaScene {
     flex: 1;
     height: 100%;
-  }
-
-  /* 施設カードを左端（左帯の右側）に寄せる */
-  .facilityColumn {
-    right: auto;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  /* ボトムナビが右端の縦帯になるので、あなたチップは通常位置に戻す */
-  .youChip {
-    bottom: 11px;
   }
 }
 
