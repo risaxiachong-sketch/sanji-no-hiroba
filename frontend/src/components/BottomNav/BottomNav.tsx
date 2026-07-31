@@ -1,8 +1,8 @@
 import type { Page } from '../../types'
 import styles from './BottomNav.module.css'
 
-/** The four main sections reachable from the persistent bottom nav. */
-export type BottomNavPage = 'plaza' | 'bulletinBoard' | 'postArea' | 'savedEvents'
+/** The main sections reachable from the persistent bottom nav. */
+export type BottomNavPage = 'plaza' | 'bulletinBoard' | 'postArea' | 'savedEvents' | 'settings'
 
 interface Props {
   active: BottomNavPage
@@ -14,6 +14,7 @@ const ITEMS: Array<{ page: BottomNavPage; icon: string; label: string; ariaLabel
   { page: 'bulletinBoard', icon: '📋', label: 'Board', ariaLabel: 'まちの掲示板' },
   { page: 'postArea', icon: '💬', label: 'Post', ariaLabel: 'つぶやく' },
   { page: 'savedEvents', icon: '🔖', label: 'Saved', ariaLabel: '保存イベント' },
+  { page: 'settings', icon: '⚙️', label: 'Settings', ariaLabel: '設定' },
 ]
 
 /** Fixed to the viewport bottom, so it stays visible while a page's own content scrolls. */

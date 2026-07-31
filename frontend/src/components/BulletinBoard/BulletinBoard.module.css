@@ -148,3 +148,11 @@
   font-size: var(--font-size-base);
   margin: 0;
 }
+
+/* 横画面ではボトムナビが右端の縦帯になるので、余白も右側に確保する */
+@media (orientation: landscape) {
+  .list {
+    padding-bottom: var(--space-md);
+    padding-right: calc(var(--bottom-nav-height) + var(--space-md));
+  }
+}
