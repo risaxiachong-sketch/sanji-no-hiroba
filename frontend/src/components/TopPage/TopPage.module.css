@@ -1,11 +1,13 @@
 .main {
+  --home-cream: #feedd5;
+
   height: 100dvh;
   display: flex;
   justify-content: center;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0;
-  background: #fff6e3;
+  background: var(--home-cream);
 }
 
 .screen {
@@ -20,7 +22,7 @@
   padding: 0 0 14px;
   color: #5d3623;
   text-align: center;
-  background: #fff6e3;
+  background: var(--home-cream);
 }
 
 .visuallyHidden {
@@ -47,45 +49,64 @@
   overflow: hidden;
   margin: 0;
   line-height: 0;
-  background: #fff6e3;
+  background: var(--home-cream);
+}
+
+.hero::after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  z-index: 2;
+  height: min(138px, 18dvh);
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(254, 237, 213, 0) 0%,
+    rgba(254, 237, 213, 0.72) 58%,
+    var(--home-cream) 100%
+  );
 }
 
 .heroImg {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: auto;
   max-height: calc(100dvh - 245px);
   object-fit: contain;
   object-position: center top;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 88%, rgba(0, 0, 0, 0) 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 88%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, rgba(0, 0, 0, 0.76) 90%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 80%, rgba(0, 0, 0, 0.76) 90%, rgba(0, 0, 0, 0) 100%);
 }
 
 .actions {
   position: relative;
-  z-index: 2;
-  width: calc(100% - 44px);
-  max-width: 334px;
+  z-index: 3;
+  width: calc(100% - 84px);
+  max-width: 292px;
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  gap: 11px;
-  margin: -26px auto 0;
+  gap: 9px;
+  margin: -42px auto 0;
   filter: drop-shadow(0 14px 22px rgba(130, 82, 54, 0.12));
 }
 
 .actionBtn {
   position: relative;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 24px;
+  grid-template-columns: 38px minmax(0, 1fr) 18px;
   align-items: center;
   width: 100%;
-  min-height: 64px;
-  padding: 10px 16px;
+  min-height: 52px;
+  padding: 7px 12px;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  border-radius: 26px;
+  border-radius: 21px;
   color: #613620;
-  font-size: 1.22rem;
+  font-size: 1.02rem;
   font-weight: 800;
   letter-spacing: 0;
   cursor: pointer;
@@ -98,10 +119,10 @@
 
 .actionBtn::after {
   position: absolute;
-  inset: 8px;
+  inset: 6px;
   content: "";
   border: 2px dashed rgba(255, 255, 255, 0.88);
-  border-radius: 20px;
+  border-radius: 16px;
   pointer-events: none;
 }
 
@@ -138,10 +159,10 @@
 .buttonMark {
   position: relative;
   display: block;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   justify-self: start;
-  border: 3px solid #8b5435;
+  border: 2px solid #8b5435;
   background: rgba(255, 252, 244, 0.78);
   box-shadow: 0 2px 0 rgba(121, 74, 48, 0.22);
 }
@@ -153,20 +174,20 @@
 
 .enterMark::before {
   position: absolute;
-  top: 8px;
-  left: 17px;
+  top: 6px;
+  left: 14px;
   width: 2px;
-  height: 25px;
+  height: 20px;
   content: "";
   background: rgba(124, 70, 39, 0.58);
 }
 
 .enterMark::after {
   position: absolute;
-  top: 21px;
-  right: 7px;
-  width: 5px;
-  height: 5px;
+  top: 17px;
+  right: 5px;
+  width: 4px;
+  height: 4px;
   content: "";
   border-radius: 50%;
   background: #fff4c9;
@@ -178,21 +199,21 @@
 
 .boardMark::before {
   position: absolute;
-  top: 11px;
-  left: 10px;
-  width: 21px;
+  top: 8px;
+  left: 8px;
+  width: 16px;
   height: 3px;
   content: "";
   border-radius: 999px;
   background: #9d6a8b;
-  box-shadow: 0 9px 0 #9d6a8b, 0 18px 0 #9d6a8b;
+  box-shadow: 0 7px 0 #9d6a8b, 0 14px 0 #9d6a8b;
 }
 
 .boardMark::after {
   position: absolute;
-  right: -8px;
+  right: -6px;
   bottom: 3px;
-  width: 14px;
+  width: 12px;
   height: 3px;
   content: "";
   border-radius: 999px;
@@ -209,7 +230,7 @@
 
 .buttonArrow {
   color: rgba(111, 64, 42, 0.72);
-  font-size: 2rem;
+  font-size: 1.58rem;
   line-height: 1;
 }
 
@@ -283,39 +304,51 @@
   }
 
   .actions {
-    gap: 9px;
-    margin-top: -22px;
+    gap: 8px;
+    margin-top: -34px;
   }
 
   .actionBtn {
-    grid-template-columns: 44px minmax(0, 1fr) 22px;
-    min-height: 56px;
-    padding: 8px 14px;
-    border-radius: 23px;
-    font-size: 1.1rem;
+    grid-template-columns: 34px minmax(0, 1fr) 18px;
+    min-height: 46px;
+    padding: 6px 11px;
+    border-radius: 19px;
+    font-size: 0.94rem;
   }
 
   .actionBtn::after {
-    inset: 7px;
-    border-radius: 18px;
+    inset: 5px;
+    border-radius: 14px;
   }
 
   .buttonMark {
-    width: 36px;
-    height: 36px;
-    border-width: 2px;
+    width: 28px;
+    height: 28px;
   }
 
   .enterMark::before {
-    left: 16px;
-    height: 23px;
+    top: 5px;
+    left: 12px;
+    height: 18px;
+  }
+
+  .enterMark::after {
+    top: 15px;
+    right: 5px;
   }
 
   .boardMark::before {
-    top: 9px;
-    left: 9px;
-    width: 18px;
-    box-shadow: 0 8px 0 #9d6a8b, 0 16px 0 #9d6a8b;
+    top: 7px;
+    left: 7px;
+    width: 14px;
+    height: 2px;
+    box-shadow: 0 6px 0 #9d6a8b, 0 12px 0 #9d6a8b;
+  }
+
+  .boardMark::after {
+    right: -5px;
+    width: 10px;
+    height: 2px;
   }
 
   .adminBtn {
@@ -343,7 +376,7 @@
   }
 
   .actions {
-    margin-top: -18px;
+    margin-top: -30px;
   }
 }
 
@@ -353,17 +386,17 @@
   }
 
   .actions {
-    width: calc(100% - 40px);
+    width: calc(100% - 76px);
   }
 
   .actionBtn {
-    grid-template-columns: 46px minmax(0, 1fr) 22px;
-    padding-inline: 14px;
-    font-size: 1.12rem;
+    grid-template-columns: 34px minmax(0, 1fr) 18px;
+    padding-inline: 11px;
+    font-size: 0.96rem;
   }
 
   .buttonMark {
-    width: 36px;
-    height: 36px;
+    width: 29px;
+    height: 29px;
   }
 }
