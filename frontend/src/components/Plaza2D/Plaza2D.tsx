@@ -27,6 +27,10 @@ type Viewport = {
   width: number
   height: number
   dpr: number
+  topInset: number
+  bottomInset: number
+  leftInset: number
+  rightInset: number
 }
 
 type PointerSample = {
@@ -94,19 +98,44 @@ function drawSpeechBubble(
   y: number,
   text: string,
   viewportWidth: number,
+  viewportHeight: number,
+  insets: Pick<Viewport, 'topInset' | 'bottomInset' | 'leftInset' | 'rightInset'>,
 ) {
-  const shownText = text.length > 24 ? `${text.slice(0, 24)}…` : text
+  const fontSize = 12
+  const lineHeight = 17
+  const horizontalPadding = 14
+  const verticalPadding = 9
+  const maxWidth = Math.min(220, viewportWidth - insets.leftInset - insets.rightInset - 16)
   context.font = '700 12px "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif'
-  const width = Math.min(190, Math.max(92, context.measureText(shownText).width + 28))
-  const left = Math.max(8, Math.min(viewportWidth - width - 8, x - width / 2))
-  const top = Math.max(10, y - 50)
+  const lines = wrapSpeechText(context, text, Math.max(112, maxWidth - horizontalPadding * 2))
+  const textWidth = Math.max(...lines.map((line) => context.measureText(line).width), 0)
+  const width = Math.min(maxWidth, Math.max(92, textWidth + horizontalPadding * 2))
+  const height = lines.length * lineHeight + verticalPadding * 2
+  const left = Math.max(
+    insets.leftInset,
+    Math.min(viewportWidth - insets.rightInset - width, x - width / 2),
+  )
+  const bottomLimit = Math.max(insets.topInset + height, viewportHeight - insets.bottomInset)
+  const preferredTop = y - height - 10
+  const placeBelow = preferredTop < insets.topInset
+  const top = Math.max(
+    insets.topInset,
+    placeBelow
+      ? Math.min(y + 10, bottomLimit - height)
+      : Math.min(preferredTop, bottomLimit - height),
+  )
+  const tailX = Math.max(left + 18, Math.min(left + width - 18, x))
 
   context.save()
   context.shadowColor = 'rgba(80, 61, 46, 0.18)'
   context.shadowBlur = 10
   context.shadowOffsetY = 4
   context.fillStyle = 'rgba(255, 253, 247, 0.96)'
-  roundedRect(context, left, top, width, 34, 14)
+  roundedRect(context, left, top, width, height, 14)
+  context.moveTo(tailX - 7, placeBelow ? top : top + height)
+  context.lineTo(tailX, placeBelow ? Math.max(top - 10, y) : Math.min(top + height + 10, y))
+  context.lineTo(tailX + 7, placeBelow ? top : top + height)
+  context.closePath()
   context.fill()
   context.shadowColor = 'transparent'
   context.strokeStyle = 'rgba(202, 147, 123, 0.45)'
@@ -114,9 +143,45 @@ function drawSpeechBubble(
   context.stroke()
   context.fillStyle = '#634738'
   context.textAlign = 'center'
-  context.textBaseline = 'middle'
-  context.fillText(shownText, left + width / 2, top + 17)
+  context.textBaseline = 'alphabetic'
+  lines.forEach((line, index) => {
+    context.fillText(
+      line,
+      left + width / 2,
+      top + verticalPadding + fontSize + index * lineHeight,
+    )
+  })
   context.restore()
+}
+
+function wrapSpeechText(context: CanvasRenderingContext2D, text: string, maxTextWidth: number) {
+  const characters = Array.from(text.trim())
+  const lines: string[] = []
+  let currentLine = ''
+
+  for (const character of characters) {
+    const candidate = currentLine + character
+    if (currentLine && context.measureText(candidate).width > maxTextWidth) {
+      lines.push(currentLine)
+      currentLine = character
+      if (lines.length === 2) break
+    } else {
+      currentLine = candidate
+    }
+  }
+
+  if (lines.length < 2 && currentLine) lines.push(currentLine)
+  if (lines.length === 0) lines.push('…')
+
+  if (lines.join('').length < characters.length) {
+    let lastLine = lines[lines.length - 1]
+    while (lastLine && context.measureText(`${lastLine}…`).width > maxTextWidth) {
+      lastLine = lastLine.slice(0, -1)
+    }
+    lines[lines.length - 1] = `${lastLine}…`
+  }
+
+  return lines
 }
 
 export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props) {
@@ -125,7 +190,15 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
   const boardButtonRef = useRef<HTMLButtonElement | null>(null)
   const animationFrameRef = useRef<number | null>(null)
   const simulationRef = useRef<PlazaSimulation | null>(null)
-  const viewportRef = useRef<Viewport>({ width: 1, height: 1, dpr: 1 })
+  const viewportRef = useRef<Viewport>({
+    width: 1,
+    height: 1,
+    dpr: 1,
+    topInset: 8,
+    bottomInset: 8,
+    leftInset: 8,
+    rightInset: 8,
+  })
   const cameraRef = useRef<Camera>({
     x: MAP_WIDTH / 2,
     y: MAP_HEIGHT / 2,
@@ -162,10 +235,18 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
     const resize = () => {
       const bounds = frame.getBoundingClientRect()
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches
+      const navSize = Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height'),
+      ) || 0
       const viewport = {
         width: Math.max(1, bounds.width),
         height: Math.max(1, bounds.height),
         dpr,
+        topInset: 8,
+        bottomInset: isLandscape ? 8 : navSize,
+        leftInset: 8,
+        rightInset: isLandscape ? navSize : 8,
       }
       viewportRef.current = viewport
       canvas.width = Math.round(viewport.width * dpr)
@@ -300,7 +381,15 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
             || position.y < -80
             || position.y > viewport.height + 80
           ) continue
-          drawSpeechBubble(context, position.x, position.y, bubble.text, viewport.width)
+          drawSpeechBubble(
+            context,
+            position.x,
+            position.y,
+            bubble.text,
+            viewport.width,
+            viewport.height,
+            viewport,
+          )
         }
 
         const currentUser = simulation.userVisitor()
