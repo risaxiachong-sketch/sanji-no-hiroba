@@ -39,7 +39,7 @@
   --tap-min: 44px;
 
   /* 常時表示のボトムナビの高さ（コンテンツの padding-bottom 確保用） */
-  --bottom-nav-height: 64px;
+  --bottom-nav-height: 190px;
 
   /* 角丸 */
   --radius-sm:   8px;
@@ -70,6 +70,18 @@
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+}
+
+@media (orientation: landscape) {
+  :root {
+    --bottom-nav-height: 112px;
+  }
+}
+
+@media (max-width: 380px) and (orientation: portrait) {
+  :root {
+    --bottom-nav-height: 176px;
+  }
 }
 
 /* ===================================================

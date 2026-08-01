@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Avatar, Page, Post } from '../../types'
 import { DUMMY_USERS } from '../../data/dummyUsers'
 import { fetchPosts } from '../../api/posts'
+import postStarButton from '../../assets/navigation/post-star-button.png'
 import { BottomNav } from '../BottomNav/BottomNav'
 import { Plaza2D } from '../Plaza2D/Plaza2D'
 import styles from './Plaza.module.css'
@@ -46,6 +47,19 @@ export function Plaza({ avatar, onNavigate, onExit }: Props) {
           onOpenBulletinBoard={() => onNavigate('bulletinBoard')}
         />
       </div>
+
+      <button
+        type="button"
+        className={styles.postButton}
+        data-testid="plaza-post-button"
+        aria-label="つぶやく"
+        onClick={() => onNavigate('postArea')}
+      >
+        <span className={styles.postButtonVisual} aria-hidden="true">
+          <img className={styles.postButtonArt} src={postStarButton} alt="" />
+          <span className={styles.postButtonLabel}>つぶやく</span>
+        </span>
+      </button>
 
       <BottomNav active="plaza" onNavigate={onNavigate} />
     </div>
