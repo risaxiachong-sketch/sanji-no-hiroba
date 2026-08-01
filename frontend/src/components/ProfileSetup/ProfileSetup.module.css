@@ -1,84 +1,390 @@
 .page {
+  width: 100%;
+  max-width: 430px;
   min-height: 100vh;
+  min-height: 100svh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 430px;
-  margin: 0 auto;
-  padding: var(--space-lg) var(--space-md);
+  color: #56392f;
+  background:
+    radial-gradient(circle at 15% 9%, rgba(255, 255, 255, 0.96) 0 8%, transparent 22%),
+    radial-gradient(circle at 91% 23%, rgba(255, 229, 203, 0.78) 0 10%, transparent 24%),
+    linear-gradient(180deg, #fff8ee 0%, #fffdf8 44%, #f9efe3 100%);
 }
 
-.header {
+.hero {
+  position: relative;
+  min-height: 238px;
+  padding: 42px 20px 56px;
+  overflow: hidden;
+}
+
+.titleBlock {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 330px);
+  margin: 0 auto;
   text-align: center;
-  margin-bottom: var(--space-lg);
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #ef8798;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0;
 }
 
 .title {
   margin: 0;
-  font-size: var(--font-size-xl);
-  color: #4d456f;
+  color: #5a4035;
+  font-size: 1.98rem;
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: 0;
+  text-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.92),
+    0 7px 14px rgba(126, 87, 61, 0.14);
+}
+
+.titleRule {
+  width: 100%;
+  height: 2px;
+  display: block;
+  margin: 9px auto 10px;
+  border-radius: 999px;
+  background-image: linear-gradient(90deg, rgba(226, 193, 151, 0.85) 50%, transparent 50%);
+  background-size: 14px 2px;
+}
+
+.subtitle {
+  margin: 0;
+  color: #68473a;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.48;
+}
+
+.heroCloud,
+.heroFlower {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.heroCloud {
+  width: 58px;
+  height: 29px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    17px -10px 0 5px rgba(255, 255, 255, 0.82),
+    36px 0 0 2px rgba(255, 255, 255, 0.82),
+    0 2px 10px rgba(218, 165, 122, 0.1);
+}
+
+.heroCloudOne {
+  top: 82px;
+  left: 16px;
+  transform: scale(0.7);
+  opacity: 0.9;
+}
+
+.heroCloudTwo {
+  right: 28px;
+  bottom: 50px;
+  transform: scale(0.56);
+  opacity: 0.74;
+}
+
+.heroFlower {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #f5a0aa;
+  box-shadow:
+    0 -9px 0 -2px #f5a0aa,
+    9px 0 0 -2px #f5a0aa,
+    0 9px 0 -2px #f5a0aa,
+    -9px 0 0 -2px #f5a0aa;
+  opacity: 0.86;
+}
+
+.heroFlowerOne {
+  top: 35px;
+  right: 56px;
+}
+
+.heroFlowerTwo {
+  left: 42px;
+  bottom: 66px;
+  background: #ecc2e4;
+  box-shadow:
+    0 -9px 0 -2px #ecc2e4,
+    9px 0 0 -2px #ecc2e4,
+    0 9px 0 -2px #ecc2e4,
+    -9px 0 0 -2px #ecc2e4;
+  transform: scale(0.74) rotate(18deg);
 }
 
 .card {
-  width: 100%;
-  background: #fff;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-lg);
+  position: relative;
+  z-index: 3;
+  width: calc(100% - 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  margin: -42px auto 24px;
+  padding: 18px 16px 17px;
+  border: 1px solid rgba(218, 186, 147, 0.42);
+  border-radius: 26px;
+  background: rgba(255, 253, 248, 0.96);
+  box-shadow:
+    0 16px 30px rgba(132, 93, 63, 0.12),
+    0 3px 8px rgba(132, 93, 63, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
 }
 
 .field {
-  margin-bottom: var(--space-lg);
+  min-width: 0;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
 }
 
 .label {
-  display: block;
-  margin-bottom: var(--space-xs);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text);
+  color: #5a4035;
+  font-size: 0.96rem;
+  font-weight: 900;
+  line-height: 1.35;
 }
 
-.input {
+.inputShell {
+  position: relative;
+}
+
+.selectShell {
+  position: relative;
+  z-index: 1;
+}
+
+.selectShellOpen {
+  z-index: 6;
+}
+
+.input,
+.selectButton {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-base);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1px solid rgba(218, 186, 147, 0.52);
+  border-radius: 18px;
+  background: #fffdf9;
+  color: #56392f;
+  box-shadow: inset 0 2px 8px rgba(132, 93, 63, 0.04);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.4;
   outline: none;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
-.input:focus {
-  border-color: var(--color-primary);
+.input:focus,
+.selectButton:focus {
+  border-color: rgba(232, 137, 150, 0.68);
+  box-shadow:
+    0 0 0 4px rgba(255, 224, 229, 0.72),
+    inset 0 2px 8px rgba(132, 93, 63, 0.04);
 }
 
-.select {
+.input::placeholder {
+  color: #aa9288;
+}
+
+.selectButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-color: rgba(232, 137, 150, 0.44);
+  background: #fffdf9;
+  cursor: pointer;
+  text-align: left;
+}
+
+.selectButtonPlaceholder {
+  color: #9a8379;
+}
+
+.selectChevron {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-right: 3px solid #a8795b;
+  border-bottom: 3px solid #a8795b;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.16s ease;
+}
+
+.selectShellOpen .selectChevron {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.optionPanel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(218, 186, 147, 0.5);
+  border-radius: 20px;
+  background: rgba(255, 253, 249, 0.98);
+  box-shadow:
+    0 16px 28px rgba(132, 93, 63, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.optionButton {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-base);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: #fff;
-  outline: none;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
-  appearance: auto;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: #56392f;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: left;
+  letter-spacing: 0;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    transform 0.16s ease;
 }
 
-.select:focus {
-  border-color: var(--color-primary);
+.optionButton:hover,
+.optionButton:focus {
+  border-color: rgba(232, 137, 150, 0.28);
+  background: #fff2f4;
+  outline: none;
+}
+
+.optionSelected {
+  border-color: rgba(232, 137, 150, 0.48);
+  background: #ffdfe5;
+  color: #7b4738;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .hint {
   display: block;
-  margin-top: var(--space-xs);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-sub);
+  margin-top: 7px;
+  color: #8a6d60;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.55;
 }
 
 .footer {
-  margin-top: var(--space-lg);
+  margin-top: 2px;
+}
+
+.nextButton {
+  width: 100%;
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(225, 113, 129, 0.62);
+  border-radius: 999px;
+  background: #ffc9b4;
+  color: #794532;
+  box-shadow:
+    0 12px 22px rgba(188, 119, 74, 0.16),
+    inset 0 2px 0 rgba(255, 255, 255, 0.64);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.nextButton:hover:not(:disabled) {
+  background: #ffbea5;
+  transform: translateY(-1px);
+}
+
+.nextButton:disabled {
+  border-color: rgba(218, 186, 147, 0.34);
+  background: #f4dfd2;
+  color: #a99489;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+@media (max-width: 380px) {
+  .hero {
+    min-height: 222px;
+    padding-top: 32px;
+    padding-bottom: 52px;
+  }
+
+  .titleBlock {
+    width: min(100%, 310px);
+  }
+
+  .title {
+    font-size: 1.78rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+  }
+
+  .card {
+    width: calc(100% - 20px);
+    margin-top: -38px;
+    padding: 16px 14px;
+  }
+}
+
+@media (max-height: 700px) {
+  .hero {
+    min-height: 204px;
+    padding-top: 28px;
+    padding-bottom: 48px;
+  }
+
+  .title {
+    font-size: 1.74rem;
+  }
+
+  .card {
+    gap: 13px;
+    margin-top: -38px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .input,
+  .selectButton,
+  .nextButton {
+    min-height: 46px;
+  }
 }
