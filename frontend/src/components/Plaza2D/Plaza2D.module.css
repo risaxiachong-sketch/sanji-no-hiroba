@@ -103,7 +103,15 @@
 @media (orientation: landscape) {
   .recenterButton {
     right: calc(var(--bottom-nav-height) + 12px);
-    bottom: 14px;
+    top: 14px;
+    bottom: auto;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 380px) {
+  .recenterButton {
+    top: 52px;
+    bottom: auto;
   }
 }
 

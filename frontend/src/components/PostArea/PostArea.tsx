@@ -246,7 +246,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
         </button>
       </div>
 
-      <BottomNav active="postArea" onNavigate={onNavigate} />
+      <BottomNav active={null} onNavigate={onNavigate} />
     </div>
   )
 }
