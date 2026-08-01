@@ -17,6 +17,18 @@ const REACTIONS: ReactionOption[] = [
   { value: 'hitoiki',     label: 'ひと息ついてね',   emoji: '🍀' },
 ]
 
+function AvatarBadge({ avatar }: { avatar: Avatar }) {
+  return (
+    <span className={styles.avatarCircle} style={{ backgroundColor: avatar.color }} aria-hidden="true">
+      {avatar.selectionImageUrl ? (
+        <img src={avatar.selectionImageUrl} alt="" className={styles.avatarImage} />
+      ) : (
+        <span className={styles.avatarEmoji}>{avatar.emoji}</span>
+      )}
+    </span>
+  )
+}
+
 interface Props {
   avatar: Avatar
   onClose: () => void
@@ -103,26 +115,30 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
 
   return (
     <div className={styles.page}>
-      {/* ヘッダー */}
-      <div className={styles.header}>
-        <button type="button" className="btn-back" onClick={onClose} aria-label="広場に戻る">
-          ← 戻る
+      <header className={styles.hero}>
+        <button type="button" className={styles.backButton} onClick={onClose} aria-label="広場に戻る">
+          <span aria-hidden="true">‹</span>
+          <span>ひろば</span>
         </button>
-        <h1 className={styles.title}>つぶやく</h1>
-        <div style={{ width: '60px' }} />
-      </div>
+        <div className={styles.titleBlock}>
+          <p className={styles.eyebrow}>Voice</p>
+          <h1 className={styles.title}>つぶやく</h1>
+          <span className={styles.titleRule} aria-hidden="true" />
+          <p className={styles.subtitle}>小さな気持ちを、そっと置いていけます</p>
+        </div>
+        <span className={`${styles.heroCloud} ${styles.heroCloudOne}`} aria-hidden="true" />
+        <span className={`${styles.heroFlower} ${styles.heroFlowerOne}`} aria-hidden="true" />
+        <span className={`${styles.heroFlower} ${styles.heroFlowerTwo}`} aria-hidden="true" />
+      </header>
 
-      {/* 投稿フォーム */}
-      <div className={styles.card}>
+      <main className={styles.body}>
+      <section className={styles.card} aria-label="つぶやきを投稿">
         <div className={styles.userRow}>
-          <div
-            className={styles.avatarCircle}
-            style={{ backgroundColor: avatar.color }}
-            aria-hidden="true"
-          >
-            {avatar.emoji}
+          <AvatarBadge avatar={avatar} />
+          <div>
+            <span className={styles.userLabel}>いまのあなた</span>
+            <span className={styles.userName}>{avatar.label}</span>
           </div>
-          <span className={styles.userName}>{avatar.label}</span>
         </div>
 
         <textarea
@@ -140,10 +156,9 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
 
         <button
           type="button"
-          className="btn-primary"
+          className={styles.postButton}
           disabled={!text.trim()}
           onClick={handlePost}
-          style={{ marginTop: '8px' }}
         >
           つぶやく
         </button>
@@ -153,26 +168,18 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
             🌸 つぶやきを送りました
           </p>
         )}
-      </div>
+      </section>
 
-      {/* 注意書き */}
       <p className={styles.notice}>
         投稿・リアクションは任意です。見るだけでも、いつでも広場に戻れます。
       </p>
 
-      {/* 投稿一覧 */}
       <section className={styles.postList} aria-label="みんなのつぶやき">
         <h2 className={styles.sectionTitle}>みんなのつぶやき</h2>
         {posts.map(post => (
           <article key={post.id} className={styles.postCard}>
             <div className={styles.postHeader}>
-              <div
-                className={styles.avatarCircle}
-                style={{ backgroundColor: post.avatar.color }}
-                aria-hidden="true"
-              >
-                {post.avatar.emoji}
-              </div>
+              <AvatarBadge avatar={post.avatar} />
               <div className={styles.postMeta}>
                 <span className={styles.postNickname}>{post.nickname}</span>
                 <span className={styles.postTime}>{formatTime(post.timestamp)}</span>
@@ -235,16 +242,16 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
         ))}
       </section>
 
-      {/* フッター */}
       <div className={styles.footer}>
         <button
           type="button"
-          className="btn-secondary"
+          className={styles.returnButton}
           onClick={onClose}
         >
           広場に戻る
         </button>
       </div>
+      </main>
 
       <BottomNav active={null} onNavigate={onNavigate} />
     </div>

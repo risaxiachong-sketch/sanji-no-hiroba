@@ -1,24 +1,56 @@
 import { EVENTS } from '../../data/events'
 import { EVENT_STATUS_LABELS } from '../../types'
-import type { Event } from '../../types'
+import type { Event, FacilityType } from '../../types'
+import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
 import styles from './EventDetail.module.css'
 
-const FACILITY_LABEL: Record<string, string> = {
+const FACILITY_LABEL: Record<FacilityType, string> = {
   'community-center': '公民館',
-  'library':          '図書館',
-  'museum':           '博物館・科学館',
+  library: '図書館',
+  museum: '博物館・科学館',
   'childcare-center': '子育て支援施設',
-  'other':            'その他',
+  other: 'その他',
 }
+
+const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
+
+type TagTone = 'free' | 'paid' | 'reservation' | 'indoor' | 'status'
 
 function getStatusStyle(status: Event['status']): string {
   switch (status) {
-    case 'canceled':  return styles.statusCanceled
+    case 'canceled': return styles.statusCanceled
     case 'postponed': return styles.statusPostponed
-    case 'closed':    return styles.statusClosed
-    case 'ended':     return styles.statusEnded
-    default:          return styles.statusScheduled
+    case 'closed': return styles.statusClosed
+    case 'ended': return styles.statusEnded
+    default: return styles.statusScheduled
   }
+}
+
+function formatEventDate(dateString: string) {
+  const [year, month, day] = dateString.split('-').map(Number)
+  if (!year || !month || !day) return dateString
+
+  const date = new Date(year, month - 1, day)
+  return `${year}年${month}月${day}日（${WEEKDAYS[date.getDay()]}）`
+}
+
+function getDisplayImageUrl(event: Event) {
+  if (event.imageUrl && !event.imageUrl.includes('placehold.co')) return event.imageUrl
+  return rhythmEventImage
+}
+
+function buildTags(event: Event): Array<{ label: string; tone: TagTone }> {
+  const tags: Array<{ label: string; tone: TagTone }> = []
+
+  if (event.status !== 'scheduled') {
+    tags.push({ label: EVENT_STATUS_LABELS[event.status], tone: 'status' })
+  }
+
+  tags.push({ label: event.priceLabel, tone: event.price === 'free' ? 'free' : 'paid' })
+  tags.push({ label: event.reservationRequired ? '要予約' : '予約不要', tone: 'reservation' })
+  if (event.indoor) tags.push({ label: '屋内', tone: 'indoor' })
+
+  return tags
 }
 
 interface Props {
@@ -29,120 +61,136 @@ interface Props {
 }
 
 export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
-  const event = EVENTS.find(ev => ev.id === eventId)
+  const event = EVENTS.find((ev) => ev.id === eventId)
 
   if (!event) {
     return (
       <div className={styles.page}>
-        <div className={styles.header}>
-          <button type="button" className="btn-back" onClick={onBack}>← 戻る</button>
-        </div>
-        <div style={{ padding: 'var(--space-xl)', textAlign: 'center', color: 'var(--color-text-sub)' }}>
-          イベントが見つかりませんでした
-        </div>
+        <header className={styles.header}>
+          <button type="button" className={styles.backButton} onClick={onBack}>戻る</button>
+          <h1 className={styles.headerTitle}>イベント詳細</h1>
+          <span className={styles.headerSpacer} />
+        </header>
+        <main className={styles.body}>
+          <div className={styles.emptyCard}>
+            <p>イベントが見つかりませんでした</p>
+          </div>
+        </main>
       </div>
     )
   }
 
+  const imageUrl = getDisplayImageUrl(event)
+  const tags = buildTags(event)
+
   return (
     <div className={styles.page}>
-      {/* ヘッダー */}
       <header className={styles.header}>
-        <button type="button" className="btn-back" onClick={onBack} aria-label="前の画面に戻る">
-          ← 戻る
+        <button type="button" className={styles.backButton} onClick={onBack} aria-label="前の画面に戻る">
+          <span aria-hidden="true">‹</span>
+          <span>戻る</span>
         </button>
         <h1 className={styles.headerTitle}>イベント詳細</h1>
-        <div style={{ width: '60px' }} />
+        <span className={styles.headerSpacer} />
       </header>
 
-      <div className={styles.body}>
-        {/* イベント画像 */}
-        {event.imageUrl && (
-          <div className={styles.imageCard}>
+      <main className={styles.body}>
+        <article className={styles.heroCard}>
+          <div className={styles.imageFrame}>
             <img
-              src={event.imageUrl}
+              src={imageUrl}
               alt={`${event.title}のイメージ`}
               className={styles.eventImage}
-              loading="lazy"
+              loading="eager"
             />
-          </div>
-        )}
-
-        {/* タイトル + ステータス */}
-        <div className={styles.titleCard}>
-          <div className={styles.titleRow}>
-            <h2 className={styles.eventTitle}>{event.title}</h2>
             <span className={`${styles.statusBadge} ${getStatusStyle(event.status)}`}>
               {EVENT_STATUS_LABELS[event.status]}
             </span>
           </div>
-          <span className={styles.facilityBadge}>{FACILITY_LABEL[event.facilityType]}</span>
-        </div>
 
-        {/* 基本情報 */}
-        <div className={styles.infoCard}>
-          <dl className={styles.infoGrid}>
-            <div className={styles.infoRow}>
-              <dt className={styles.infoLabel}>📅 日時</dt>
-              <dd className={styles.infoValue}>{event.date}（{event.time}）</dd>
-            </div>
-            <hr className={styles.divider} />
-            <div className={styles.infoRow}>
-              <dt className={styles.infoLabel}>👶 対象</dt>
-              <dd className={styles.infoValue}>{event.ageRange}</dd>
-            </div>
-            <hr className={styles.divider} />
-            <div className={styles.infoRow}>
-              <dt className={styles.infoLabel}>📍 場所</dt>
-              <dd className={styles.infoValue}>
-                {event.location}<br />
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-sub)' }}>
-                  {event.address}
+          <div className={styles.heroContent}>
+            <h2 className={styles.eventTitle}>{event.title}</h2>
+            <div className={styles.tagList} aria-label="イベント条件">
+              {tags.map((tag) => (
+                <span
+                  key={`${tag.tone}-${tag.label}`}
+                  className={`${styles.tag} ${styles[`tag-${tag.tone}`]}`}
+                >
+                  {tag.label}
                 </span>
-              </dd>
+              ))}
             </div>
-            <hr className={styles.divider} />
+          </div>
+        </article>
+
+        <section className={styles.infoCard} aria-label="基本情報">
+          <dl className={styles.infoList}>
             <div className={styles.infoRow}>
-              <dt className={styles.infoLabel}>💴 料金</dt>
-              <dd className={styles.infoValue}>{event.priceLabel}</dd>
+              <dt>
+                <span className={`${styles.infoIcon} ${styles.calendarIcon}`} aria-hidden="true" />
+                <span className={styles.infoLabel}>日時</span>
+              </dt>
+              <dd>{formatEventDate(event.date)}<br />{event.time}</dd>
             </div>
-            <hr className={styles.divider} />
             <div className={styles.infoRow}>
-              <dt className={styles.infoLabel}>📝 予約</dt>
-              <dd className={styles.infoValue}>
-                {event.reservationRequired ? '要予約' : '予約不要（当日参加OK）'}
-              </dd>
+              <dt>
+                <span className={`${styles.infoIcon} ${styles.pinIcon}`} aria-hidden="true" />
+                <span className={styles.infoLabel}>場所</span>
+              </dt>
+              <dd>{event.location}<span className={styles.address}>{event.address}</span></dd>
+            </div>
+            <div className={styles.infoRow}>
+              <dt>
+                <span className={`${styles.infoIcon} ${styles.faceIcon}`} aria-hidden="true" />
+                <span className={styles.infoLabel}>対象</span>
+              </dt>
+              <dd>{event.ageRange}の親子</dd>
+            </div>
+            <div className={styles.infoRow}>
+              <dt>
+                <span className={`${styles.infoIcon} ${styles.buildingIcon}`} aria-hidden="true" />
+                <span className={styles.infoLabel}>施設</span>
+              </dt>
+              <dd>{FACILITY_LABEL[event.facilityType]}</dd>
+            </div>
+            <div className={styles.infoRow}>
+              <dt>
+                <span className={`${styles.infoIcon} ${styles.ticketIcon}`} aria-hidden="true" />
+                <span className={styles.infoLabel}>参加</span>
+              </dt>
+              <dd>{event.priceLabel}・{event.reservationRequired ? '要予約' : '予約不要'}</dd>
             </div>
           </dl>
-        </div>
+        </section>
 
-        {/* 設備情報 */}
-        <div className={styles.facilitiesCard}>
-          <p className={styles.sectionTitle}>施設設備</p>
-          <div className={styles.badges}>
-            <span className={`${styles.badge} ${event.nursingRoom ? styles.ok : styles.ng}`}>
-              {event.nursingRoom ? '✓' : '✗'} 授乳室
-            </span>
-            <span className={`${styles.badge} ${event.diaperChange ? styles.ok : styles.ng}`}>
-              {event.diaperChange ? '✓' : '✗'} おむつ交換台
-            </span>
-            <span className={`${styles.badge} ${event.strollerOk ? styles.ok : styles.ng}`}>
-              {event.strollerOk ? '✓' : '✗'} ベビーカーOK
-            </span>
-            <span className={`${styles.badge} ${event.indoor ? styles.ok : styles.ng}`}>
-              {event.indoor ? '✓' : '✗'} 屋内
-            </span>
+        <section className={styles.detailGroup} aria-label="イベント詳細情報">
+          <div className={styles.detailSection}>
+            <h3 className={styles.sectionTitle}>施設設備</h3>
+            <div className={styles.facilityList}>
+              <span className={`${styles.facilityChip} ${event.nursingRoom ? styles.ok : styles.ng}`}>
+                授乳室
+              </span>
+              <span className={`${styles.facilityChip} ${event.diaperChange ? styles.ok : styles.ng}`}>
+                おむつ交換台
+              </span>
+              <span className={`${styles.facilityChip} ${event.strollerOk ? styles.ok : styles.ng}`}>
+                ベビーカーOK
+              </span>
+              <span className={`${styles.facilityChip} ${event.indoor ? styles.ok : styles.ng}`}>
+                屋内
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* 説明 */}
-        <p className={styles.descCard}>{event.description}</p>
+          <div className={styles.detailSection}>
+            <h3 className={styles.sectionTitle}>イベント内容</h3>
+            <p className={styles.description}>{event.description}</p>
+          </div>
 
-        {/* 情報提供元 */}
-        <div className={styles.sourceCard}>
-          <div>情報提供元：{event.source}</div>
-          <div>最終確認日：{event.lastConfirmed}</div>
-          <div style={{ marginTop: 'var(--space-xs)' }}>
+          <div className={`${styles.detailSection} ${styles.sourceSection}`}>
+            <h3 className={styles.sectionTitle}>確認先</h3>
+            <p>情報提供元：{event.source}</p>
+            <p>最終確認日：{formatEventDate(event.lastConfirmed)}</p>
             <a
               href={event.officialUrl}
               target="_blank"
@@ -150,25 +198,24 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
               className={styles.sourceLink}
               aria-label={`${event.title}の公式情報を見る（外部サイト）`}
             >
-              🔗 公式情報を確認する ↗
+              <span className={styles.sourceText}>公式情報を確認する</span>
+              <span className={styles.sourceArrow} aria-hidden="true">↗</span>
             </a>
+            <p className={styles.note}>情報は変更される場合があります。参加前に公式情報をご確認ください。</p>
           </div>
-          <div style={{ marginTop: 'var(--space-sm)', fontSize: 'var(--font-size-xs)', color: '#aaa' }}>
-            ※ 情報は変更される場合があります。参加前に公式情報をご確認ください。
-          </div>
-        </div>
-      </div>
+        </section>
+      </main>
 
-      {/* 行ってみたいボタン */}
       <footer className={styles.footer}>
         <button
           type="button"
           className={`${styles.saveBtn} ${isSaved ? styles.saved : styles.unsaved}`}
           onClick={onToggleSave}
           aria-pressed={isSaved}
-          aria-label={isSaved ? '「行ってみたい」を解除する' : '「行ってみたい」に保存する'}
+          aria-label={isSaved ? '保存を解除する' : 'イベントを保存する'}
         >
-          {isSaved ? '✓ 保存済み（タップで解除）' : '♡ 行ってみたい'}
+          <span className={styles.saveIcon} aria-hidden="true">{isSaved ? '♥' : '♡'}</span>
+          <span>{isSaved ? '保存済み' : '保存する'}</span>
         </button>
       </footer>
     </div>

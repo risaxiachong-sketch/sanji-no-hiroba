@@ -111,9 +111,8 @@ function buildTags(event: BoardEvent): Array<{ label: string; tone: TagTone }> {
 
 function getDisplayImageUrl(event: BoardEvent, featured: boolean) {
   if (featured) return rhythmEventImage
-  if (!event.imageUrl) return null
-  if (event.imageUrl.includes('placehold.co')) return null
-  return event.imageUrl
+  if (event.imageUrl && !event.imageUrl.includes('placehold.co')) return event.imageUrl
+  return rhythmEventImage
 }
 
 interface BoardEventCardProps {
@@ -142,7 +141,7 @@ function BoardEventCard({
   }
 
   return (
-    <article className={`${styles.eventCard} ${featured ? styles.featuredCard : styles.compactCard}`}>
+    <article className={`${styles.eventCard} ${styles.featuredCard}`}>
       <div
         className={styles.cardAction}
         role="button"

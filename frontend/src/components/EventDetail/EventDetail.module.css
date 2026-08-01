@@ -1,277 +1,634 @@
 .page {
+  width: 100%;
   max-width: 430px;
-  margin: 0 auto;
   min-height: 100vh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  color: #56392f;
+  background:
+    radial-gradient(circle at 14% 10%, rgba(255, 255, 255, 0.96) 0 8%, transparent 22%),
+    radial-gradient(circle at 90% 24%, rgba(255, 231, 204, 0.78) 0 9%, transparent 22%),
+    linear-gradient(180deg, #fff8ee 0%, #fffdf8 44%, #f9efe3 100%);
 }
 
 .header {
   position: sticky;
   top: 0;
-  z-index: 10;
-  display: flex;
+  z-index: 20;
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 80px;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: rgba(255, 248, 241, 0.95);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--color-border);
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(218, 186, 147, 0.32);
+  background: rgba(255, 250, 244, 0.94);
+  box-shadow: 0 8px 22px rgba(132, 93, 63, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.backButton {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border: 1px solid rgba(202, 166, 125, 0.42);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.96);
+  color: #6a493c;
+  box-shadow: 0 5px 12px rgba(132, 93, 63, 0.08);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.backButton span:first-child {
+  font-size: 1.4rem;
+  line-height: 0.7;
 }
 
 .headerTitle {
-  flex: 1;
-  text-align: center;
-  font-size: var(--font-size-base);
-  color: #4d456f;
+  min-width: 0;
   margin: 0;
+  color: #5a4035;
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.body {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+.headerSpacer {
+  width: 100%;
+  height: 1px;
 }
 
-/* ── イベント画像 ── */
-.imageCard {
-  border-radius: var(--radius-lg);
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 14px calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
+.heroCard,
+.infoCard,
+.sectionCard,
+.sourceCard,
+.detailGroup,
+.emptyCard {
+  border: 1px solid rgba(218, 186, 147, 0.4);
+  border-radius: 26px;
+  background: rgba(255, 253, 248, 0.97);
+  box-shadow:
+    0 15px 28px rgba(132, 93, 63, 0.12),
+    0 3px 8px rgba(132, 93, 63, 0.06);
+}
+
+.heroCard {
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+}
+
+.imageFrame {
+  position: relative;
+  overflow: hidden;
+  margin: 8px 8px 0;
+  height: 160px;
+  border-radius: 18px;
+  background: #fff0e2;
 }
 
 .eventImage {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
+  height: 100%;
   display: block;
+  object-fit: cover;
+  filter: sepia(0.06) saturate(0.95) brightness(1.04);
 }
 
-/* ── タイトルカード ── */
-.titleCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.titleRow {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
-
-.eventTitle {
-  flex: 1;
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  color: var(--color-text-main);
-  margin: 0;
-  line-height: 1.4;
-}
-
-/* ── ステータスバッジ ── */
 .statusBadge {
-  flex-shrink: 0;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.statusCanceled {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.statusPostponed {
-  background: #fff8e1;
-  color: #f57f17;
-}
-
-.statusClosed {
-  background: #f5f5f5;
-  color: #616161;
-}
-
-.statusEnded {
-  background: #f5f5f5;
-  color: #9e9e9e;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 14px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 6px 14px rgba(132, 93, 63, 0.08);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .statusScheduled {
-  background: #e8f5e9;
-  color: #2e7d32;
+  color: #e95d76;
 }
 
-.facilityBadge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-  font-weight: 600;
+.statusCanceled {
+  color: #c84646;
 }
 
-/* ── 情報グリッド ── */
-.infoCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
+.statusPostponed {
+  color: #b87943;
 }
 
-.infoGrid {
+.statusClosed,
+.statusEnded {
+  color: #8a7f78;
+}
+
+.heroContent {
+  padding: 15px 18px 18px;
+}
+
+.eventTitle {
+  margin: 0 0 12px;
+  color: #e56d82;
+  font-size: 1.34rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.tagList {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tag,
+.facilityChip {
+  max-width: 100%;
+  min-height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 12px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.74);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.tag-free {
+  color: #ed6278;
+  background: rgba(255, 238, 240, 0.78);
+}
+
+.tag-paid,
+.tag-reservation {
+  color: #b87943;
+}
+
+.tag-indoor {
+  color: #8067a7;
+  background: rgba(244, 237, 255, 0.78);
+}
+
+.tag-status {
+  color: #6a9187;
+}
+
+.infoCard,
+.sectionCard,
+.sourceCard,
+.emptyCard {
+  padding: 18px;
+}
+
+.detailGroup {
+  overflow: hidden;
+}
+
+.detailSection {
+  padding: 18px;
+  border-bottom: 1px dashed rgba(220, 189, 151, 0.56);
+}
+
+.detailSection:last-child {
+  border-bottom: none;
+}
+
+.infoList {
+  display: grid;
+  gap: 13px;
+  margin: 0;
 }
 
 .infoRow {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding-bottom: 13px;
+  border-bottom: 1px dashed rgba(220, 189, 151, 0.56);
+}
+
+.infoRow:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.infoRow dt {
+  min-width: 0;
   display: flex;
-  gap: var(--space-md);
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #56392f;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.3;
 }
 
-.infoLabel {
-  flex-shrink: 0;
-  width: 80px;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-sub);
-  font-weight: 600;
-}
-
-.infoValue {
-  flex: 1;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-main);
+.infoRow dd {
+  min-width: 0;
+  margin: 0;
+  color: #56392f;
+  font-size: 0.94rem;
+  font-weight: 700;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
-.divider {
-  border: none;
-  border-top: 1px solid var(--color-border);
-  margin: var(--space-xs) 0;
+.address {
+  display: block;
+  margin-top: 4px;
+  color: #8a6d61;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.5;
 }
 
-/* ── 設備バッジ ── */
-.facilitiesCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
+.infoIcon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  color: #ee8e9c;
+}
+
+.calendarIcon {
+  border: 2px solid currentColor;
+  border-radius: 5px;
+}
+
+.calendarIcon::before {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 5px;
+  height: 2px;
+  content: "";
+  background: currentColor;
+}
+
+.calendarIcon::after {
+  position: absolute;
+  left: 5px;
+  top: -4px;
+  width: 3px;
+  height: 6px;
+  content: "";
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 8px 0 0 currentColor, 0 12px 0 currentColor, 8px 12px 0 currentColor;
+}
+
+.pinIcon {
+  border-radius: 999px 999px 999px 0;
+  background: currentColor;
+  transform: rotate(-45deg) scale(0.86);
+}
+
+.pinIcon::after {
+  position: absolute;
+  inset: 6px;
+  content: "";
+  border-radius: 999px;
+  background: #fffdf8;
+}
+
+.faceIcon {
+  border: 2px solid currentColor;
+  border-radius: 999px;
+}
+
+.faceIcon::before {
+  position: absolute;
+  top: 7px;
+  left: 5px;
+  width: 3px;
+  height: 3px;
+  content: "";
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 8px 0 0 currentColor;
+}
+
+.faceIcon::after {
+  position: absolute;
+  bottom: 5px;
+  left: 6px;
+  width: 8px;
+  height: 4px;
+  content: "";
+  border-bottom: 2px solid currentColor;
+  border-radius: 0 0 999px 999px;
+}
+
+.buildingIcon {
+  border: 2px solid currentColor;
+  border-radius: 4px;
+}
+
+.buildingIcon::before {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  width: 3px;
+  height: 3px;
+  content: "";
+  background: currentColor;
+  box-shadow: 7px 0 0 currentColor, 0 -7px 0 currentColor, 7px -7px 0 currentColor;
+}
+
+.buildingIcon::after {
+  position: absolute;
+  top: -8px;
+  left: 5px;
+  width: 8px;
+  height: 8px;
+  content: "";
+  border: 2px solid currentColor;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+}
+
+.ticketIcon {
+  border-radius: 6px;
+  background: currentColor;
+}
+
+.ticketIcon::before,
+.ticketIcon::after {
+  position: absolute;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  content: "";
+  border-radius: 999px;
+  background: #fffdf8;
+}
+
+.ticketIcon::before {
+  left: -3px;
+}
+
+.ticketIcon::after {
+  right: -3px;
 }
 
 .sectionTitle {
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  color: var(--color-text-sub);
-  margin: 0 0 var(--space-sm);
+  margin: 0 0 12px;
+  color: #5b3c32;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
-.badges {
+.facilityList {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs);
+  gap: 8px;
 }
 
-.badge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
+.facilityChip.ok {
+  color: #e66d80;
+  background: rgba(255, 238, 240, 0.78);
 }
 
-.badge.ok {
-  background: #e6f4ea;
-  color: #2e7d32;
+.facilityChip.ng {
+  color: #9a897f;
+  background: rgba(245, 240, 234, 0.78);
 }
 
-.badge.ng {
-  background: #f5f5f5;
-  color: #9e9e9e;
+.description {
+  margin: 0;
+  color: #62473c;
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.85;
 }
 
-/* ── 説明 ── */
-.descCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  font-size: var(--font-size-base);
-  line-height: 1.8;
-  color: var(--color-text-main);
-}
-
-/* ── 情報提供元 ── */
-.sourceCard {
-  background: #faf9ff;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-sub);
+.sourceSection {
+  color: #785f55;
+  font-size: 0.88rem;
+  font-weight: 650;
   line-height: 1.7;
 }
 
+.sourceSection p {
+  margin: 0 0 6px;
+}
+
 .sourceLink {
-  display: inline-flex;
+  position: relative;
+  width: min(100%, 340px);
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 50px;
   align-items: center;
-  gap: 4px;
-  color: var(--color-primary);
-  font-weight: 600;
+  gap: 8px;
+  margin: 14px auto 0;
+  padding: 7px 9px 7px 16px;
+  border: 1px solid rgba(239, 185, 121, 0.72);
+  border-radius: 999px;
+  background: #ffc9b4;
+  color: #794532;
+  box-shadow:
+    0 12px 22px rgba(188, 119, 74, 0.18),
+    inset 0 2px 0 rgba(255, 255, 255, 0.74),
+    inset 0 -3px 8px rgba(196, 107, 66, 0.14);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
   text-decoration: none;
-  word-break: break-all;
+  text-shadow: 0 1px 0 rgba(255, 245, 238, 0.8);
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.sourceLink::before {
+  display: none;
 }
 
 .sourceLink:hover {
-  text-decoration: underline;
+  background: #ffbea5;
+  transform: translateY(-1px);
+  box-shadow:
+    0 15px 25px rgba(188, 119, 74, 0.21),
+    inset 0 2px 0 rgba(255, 255, 255, 0.76),
+    inset 0 -3px 8px rgba(196, 107, 66, 0.14);
 }
 
-/* ── フッター ── */
+.sourceText {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 1.14rem;
+}
+
+.sourceArrow {
+  position: relative;
+  z-index: 1;
+  grid-column: 3;
+  grid-row: 1;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 226, 211, 0.9);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.88), transparent 42%),
+    linear-gradient(180deg, #fffefa 0%, #fff5ee 100%);
+  color: #7c4934;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.9),
+    0 4px 8px rgba(174, 101, 67, 0.14);
+  font-size: 1.34rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: none;
+}
+
+.note {
+  margin-top: 10px !important;
+  color: #9a897f;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.emptyCard {
+  color: #785f55;
+  text-align: center;
+}
+
 .footer {
   position: sticky;
   bottom: 0;
-  padding: var(--space-md);
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  z-index: 20;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(218, 186, 147, 0.32);
+  background: rgba(255, 250, 244, 0.94);
+  box-shadow: 0 -12px 26px rgba(132, 93, 63, 0.1);
+  backdrop-filter: blur(12px);
 }
 
 .saveBtn {
   width: 100%;
-  min-height: var(--tap-min);
-  padding: 12px 20px;
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-base);
-  font-weight: 700;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 18px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
-.saveBtn.unsaved {
-  border: 2px solid var(--color-primary);
-  background: #fff;
-  color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
+.saveBtn:hover {
+  transform: translateY(-1px);
 }
 
-.saveBtn.unsaved:hover {
-  background: var(--color-primary-light);
+.unsaved {
+  border: 1px solid rgba(232, 106, 128, 0.58);
+  background: linear-gradient(180deg, #fffdf9 0%, #fff5f2 100%);
+  color: #e75f77;
+  box-shadow:
+    0 10px 22px rgba(132, 93, 63, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
-.saveBtn.saved {
-  border: 2px solid var(--color-accent-green);
-  background: #e6f4ea;
-  color: #2e7d32;
+.saved {
+  border: 1px solid rgba(232, 106, 128, 0.48);
+  background: linear-gradient(180deg, #fcb8bf 0%, #f0919e 100%);
+  color: #fff;
+  box-shadow:
+    0 12px 24px rgba(231, 95, 119, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.saveIcon {
+  font-size: 1.7rem;
+  line-height: 0.9;
+}
+
+@media (max-width: 380px) {
+  .header {
+    grid-template-columns: 72px minmax(0, 1fr) 72px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .body {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .imageFrame {
+    height: 142px;
+  }
+
+  .eventTitle {
+    font-size: 1.2rem;
+  }
+
+  .infoCard,
+  .sectionCard,
+  .sourceCard,
+  .detailSection,
+  .emptyCard {
+    padding: 15px;
+  }
+
+  .infoRow {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .infoRow dt,
+  .infoRow dd {
+    font-size: 0.84rem;
+  }
 }
