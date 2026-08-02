@@ -143,7 +143,7 @@ function SavedEventCard({ event, onSelectEvent }: SavedEventCardProps) {
           </div>
 
           <span className={styles.savedMark} aria-hidden="true">
-            <span className={styles.savedHeart}>♡</span>
+            <span className={styles.savedHeart}>♥</span>
             <span className={styles.savedText}>保存中</span>
           </span>
         </div>
@@ -164,10 +164,6 @@ export function SavedEvents({ savedIds, onSelectEvent, onBack, onNavigate }: Pro
   return (
     <div className={styles.page}>
       <header className={styles.hero}>
-        <button type="button" className={styles.backButton} onClick={onBack} aria-label="広場に戻る">
-          <span aria-hidden="true">‹</span>
-          <span>ひろば</span>
-        </button>
         <div className={styles.titleBlock}>
           <p className={styles.eyebrow}>My list</p>
           <h1 className={styles.title}>行ってみたい一覧</h1>
@@ -197,13 +193,15 @@ export function SavedEvents({ savedIds, onSelectEvent, onBack, onNavigate }: Pro
                 <p className={styles.count}>{saved.length}件</p>
               </div>
             </div>
-            {saved.map(ev => (
-              <SavedEventCard
-                key={ev.id}
-                event={ev}
-                onSelectEvent={onSelectEvent}
-              />
-            ))}
+            <div className={styles.eventGrid}>
+              {saved.map(ev => (
+                <SavedEventCard
+                  key={ev.id}
+                  event={ev}
+                  onSelectEvent={onSelectEvent}
+                />
+              ))}
+            </div>
           </>
         )}
       </main>

@@ -1,5 +1,3 @@
-/* The lace, post button, and nav cards use separate stacking layers. */
-.laceBackdrop,
 .bottomNav {
   position: fixed;
   bottom: 0;
@@ -12,21 +10,12 @@
   margin: 0 auto;
 }
 
-.laceBackdrop {
-  z-index: 40;
-  background-image: var(--nav-lace-background);
-  background-size: 108% auto;
-  background-position: center calc(100% + 48px);
-  background-repeat: no-repeat;
-  pointer-events: none;
-}
-
 .bottomNav {
   z-index: 42;
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  padding: 22px 12px env(safe-area-inset-bottom, 10px);
+  gap: clamp(4px, 1.5vw, 7px);
+  padding: clamp(16px, 5vw, 22px) clamp(7px, 2.8vw, 12px) env(safe-area-inset-bottom, 8px);
   background: transparent;
   pointer-events: none;
 }
@@ -37,15 +26,16 @@
   display: flex;
   flex: 1;
   min-width: 0;
-  min-height: 112px;
-  padding: 6px 2px 7px;
+  min-height: var(--tap-min);
+  aspect-ratio: 1;
+  padding: 0 2px clamp(9px, 2.8vw, 14px);
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   gap: 1px;
-  border: 4px solid rgba(255, 255, 255, 0.82);
-  border-radius: 40px 40px 32px 32px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.83) 68%, rgba(255, 231, 230, 0.62));
+  border: clamp(2px, 0.9vw, 4px) solid rgba(255, 255, 255, 0.82);
+  border-radius: clamp(28px, 8vw, 36px) clamp(28px, 8vw, 36px) clamp(23px, 6.5vw, 30px) clamp(23px, 6.5vw, 30px);
+  background: linear-gradient(180deg, #fff 0%, #fffdfb 68%, #fff0ef 100%);
   color: #7f5660;
   cursor: pointer;
   box-shadow: 0 8px 18px rgba(100, 59, 74, 0.14), inset 0 1px 0 #fff;
@@ -63,15 +53,23 @@
   transform: translateY(1px) scale(0.98);
 }
 
-.navActive {
-  background: rgba(255, 255, 255, 0.96);
+.navBtn.navActive {
+  border-color: #df6f88;
+  background: linear-gradient(180deg, #ffe9ec 0%, #ffcdd5 100%);
   color: #fff;
-  box-shadow: 0 8px 14px rgba(100, 59, 74, 0.16), inset 0 1px 0 #fff;
+  box-shadow:
+    0 9px 18px rgba(180, 91, 107, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+}
+
+.navBtn.navActive:hover,
+.navBtn.navActive:focus-visible {
+  border-color: #d95f7b;
 }
 
 .navActive .navLabel {
   min-width: 74%;
-  padding: 4px 14px 5px;
+  padding: 2px clamp(7px, 2.2vw, 10px) 3px;
   border-radius: 999px;
   background: #d98387;
   color: #fff;
@@ -81,22 +79,22 @@
 .navIcon {
   display: grid;
   width: 100%;
-  height: 72px;
+  height: clamp(36px, 11.5vw, 54px);
   place-items: center;
   line-height: 1;
 }
 
 .navIcon img {
   display: block;
-  width: 78px;
-  height: 78px;
+  width: clamp(36px, 11.5vw, 54px);
+  height: clamp(36px, 11.5vw, 54px);
   object-fit: contain;
 }
 
 .navLabel {
   max-width: 100%;
   overflow: hidden;
-  font-size: clamp(0.72rem, 2.9vw, 0.94rem);
+  font-size: clamp(0.72rem, 2.8vw, 0.94rem);
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: 0.05em;
@@ -104,87 +102,135 @@
   text-overflow: ellipsis;
 }
 
+@media (max-width: 599px) and (orientation: portrait) {
+  .navIcon img {
+    transform: translateY(-12px) scale(1.95);
+    transform-origin: center;
+  }
+
+  .navBtn:nth-child(1) .navIcon img {
+    transform: translateY(-14px) scale(2.15);
+  }
+
+  .navBtn:nth-child(2) .navIcon img {
+    transform: translateY(-16px) scale(2.3);
+  }
+}
+
+@media (max-width: 380px) and (orientation: portrait) {
+  .navIcon img {
+    transform: translateY(-8px) scale(1.72);
+  }
+
+  .navBtn:nth-child(1) .navIcon img {
+    transform: translateY(-10px) scale(1.87);
+  }
+
+  .navBtn:nth-child(2) .navIcon img {
+    transform: translateY(-11px) scale(2);
+  }
+}
+
+@media (min-width: 431px) and (orientation: portrait) {
+  .bottomNav {
+    width: min(calc(100% - 20px), 460px);
+    max-width: none;
+  }
+}
+
 /* 横画面では下ではなく右端に縦帯として表示 */
 @media (orientation: landscape) {
-  .laceBackdrop,
   .bottomNav {
     top: 0;
     bottom: 0;
     left: auto;
     right: 0;
-    width: 112px;
+    width: min(clamp(76px, 11vw, 96px), calc((100dvh + 16px) / 4));
     max-width: none;
     min-height: 0;
     height: auto;
     margin: 0;
   }
 
-  .laceBackdrop {
-    background-size: auto 100%;
-    background-position: center;
-  }
-
   .bottomNav {
-    padding: 10px 8px env(safe-area-inset-right, 10px);
+    padding: clamp(6px, 1.5vh, 10px) 5px env(safe-area-inset-right, 7px);
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
   }
 
   .navBtn {
     flex: none;
     width: 100%;
-    height: min(96px, calc((100vh - 40px) / 4));
-    min-height: 0;
-    padding: 4px 2px;
-    border-radius: 20px;
+    min-height: var(--tap-min);
+    aspect-ratio: 1;
+    padding: 3px 2px;
+    border-radius: 16px;
   }
 
   .navIcon {
-    height: 54px;
+    height: min(48px, 52%);
   }
 
   .navIcon img {
-    width: 52px;
-    height: 52px;
+    width: 100%;
+    height: 100%;
+    max-width: 48px;
+    max-height: 48px;
   }
 
   .navLabel {
-    font-size: 0.77rem;
-  }
-}
-
-@media (max-width: 380px) and (orientation: portrait) {
-  .bottomNav {
-    gap: 5px;
-    padding: 28px 7px 10px;
-  }
-
-  .navBtn {
-    min-height: 102px;
-    padding-inline: 1px;
-    border-width: 2px;
-    border-radius: 32px 32px 26px 26px;
-  }
-
-  .navIcon {
-    height: 64px;
-  }
-
-  .navIcon img {
-    width: 68px;
-    height: 68px;
-  }
-
-  .navLabel {
-    font-size: 0.74rem;
-    letter-spacing: 0.02em;
+    font-size: clamp(0.62rem, 2vh, 0.72rem);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .navBtn {
     transition: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bottomNav {
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    width: 116px;
+    max-width: none;
+    min-height: 0;
+    height: auto;
+    margin: 0;
+  }
+
+  .bottomNav {
+    padding: 20px 10px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .navBtn {
+    flex: none;
+    width: 100%;
+    min-height: var(--tap-min);
+    aspect-ratio: 1;
+    padding: 6px 3px;
+    border-radius: 22px;
+  }
+
+  .navIcon {
+    height: 58px;
+  }
+
+  .navIcon img {
+    width: 58px;
+    height: 58px;
+  }
+
+  .navLabel {
+    font-size: 0.78rem;
   }
 }

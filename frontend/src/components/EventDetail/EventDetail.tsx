@@ -1,8 +1,19 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react'
 import { fetchEvent } from '../../api/events'
+=======
+import { useEffect, useRef } from 'react'
+import { EVENTS } from '../../data/events'
+>>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
 import { EVENT_STATUS_LABELS } from '../../types'
 import type { Event, FacilityType } from '../../types'
 import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
+import {
+  buildAppleCalendarIcs,
+  buildGoogleCalendarUrl,
+  createCalendarEventDraft,
+  getCalendarFileName,
+} from '../../utils/calendar'
 import styles from './EventDetail.module.css'
 
 const FACILITY_LABEL: Record<FacilityType, string> = {
@@ -62,6 +73,7 @@ interface Props {
 }
 
 export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
+<<<<<<< HEAD
   const [event, setEvent] = useState<Event | null>(null)
   const [loadError, setLoadError] = useState(false)
 
@@ -72,6 +84,17 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
       .catch(() => { if (!cancelled) setLoadError(true) })
     return () => { cancelled = true }
   }, [eventId])
+=======
+  const event = EVENTS.find((ev) => ev.id === eventId)
+  const calendarDialogRef = useRef<HTMLDialogElement>(null)
+  const appleDownloadUrlRef = useRef<string | null>(null)
+
+  useEffect(() => () => {
+    if (appleDownloadUrlRef.current) {
+      URL.revokeObjectURL(appleDownloadUrlRef.current)
+    }
+  }, [])
+>>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
 
   if (!event) {
     return (
@@ -92,6 +115,58 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
 
   const imageUrl = getDisplayImageUrl(event)
   const tags = buildTags(event)
+  const calendarDraft = createCalendarEventDraft(event)
+  const calendarHint = event.status !== 'scheduled'
+    ? `${EVENT_STATUS_LABELS[event.status]}のイベントはカレンダーに追加できません。`
+    : !calendarDraft
+      ? '日時情報を確認できないため、カレンダーに追加できません。'
+      : null
+  const canAddToCalendar = calendarHint === null
+
+  const closeCalendarDialog = () => {
+    calendarDialogRef.current?.close()
+  }
+
+  const openCalendarDialog = () => {
+    if (canAddToCalendar) {
+      calendarDialogRef.current?.showModal()
+    }
+  }
+
+  const addToGoogleCalendar = () => {
+    if (!calendarDraft) return
+
+    window.open(buildGoogleCalendarUrl(calendarDraft), '_blank', 'noopener,noreferrer')
+    closeCalendarDialog()
+  }
+
+  const addToAppleCalendar = () => {
+    if (!calendarDraft) return
+
+    if (appleDownloadUrlRef.current) {
+      URL.revokeObjectURL(appleDownloadUrlRef.current)
+    }
+
+    const file = new Blob([buildAppleCalendarIcs(calendarDraft)], { type: 'text/calendar;charset=utf-8' })
+    const downloadUrl = URL.createObjectURL(file)
+    appleDownloadUrlRef.current = downloadUrl
+
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = getCalendarFileName(calendarDraft)
+    document.body.append(link)
+    link.click()
+    link.remove()
+
+    window.setTimeout(() => {
+      if (appleDownloadUrlRef.current === downloadUrl) {
+        URL.revokeObjectURL(downloadUrl)
+        appleDownloadUrlRef.current = null
+      }
+    }, 1000)
+
+    closeCalendarDialog()
+  }
 
   return (
     <div className={styles.page}>
@@ -171,6 +246,19 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
               <dd>{event.priceLabel}・{event.reservationRequired ? '要予約' : '予約不要'}</dd>
             </div>
           </dl>
+          <div className={styles.calendarAction}>
+            <button
+              type="button"
+              className={styles.calendarBtn}
+              onClick={openCalendarDialog}
+              disabled={!canAddToCalendar}
+              aria-describedby={calendarHint ? 'calendar-hint' : undefined}
+            >
+              <span className={styles.calendarButtonIcon} aria-hidden="true" />
+              <span>カレンダーに追加</span>
+            </button>
+            {calendarHint && <p className={styles.calendarHint} id="calendar-hint">{calendarHint}</p>}
+          </div>
         </section>
 
         <section className={styles.detailGroup} aria-label="イベント詳細情報">
@@ -211,7 +299,10 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
               <span className={styles.sourceText}>公式情報を確認する</span>
               <span className={styles.sourceArrow} aria-hidden="true">↗</span>
             </a>
-            <p className={styles.note}>情報は変更される場合があります。参加前に公式情報をご確認ください。</p>
+            <p className={styles.note}>
+              <span className={styles.noteSentence}>情報は変更される場合があります。</span>{' '}
+              <span className={styles.noteSentence}>参加前に公式情報をご確認ください。</span>
+            </p>
           </div>
         </section>
       </main>
@@ -228,6 +319,54 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
           <span>{isSaved ? '保存済み' : '保存する'}</span>
         </button>
       </footer>
+
+      <dialog
+        ref={calendarDialogRef}
+        className={styles.calendarDialog}
+        aria-labelledby="calendar-dialog-title"
+        onCancel={(event) => {
+          event.preventDefault()
+          closeCalendarDialog()
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault()
+            closeCalendarDialog()
+          }
+        }}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) closeCalendarDialog()
+        }}
+      >
+        <div className={styles.calendarDialogContent}>
+          <button
+            type="button"
+            className={styles.dialogCloseButton}
+            onClick={closeCalendarDialog}
+            aria-label="カレンダー選択を閉じる"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+          <span className={styles.dialogIcon} aria-hidden="true" />
+          <h2 className={styles.dialogTitle} id="calendar-dialog-title">カレンダーに追加</h2>
+          <p className={styles.dialogDescription}>
+            追加先を選ぶと、予定が入力済みの登録画面を開きます。最後の追加はカレンダー側で確定してください。
+          </p>
+          <div className={styles.dialogActions}>
+            <button type="button" className={styles.googleButton} onClick={addToGoogleCalendar} autoFocus>
+              Google カレンダーに追加
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button type="button" className={styles.appleButton} onClick={addToAppleCalendar}>
+              Apple カレンダーに追加
+              <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+          <button type="button" className={styles.dialogCancelButton} onClick={closeCalendarDialog}>
+            キャンセル
+          </button>
+        </div>
+      </dialog>
     </div>
   )
 }

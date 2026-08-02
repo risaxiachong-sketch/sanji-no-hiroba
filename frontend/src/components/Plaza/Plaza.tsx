@@ -10,10 +10,9 @@ import styles from './Plaza.module.css'
 interface Props {
   avatar: Avatar
   onNavigate: (page: Page) => void
-  onExit: () => void
 }
 
-export function Plaza({ avatar, onNavigate, onExit }: Props) {
+export function Plaza({ avatar, onNavigate }: Props) {
   const [posts, setPosts] = useState<Post[]>([])
   const [visitors, setVisitors] = useState<DummyUser[]>([])
 
@@ -37,13 +36,6 @@ export function Plaza({ avatar, onNavigate, onExit }: Props) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.topBar}>
-        <h1 className={styles.topTitle}>さんじのひろば</h1>
-        <button type="button" className={styles.exitBtn} onClick={onExit} aria-label="広場を退出する">
-          <span aria-hidden="true">🚪</span>退出
-        </button>
-      </header>
-
       <div className={styles.plazaScene}>
         <Plaza2D avatar={avatar} visitors={visitors} posts={posts} onOpenBulletinBoard={() => onNavigate('bulletinBoard')} />
       </div>
