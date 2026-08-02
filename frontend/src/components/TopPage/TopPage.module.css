@@ -295,6 +295,12 @@
   box-shadow: 6px 0 0 currentColor, 0 -6px 0 currentColor, 6px -6px 0 currentColor;
 }
 
+@media (min-width: 431px) and (orientation: portrait) {
+  .screen {
+    width: min(100%, 500px);
+  }
+}
+
 @media (max-height: 760px) {
   .screen {
     padding-bottom: 10px;

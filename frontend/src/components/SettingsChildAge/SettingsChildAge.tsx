@@ -21,14 +21,20 @@ export function SettingsChildAge({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button type="button" className="btn-back" onClick={onBack} aria-label="設定に戻る">
-          ← 戻る
+        <button type="button" className={styles.backButton} onClick={onBack} aria-label="設定に戻る">
+          <span aria-hidden="true">‹</span>
+          <span>設定</span>
         </button>
-        <h1 className={styles.title}>お子さんの年齢</h1>
-        <div style={{ width: '60px' }} />
+        <div className={styles.headingGroup}>
+          <span className={styles.eyebrow}>CHILD PROFILE</span>
+          <h1 className={styles.title}>お子さんの年齢</h1>
+          <p className={styles.subtitle}>近い年齢をひとつ選んでね</p>
+        </div>
+        <span className={styles.headerSpacer} aria-hidden="true" />
       </header>
 
       <div className={styles.body}>
+        <p className={styles.guide}>選んだ年齢に合わせて、イベントを見つけやすくします。</p>
         <ul className={styles.list} role="group" aria-label="お子さんの年齢区分を選択">
           {AGE_GROUPS.map((group) => (
             <li key={group.value}>
@@ -38,10 +44,16 @@ export function SettingsChildAge({ onBack }: Props) {
                 aria-pressed={profile?.childAgeGroup === group.value}
                 onClick={() => handleSelect(group.value)}
               >
-                <span className={styles.optionLabel}>{group.label}</span>
-                {profile?.childAgeGroup === group.value && (
-                  <span className={styles.check} aria-hidden="true">✓</span>
-                )}
+                <span className={styles.optionIcon} aria-hidden="true">☺</span>
+                <span className={styles.optionText}>
+                  <span className={styles.optionLabel}>{group.label}</span>
+                  <span className={styles.optionHint}>
+                    {profile?.childAgeGroup === group.value ? '現在の設定' : 'この年齢にする'}
+                  </span>
+                </span>
+                <span className={styles.check} aria-hidden="true">
+                  {profile?.childAgeGroup === group.value ? '✓' : '›'}
+                </span>
               </button>
             </li>
           ))}

@@ -8,46 +8,6 @@
   position: relative;
 }
 
-.topBar {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  padding: 8px 14px;
-  background: rgba(255, 252, 246, 0.93);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(113, 102, 181, 0.1);
-  z-index: 30;
-  gap: 8px;
-}
-
-.topTitle {
-  flex: 1;
-  text-align: center;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #4d456f;
-  margin: 0;
-  letter-spacing: 0.04em;
-}
-
-.exitBtn {
-  border: none;
-  background: transparent;
-  font-size: 0.75rem;
-  color: #9e96b8;
-  cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  border-radius: 8px;
-  padding: 4px 8px;
-  white-space: nowrap;
-}
-.exitBtn:hover { background: rgba(113, 102, 181, 0.08); color: #7166b5; }
-
 .plazaScene {
   flex: 1;
   position: relative;
@@ -151,37 +111,8 @@
    横画面（landscape）レイアウト
 ===================================================== */
 @media (orientation: landscape) {
-
   .page {
-    flex-direction: row;    /* 横並びに変える */
     max-width: none;
-  }
-
-  /* トップバーを左側の縦帯に変える */
-  .topBar {
-    flex-direction: column;
-    width: 52px;
-    height: 100%;
-    border-bottom: none;
-    border-right: 1px solid rgba(113, 102, 181, 0.1);
-    padding: 12px 4px;
-    justify-content: flex-start;
-    gap: 12px;
-  }
-
-  .topTitle {
-    writing-mode: vertical-rl;
-    font-size: 0.78rem;
-    flex: 1;
-    text-align: center;
-  }
-
-  .exitBtn {
-    flex-direction: column;
-    min-width: 40px;
-    min-height: 44px;
-    padding: 4px 2px;
-    font-size: 0.65rem;
   }
 
   .plazaScene {
@@ -207,12 +138,12 @@
 }
 
 /* =====================================================
-   縦画面（portrait）— 最大幅制限
+   縦画面（portrait）
 ===================================================== */
 @media (orientation: portrait) {
   .page {
-    max-width: 430px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
   }
 }
 
@@ -235,5 +166,31 @@
 
   .postButtonVisual {
     animation: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page {
+    max-width: none;
+    margin: 0;
+    flex-direction: column;
+  }
+
+  .postButton {
+    right: calc(144px + 26px);
+    bottom: 30px;
+    left: auto;
+    width: 182px;
+    height: 182px;
+    transform: none;
+  }
+
+  .postButton:hover,
+  .postButton:focus-visible {
+    transform: translateY(-4px) scale(1.03);
+  }
+
+  .postButton:active {
+    transform: translateY(1px) scale(0.97);
   }
 }

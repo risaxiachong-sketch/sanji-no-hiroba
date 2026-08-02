@@ -440,6 +440,107 @@
   }
 }
 
+@media (min-width: 431px) and (orientation: portrait) {
+  .page {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (min-width: 720px) and (orientation: landscape), (min-width: 1024px) {
+  .page {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(260px, 420px) minmax(300px, 480px);
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-content: center;
+    column-gap: clamp(18px, 4vw, 54px);
+    padding: 0 24px;
+  }
+
+  .header {
+    width: min(100%, 960px);
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+    padding: 18px 0 12px;
+  }
+
+  .title {
+    font-size: 1.45rem;
+  }
+
+  .stage {
+    width: min(100%, 420px);
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+    justify-self: end;
+    margin: 0;
+    border-radius: 52px 52px 84px 52px;
+  }
+
+  .chooser {
+    width: 100%;
+    max-width: 480px;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    margin: 0;
+    transform: translateY(-62px);
+  }
+
+  .hint {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  .carouselViewport {
+    height: 94px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.36);
+    box-shadow: inset 0 0 0 1px rgba(121, 86, 60, 0.06);
+  }
+
+  .thumbnailButton {
+    top: 12px;
+  }
+
+  .footer {
+    width: 100%;
+    max-width: 480px;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    margin: 0;
+    padding: 0;
+    background: none;
+    transform: translateY(66px);
+  }
+
+  .confirmButton {
+    min-height: 58px;
+  }
+
+  .sparkleOne {
+    top: 18%;
+    left: 4%;
+  }
+
+  .sparkleTwo {
+    top: 32%;
+    right: 4%;
+  }
+
+  .sparkleThree {
+    top: auto;
+    bottom: 13%;
+    left: 48%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .previewEntrance,
   .thumbnailButton.selected,

@@ -19,32 +19,6 @@
   overflow: hidden;
 }
 
-.backButton {
-  position: relative;
-  z-index: 3;
-  min-height: 36px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 5px 13px 6px 10px;
-  border: 1px solid rgba(218, 186, 147, 0.48);
-  border-radius: 999px;
-  background: rgba(255, 253, 248, 0.9);
-  color: #8a684f;
-  box-shadow:
-    0 8px 16px rgba(132, 93, 63, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92);
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.backButton span:first-child {
-  color: #e27a8d;
-  font-size: 1.15rem;
-  line-height: 1;
-}
-
 .titleBlock {
   position: relative;
   z-index: 2;
@@ -146,6 +120,12 @@
   flex-direction: column;
   gap: 12px;
   padding: 0 14px calc(92px + env(safe-area-inset-bottom, 0px));
+}
+
+.eventGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .summaryCard {
@@ -569,9 +549,62 @@
   }
 }
 
+@media (min-width: 431px) and (orientation: portrait) {
+  .page {
+    max-width: none;
+    margin: 0;
+  }
+
+  .hero,
+  .body {
+    width: min(100%, 720px);
+    margin-inline: auto;
+  }
+
+  .body {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+}
+
+@media (min-width: 600px) and (orientation: portrait) {
+  .eventGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+  }
+}
+
 @media (orientation: landscape) {
   .body {
     padding-bottom: var(--space-md);
     padding-right: calc(var(--bottom-nav-height) + var(--space-md));
+  }
+}
+
+@media (min-width: 600px) and (orientation: landscape), (min-width: 1024px) {
+  .page {
+    max-width: none;
+    margin: 0;
+  }
+
+  .hero,
+  .body {
+    width: min(100%, 960px);
+    margin-inline: auto;
+  }
+
+  .body {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+@media (min-width: 780px) and (orientation: landscape), (min-width: 1024px) {
+  .eventGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 298px));
+    align-content: start;
+    justify-content: center;
   }
 }

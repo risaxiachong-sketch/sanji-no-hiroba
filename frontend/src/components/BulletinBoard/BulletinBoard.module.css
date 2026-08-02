@@ -22,8 +22,8 @@
 .titleBlock {
   position: relative;
   z-index: 2;
-  width: min(61%, 258px);
-  margin-left: 18px;
+  width: min(64%, 280px);
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -62,8 +62,8 @@
   position: absolute;
   z-index: 1;
   top: -12px;
-  right: -54px;
-  width: 205px;
+  right: -80px;
+  width: 195px;
   height: auto;
   pointer-events: none;
   filter: drop-shadow(0 8px 14px rgba(164, 110, 74, 0.08));
@@ -196,6 +196,7 @@
   min-width: 0;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 4px;
 }
 
@@ -822,8 +823,8 @@
   }
 
   .titleBlock {
-    width: 61%;
-    margin-left: 16px;
+    width: 68%;
+    margin-inline: auto;
   }
 
   .title {
@@ -835,8 +836,8 @@
   }
 
   .alpacaImage {
-    right: -52px;
-    width: 224px;
+    right: -100px;
+    width: 215px;
   }
 
   .filterPanel {
@@ -904,9 +905,101 @@
   }
 }
 
+@media (min-width: 431px) and (orientation: portrait) {
+  .page {
+    max-width: none;
+    margin: 0;
+  }
+
+  .hero,
+  .list {
+    width: min(100%, 720px);
+    margin-inline: auto;
+  }
+
+  .filterPanel {
+    width: min(calc(100% - 28px), 720px);
+    margin: -4px auto 12px;
+  }
+
+  .list {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+}
+
+@media (min-width: 600px) and (orientation: portrait) {
+  .filterRow {
+    grid-template-columns: 28px 82px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+  }
+
+  .empty {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (orientation: landscape) {
   .list {
     padding-right: 16px;
-    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--space-md);
+  }
+}
+
+@media (min-width: 600px) and (orientation: landscape), (min-width: 1024px) {
+  .page {
+    max-width: none;
+    margin: 0;
+  }
+
+  .hero,
+  .filterPanel,
+  .list {
+    width: min(100%, 960px);
+    margin-inline: auto;
+  }
+
+  .list {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .titleBlock {
+    width: min(58%, 420px);
+    margin-inline: auto;
+  }
+
+  .filterRow {
+    grid-template-columns: 28px 82px minmax(0, 700px);
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+@media (min-width: 780px) and (orientation: landscape), (min-width: 1024px) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+  }
+
+  .empty {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1220px) {
+  .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .empty {
+    grid-column: 1 / -1;
   }
 }

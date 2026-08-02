@@ -1,75 +1,289 @@
 .page {
-  max-width: 430px;
+  width: min(100%, 430px);
+  min-height: 100dvh;
   margin: 0 auto;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  color: #56392f;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.96) 0 8%, transparent 24%),
+    radial-gradient(circle at 88% 24%, rgba(255, 225, 202, 0.72) 0 10%, transparent 25%),
+    linear-gradient(180deg, #fff8ee 0%, #fffdf8 48%, #f9efe3 100%);
 }
 
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) 62px;
+  align-items: start;
+  gap: 8px;
+  padding: max(18px, env(safe-area-inset-top)) 14px 14px;
+}
+
+.backButton {
+  min-height: 38px;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: rgba(255, 248, 241, 0.95);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--color-border);
+  justify-content: center;
+  gap: 3px;
+  padding: 5px 10px 6px 7px;
+  border: 1px solid rgba(218, 186, 147, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.92);
+  color: #8a684f;
+  box-shadow: 0 8px 18px rgba(132, 93, 63, 0.1);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.backButton span:first-child {
+  color: #e27a8d;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.headerSpacer {
+  width: 62px;
+}
+
+.headingGroup {
+  min-width: 0;
+  padding-top: 8px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 2px;
+  color: #ef8798;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
 }
 
 .title {
-  flex: 1;
-  text-align: center;
-  font-size: var(--font-size-lg);
-  color: #4d456f;
   margin: 0;
+  color: #5a4035;
+  font-size: clamp(1.4rem, 6vw, 1.75rem);
+  font-weight: 900;
+  line-height: 1.2;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.9);
+}
+
+.subtitle {
+  margin: 6px -30px 0;
+  color: #80675d;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .body {
+  width: 100%;
   flex: 1;
-  padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 16px;
+  padding: 16px 14px max(24px, env(safe-area-inset-bottom));
 }
 
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
+  padding: 22px 18px 18px;
+  border: 1px solid rgba(218, 186, 147, 0.44);
+  border-radius: 26px;
+  background: rgba(255, 253, 248, 0.96);
+  box-shadow:
+    0 16px 32px rgba(132, 93, 63, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.cardHeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.cardIcon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  background: #ffe4e9;
+  color: #df7689;
+  box-shadow: 0 8px 16px rgba(132, 93, 63, 0.09);
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+.cardTitle,
+.cardDescription {
+  margin: 0;
+}
+
+.cardTitle {
+  color: #5a4035;
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.cardDescription {
+  color: #94786c;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .label {
   display: block;
-  margin-bottom: var(--space-xs);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-main);
+  margin-bottom: 7px;
+  color: #684b40;
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 .input {
   width: 100%;
-  min-height: var(--tap-min);
-  padding: var(--space-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: #fdfcff;
-  font-size: var(--font-size-base);
-  color: var(--color-text-main);
+  min-height: 54px;
+  padding: 12px 15px;
+  border: 2px solid rgba(218, 186, 147, 0.5);
+  border-radius: 16px;
+  background: #fffdf9;
+  color: #56392f;
+  font-size: 1rem;
+  font-weight: 750;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary);
+  border-color: #ed8b9a;
+  box-shadow: 0 0 0 4px rgba(237, 139, 154, 0.14);
 }
 
 .hint {
   display: block;
-  margin-top: var(--space-xs);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-sub);
+  margin-top: 7px;
+  color: #9a8177;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.saveButton {
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f19aa4, #efb080);
+  color: #5f382a;
+  box-shadow: 0 13px 25px rgba(177, 103, 78, 0.22);
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.saveButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 17px 30px rgba(177, 103, 78, 0.28);
+}
+
+.saveButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 360px) {
+  .header {
+    grid-template-columns: 56px minmax(0, 1fr) 56px;
+    padding-inline: 10px;
+  }
+
+  .headerSpacer {
+    width: 56px;
+  }
+
+  .subtitle {
+    margin-inline: -22px;
+  }
+}
+
+@media (min-width: 431px) and (orientation: portrait) {
+  .page {
+    width: 100%;
+    max-width: none;
+  }
+
+  .header,
+  .body {
+    width: min(100%, 680px);
+    margin-inline: auto;
+  }
+
+  .body {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+}
+
+@media (min-width: 600px) and (orientation: landscape), (min-width: 1024px) {
+  .page {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+  }
+
+  .header,
+  .body {
+    width: min(100%, 760px);
+    margin-inline: auto;
+  }
+
+  .header {
+    grid-template-columns: 72px minmax(0, 1fr) 72px;
+    padding: 18px 24px 8px;
+  }
+
+  .headerSpacer {
+    width: 72px;
+  }
+
+  .headingGroup {
+    padding-top: 0;
+  }
+
+  .title {
+    font-size: 1.85rem;
+  }
+
+  .subtitle {
+    margin-inline: 0;
+    font-size: 0.82rem;
+  }
+
+  .body {
+    justify-content: center;
+    padding: 14px 28px 28px;
+  }
+
+  .card {
+    padding: 26px 28px 22px;
+  }
+
+  .saveButton {
+    width: min(100%, 360px);
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .saveButton {
+    transition: none;
+  }
 }
