@@ -1,5 +1,6 @@
 import type { Avatar, Page } from '../../types'
 import { AGE_GROUPS } from '../../data/ageGroups'
+import { useSoundEffects } from '../../audio/SoundContext'
 import { useProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './Settings.module.css'
@@ -13,6 +14,7 @@ interface Props {
 /** Settings is a menu of editable fields; tapping a row opens its own editor screen. */
 export function Settings({ avatar, onNavigate }: Props) {
   const { profile } = useProfile()
+  const { enabled: soundEnabled, setEnabled: setSoundEnabled } = useSoundEffects()
   const nickname = profile?.nickname || '未設定'
   const childAgeLabel = AGE_GROUPS.find(group => group.value === profile?.childAgeGroup)?.label
     ?? profile?.childAgeGroup
@@ -52,6 +54,7 @@ export function Settings({ avatar, onNavigate }: Props) {
             <button
               type="button"
               className={styles.menuRow}
+              data-sfx="navigate"
               onClick={() => onNavigate('settingsNickname')}
             >
               <span className={styles.menuIcon} aria-hidden="true">
@@ -68,6 +71,7 @@ export function Settings({ avatar, onNavigate }: Props) {
             <button
               type="button"
               className={styles.menuRow}
+              data-sfx="navigate"
               onClick={() => onNavigate('settingsChildAge')}
             >
               <span className={styles.menuIcon} aria-hidden="true">
@@ -84,6 +88,7 @@ export function Settings({ avatar, onNavigate }: Props) {
             <button
               type="button"
               className={styles.menuRow}
+              data-sfx="navigate"
               onClick={() => onNavigate('settingsAvatar')}
             >
               <span className={`${styles.menuIcon} ${styles.avatarIcon}`} style={{ backgroundColor: avatar.color }} aria-hidden="true">
@@ -100,6 +105,27 @@ export function Settings({ avatar, onNavigate }: Props) {
                 </span>
               </span>
               <span className={styles.chevron} aria-hidden="true">›</span>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={soundEnabled}
+              className={styles.menuRow}
+              data-sfx="none"
+              onClick={() => setSoundEnabled(!soundEnabled)}
+            >
+              <span className={styles.menuIcon} aria-hidden="true">
+                <span className={styles.menuSymbol}>♪</span>
+              </span>
+              <span className={styles.menuText}>
+                <span className={styles.menuLabel}>効果音</span>
+                <span className={styles.menuValue}>{soundEnabled ? 'オン' : 'オフ'}</span>
+              </span>
+              <span className={`${styles.soundSwitch} ${soundEnabled ? styles.soundSwitchOn : ''}`} aria-hidden="true">
+                <span className={styles.soundSwitchKnob} />
+              </span>
             </button>
           </li>
         </ul>

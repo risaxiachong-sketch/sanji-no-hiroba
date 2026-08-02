@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { fetchSavedEventIds, removeSavedEvent, saveEvent } from '../api/savedEvents'
 import { getIdentity } from '../api/identity'
+import { useSoundEffects } from '../audio/SoundContext'
 
 const STORAGE_KEY = 'sanji-saved-events'
 
@@ -18,6 +19,7 @@ function cache(ids: string[]) {
 }
 
 export function useSavedEvents(userId?: string) {
+  const { play } = useSoundEffects()
   const [savedIds, setSavedIds] = useState<string[]>(loadCache)
   const [error, setError] = useState<string | null>(null)
 
@@ -52,10 +54,11 @@ export function useSavedEvents(userId?: string) {
         cache(current)
         setSavedIds(current)
         setError('保存一覧を同期できませんでした。')
+        play('error')
       })
       return next
     })
-  }, [])
+  }, [play])
 
   const isSaved = useCallback((id: string) => savedIds.includes(id), [savedIds])
   return { savedIds, toggleSave, isSaved, error }

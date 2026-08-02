@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createEvent, uploadEventImage } from '../../api/events'
+import { useSoundEffects } from '../../audio/SoundContext'
 import type { Event, FacilityType } from '../../types'
 import styles from './AdminEventForm.module.css'
 
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function AdminEventForm({ onBack }: Props) {
+  const { play } = useSoundEffects()
   const [facilityCode, setFacilityCode] = useState(() => sessionStorage.getItem(ADMIN_CODE_KEY) ?? '')
   const [authenticated, setAuthenticated] = useState(() => Boolean(sessionStorage.getItem(ADMIN_CODE_KEY)))
   const [authError, setAuthError] = useState('')
@@ -41,12 +43,14 @@ export function AdminEventForm({ onBack }: Props) {
     const code = facilityCode.trim()
     if (!code) {
       setAuthError('施設コードを入力してください。')
+      play('error')
       return
     }
     sessionStorage.setItem(ADMIN_CODE_KEY, code)
     setFacilityCode(code)
     setAuthenticated(true)
     setAuthError('')
+    play('success')
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,10 +58,12 @@ export function AdminEventForm({ onBack }: Props) {
     if (!file) return
     if (file.size > 5 * 1024 * 1024) {
       setSubmitError('画像は5MB以下にしてください。')
+      play('error')
       return
     }
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
       setSubmitError('JPEGまたはPNGの画像を選んでください。')
+      play('error')
       return
     }
 
@@ -76,6 +82,7 @@ export function AdminEventForm({ onBack }: Props) {
     event.preventDefault()
     if (!providerName.trim() || !eventName.trim() || !eventDate || !startTime || !endTime || !location.trim()) {
       setSubmitError('必須項目を入力してください。')
+      play('error')
       return
     }
 
@@ -109,8 +116,10 @@ export function AdminEventForm({ onBack }: Props) {
       }
       await createEvent(eventInput, facilityCode)
       setSubmitted(true)
+      play('success')
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'イベントを登録できませんでした。')
+      play('error')
     } finally {
       setSubmitting(false)
     }
@@ -120,7 +129,7 @@ export function AdminEventForm({ onBack }: Props) {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <button type="button" className="btn-back" onClick={onBack} aria-label="前の画面に戻る">
+          <button type="button" className="btn-back" data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
             ← 戻る
           </button>
           <h1 className={styles.headerTitle}>施設担当者ログイン</h1>
@@ -140,7 +149,7 @@ export function AdminEventForm({ onBack }: Props) {
             autoComplete="off"
           />
           {authError && <p className={styles.error}>{authError}</p>}
-          <button type="submit" className="btn-primary">イベント登録へ</button>
+          <button type="submit" className="btn-primary" data-sfx="navigate">イベント登録へ</button>
         </form>
       </div>
     )
@@ -150,7 +159,7 @@ export function AdminEventForm({ onBack }: Props) {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <button type="button" className="btn-back" onClick={onBack} aria-label="前の画面に戻る">
+          <button type="button" className="btn-back" data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
             ← 戻る
           </button>
           <h1 className={styles.headerTitle}>登録完了</h1>
@@ -158,10 +167,10 @@ export function AdminEventForm({ onBack }: Props) {
         </header>
         <div className={styles.successCard}>
           <p className={styles.successText}>イベントを登録しました。掲示板にも反映されます。</p>
-          <button type="button" className="btn-primary" onClick={() => setSubmitted(false)}>
+          <button type="button" className="btn-primary" data-sfx="navigate" onClick={() => setSubmitted(false)}>
             続けて登録する
           </button>
-          <button type="button" className="btn-secondary" onClick={onBack}>トップに戻る</button>
+          <button type="button" className="btn-secondary" data-sfx="back" onClick={onBack}>トップに戻る</button>
         </div>
       </div>
     )
@@ -170,13 +179,14 @@ export function AdminEventForm({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button type="button" className="btn-back" onClick={onBack} aria-label="前の画面に戻る">
+        <button type="button" className="btn-back" data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
           ← 戻る
         </button>
         <h1 className={styles.headerTitle}>イベント登録</h1>
         <button
           type="button"
           className="btn-back"
+          data-sfx="back"
           onClick={() => {
             sessionStorage.removeItem(ADMIN_CODE_KEY)
             setAuthenticated(false)
@@ -269,7 +279,7 @@ export function AdminEventForm({ onBack }: Props) {
           )}
         </div>
         {submitError && <p className={styles.error}>{submitError}</p>}
-        <button type="submit" className="btn-primary" disabled={submitting}>
+        <button type="submit" className="btn-primary" data-sfx="send" disabled={submitting}>
           {submitting ? '登録しています…' : 'イベントを登録する'}
         </button>
       </form>

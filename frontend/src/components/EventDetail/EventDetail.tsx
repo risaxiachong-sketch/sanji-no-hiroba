@@ -91,7 +91,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <button type="button" className={styles.backButton} onClick={onBack}>戻る</button>
+          <button type="button" className={styles.backButton} data-sfx="back" onClick={onBack}>戻る</button>
           <h1 className={styles.headerTitle}>イベント詳細</h1>
           <span className={styles.headerSpacer} />
         </header>
@@ -162,7 +162,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button type="button" className={styles.backButton} onClick={onBack} aria-label="前の画面に戻る">
+        <button type="button" className={styles.backButton} data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
           <span aria-hidden="true">‹</span>
           <span>戻る</span>
         </button>
@@ -241,6 +241,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
             <button
               type="button"
               className={styles.calendarBtn}
+              data-sfx="select"
               onClick={openCalendarDialog}
               disabled={!canAddToCalendar}
               aria-describedby={calendarHint ? 'calendar-hint' : undefined}
@@ -285,6 +286,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               className={styles.sourceLink}
+              data-sfx="navigate"
               aria-label={`${event.title}の公式情報を見る（外部サイト）`}
             >
               <span className={styles.sourceText}>公式情報を確認する</span>
@@ -302,6 +304,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
         <button
           type="button"
           className={`${styles.saveBtn} ${isSaved ? styles.saved : styles.unsaved}`}
+          data-sfx={isSaved ? 'unsave' : 'save'}
           onClick={onToggleSave}
           aria-pressed={isSaved}
           aria-label={isSaved ? '保存を解除する' : 'イベントを保存する'}
@@ -333,6 +336,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
           <button
             type="button"
             className={styles.dialogCloseButton}
+            data-sfx="back"
             onClick={closeCalendarDialog}
             aria-label="カレンダー選択を閉じる"
           >
@@ -344,16 +348,16 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
             追加先を選ぶと、予定が入力済みの登録画面を開きます。最後の追加はカレンダー側で確定してください。
           </p>
           <div className={styles.dialogActions}>
-            <button type="button" className={styles.googleButton} onClick={addToGoogleCalendar} autoFocus>
+            <button type="button" className={styles.googleButton} data-sfx="navigate" onClick={addToGoogleCalendar} autoFocus>
               Google カレンダーに追加
               <span aria-hidden="true">↗</span>
             </button>
-            <button type="button" className={styles.appleButton} onClick={addToAppleCalendar}>
+            <button type="button" className={styles.appleButton} data-sfx="navigate" onClick={addToAppleCalendar}>
               Apple カレンダーに追加
               <span aria-hidden="true">↓</span>
             </button>
           </div>
-          <button type="button" className={styles.dialogCancelButton} onClick={closeCalendarDialog}>
+          <button type="button" className={styles.dialogCancelButton} data-sfx="back" onClick={closeCalendarDialog}>
             キャンセル
           </button>
         </div>

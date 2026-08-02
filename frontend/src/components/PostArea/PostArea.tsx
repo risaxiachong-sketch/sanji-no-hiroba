@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Avatar, Page, Post, ReactionOption, ReactionType } from '../../types'
 import { createPost, fetchPosts } from '../../api/posts'
 import { addReaction, fetchReactionUsers, removeReaction } from '../../api/reactions'
+import { useSoundEffects } from '../../audio/SoundContext'
 import { useProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './PostArea.module.css'
@@ -36,6 +37,7 @@ interface Props {
 
 export function PostArea({ avatar, onClose, onNavigate }: Props) {
   const { profile } = useProfile()
+  const { play } = useSoundEffects()
   const [text, setText] = useState('')
   const [posted, setPosted] = useState(false)
   const [posts, setPosts] = useState<Post[]>([])
@@ -61,9 +63,11 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
       setText('')
       setPosted(true)
       setError(null)
+      play('success')
       window.setTimeout(() => setPosted(false), 2500)
     } catch {
       setError('投稿できませんでした。入力内容はそのまま残しています。')
+      play('error')
     } finally {
       setIsSubmitting(false)
     }
@@ -88,6 +92,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
     } catch {
       await reloadPosts().catch(() => undefined)
       setError('リアクションを更新できませんでした。')
+      play('error')
     }
   }
 
@@ -104,6 +109,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
         : post))
     } catch {
       setError('リアクションした人を読み込めませんでした。')
+      play('error')
     }
   }
 
@@ -120,7 +126,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.hero}>
-        <button type="button" className={styles.backButton} onClick={onClose} aria-label="広場に戻る"><span aria-hidden="true">‹</span><span>ひろば</span></button>
+        <button type="button" className={styles.backButton} data-sfx="back" onClick={onClose} aria-label="広場に戻る"><span aria-hidden="true">‹</span><span>ひろば</span></button>
         <div className={styles.titleBlock}>
           <p className={styles.eyebrow}>Voice</p>
           <h1 className={styles.title}>つぶやく</h1>
@@ -140,7 +146,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
           </div>
           <textarea className={styles.textarea} value={text} maxLength={MAX_LENGTH} placeholder="今の気持ちを短く書いてみよう" aria-label="つぶやきを投稿" onChange={(event) => setText(event.target.value)} />
           <div className={`${styles.counter} ${text.length >= MAX_LENGTH ? styles.limit : ''}`}>{text.length} / {MAX_LENGTH}</div>
-          <button type="button" className={styles.postButton} disabled={!text.trim() || isSubmitting} onClick={handlePost}>{isSubmitting ? '送信中…' : 'つぶやく'}</button>
+          <button type="button" className={styles.postButton} data-sfx="send" disabled={!text.trim() || isSubmitting} onClick={handlePost}>{isSubmitting ? '送信中…' : 'つぶやく'}</button>
           {posted && <p className={styles.sentMessage} role="status">🌸 つぶやきを送りました</p>}
         </section>
 
@@ -164,7 +170,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
                   const isExpanded = expandedReaction?.postId === post.id && expandedReaction.type === reaction.value
                   return (
                     <div key={reaction.value} className={styles.reactionWrapper}>
-                      <button type="button" className={`${styles.postReactionBtn} ${isMine ? styles.myReaction : ''}`} onClick={() => handleReaction(post.id, reaction.value)} aria-pressed={isMine} aria-label={reaction.label + (count ? '（' + count + '件）' : '')}>
+                      <button type="button" className={`${styles.postReactionBtn} ${isMine ? styles.myReaction : ''}`} data-sfx="select" onClick={() => handleReaction(post.id, reaction.value)} aria-pressed={isMine} aria-label={reaction.label + (count ? '（' + count + '件）' : '')}>
                         <span aria-hidden="true">{reaction.emoji}</span>{count > 0 && <span className={styles.reactionCount}>{count}</span>}
                       </button>
                       {count > 0 && <button type="button" className={styles.groupToggle} onClick={() => toggleReactionGroup(post.id, reaction.value)} aria-expanded={isExpanded} aria-label={reaction.label + 'をした人を表示'}>▾</button>}
@@ -186,7 +192,7 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
           ))}
         </section>
 
-        <div className={styles.footer}><button type="button" className={styles.returnButton} onClick={onClose}>広場に戻る</button></div>
+        <div className={styles.footer}><button type="button" className={styles.returnButton} data-sfx="back" onClick={onClose}>広場に戻る</button></div>
       </main>
       <BottomNav active={null} onNavigate={onNavigate} />
     </div>

@@ -56,7 +56,7 @@ export function ProfileSetup({ onComplete }: Props) {
               if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) setIsAgeMenuOpen(false)
             }}
           >
-            <button id="childAgeGroup" type="button" className={`${styles.selectButton} ${childAgeGroup === '' ? styles.selectButtonPlaceholder : ''}`} aria-haspopup="listbox" aria-expanded={isAgeMenuOpen} onClick={() => setIsAgeMenuOpen((current) => !current)}>
+            <button id="childAgeGroup" type="button" data-sfx="select" className={`${styles.selectButton} ${childAgeGroup === '' ? styles.selectButtonPlaceholder : ''}`} aria-haspopup="listbox" aria-expanded={isAgeMenuOpen} onClick={() => setIsAgeMenuOpen((current) => !current)}>
               <span>{selectedAgeLabel}</span>
               <span className={styles.selectChevron} aria-hidden="true" />
             </button>
@@ -74,7 +74,7 @@ export function ProfileSetup({ onComplete }: Props) {
         </div>
 
         <div className={styles.footer}>
-          <button type="submit" className={styles.nextButton} disabled={!isValid}>次へ</button>
+          <button type="submit" className={styles.nextButton} data-sfx="navigate" disabled={!isValid}>次へ</button>
         </div>
       </form>
     </div>

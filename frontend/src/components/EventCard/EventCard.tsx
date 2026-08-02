@@ -37,6 +37,7 @@ export function EventCard({ event, onClick }: Props) {
       className={styles.card}
       onClick={onClick}
       role="button"
+      data-sfx="navigate"
       tabIndex={0}
       aria-label={`${event.title}の詳細を見る`}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}

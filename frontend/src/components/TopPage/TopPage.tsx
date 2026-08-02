@@ -24,6 +24,7 @@ function EntryActions({
         <button
           type="button"
           className={`${styles.actionBtn} ${styles.enterBtn}`}
+          data-sfx="navigate"
           onClick={onEnter}
         >
           <span className={`${styles.buttonMark} ${styles.enterMark}`} aria-hidden="true" />
@@ -34,6 +35,7 @@ function EntryActions({
         <button
           type="button"
           className={`${styles.actionBtn} ${styles.boardBtn}`}
+          data-sfx="navigate"
           onClick={onOpenBulletinBoard}
         >
           <span className={`${styles.buttonMark} ${styles.boardMark}`} aria-hidden="true" />
@@ -45,6 +47,7 @@ function EntryActions({
       <button
         type="button"
         className={styles.adminBtn}
+        data-sfx="navigate"
         onClick={onAdminAccess}
         aria-label="施設担当者向けイベント登録画面へ"
       >

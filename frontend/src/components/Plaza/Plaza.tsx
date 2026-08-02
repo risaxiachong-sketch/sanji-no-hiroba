@@ -40,7 +40,7 @@ export function Plaza({ avatar, onNavigate }: Props) {
         <Plaza2D avatar={avatar} visitors={visitors} posts={posts} onOpenBulletinBoard={() => onNavigate('bulletinBoard')} />
       </div>
 
-      <button type="button" className={styles.postButton} data-testid="plaza-post-button" aria-label="つぶやく" onClick={() => onNavigate('postArea')}>
+      <button type="button" className={styles.postButton} data-sfx="navigate" data-testid="plaza-post-button" aria-label="つぶやく" onClick={() => onNavigate('postArea')}>
         <span className={styles.postButtonVisual} aria-hidden="true">
           <img className={styles.postButtonArt} src={postStarButton} alt="" />
           <span className={styles.postButtonLabel}>つぶやく</span>

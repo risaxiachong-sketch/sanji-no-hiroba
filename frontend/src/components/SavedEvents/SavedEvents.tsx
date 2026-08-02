@@ -85,6 +85,7 @@ function SavedEventCard({ event, onSelectEvent }: SavedEventCardProps) {
       <button
         type="button"
         className={styles.cardButton}
+        data-sfx="navigate"
         onClick={() => onSelectEvent(event.id)}
         aria-label={`${event.title}の詳細を見る`}
       >
@@ -152,7 +153,7 @@ function SavedEventCard({ event, onSelectEvent }: SavedEventCardProps) {
   )
 }
 
-export function SavedEvents({ savedIds, onSelectEvent, onBack, onNavigate }: Props) {
+export function SavedEvents({ savedIds, onSelectEvent, onNavigate }: Props) {
   const [saved, setSaved] = useState<Event[]>([])
 
   useEffect(() => {
