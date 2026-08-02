@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSoundEffects } from '../../audio/SoundContext'
 import { useProfile } from '../../hooks/useProfile'
 import styles from './SettingsNickname.module.css'
 
@@ -8,6 +9,7 @@ interface Props {
 
 export function SettingsNickname({ onBack }: Props) {
   const { profile, saveProfile } = useProfile()
+  const { play } = useSoundEffects()
   const [nickname, setNickname] = useState(profile?.nickname ?? '')
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
@@ -21,9 +23,11 @@ export function SettingsNickname({ onBack }: Props) {
     setError('')
     try {
       await saveProfile({ ...profile, nickname: nickname.trim() })
+      play('success')
       onBack()
     } catch {
       setError('保存できませんでした。通信状況を確認して、もう一度お試しください。')
+      play('error')
     } finally {
       setIsSaving(false)
     }
@@ -32,7 +36,7 @@ export function SettingsNickname({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button type="button" className={styles.backButton} onClick={onBack} aria-label="設定に戻る">
+        <button type="button" className={styles.backButton} data-sfx="back" onClick={onBack} aria-label="設定に戻る">
           <span aria-hidden="true">‹</span>
           <span>設定</span>
         </button>
@@ -72,6 +76,7 @@ export function SettingsNickname({ onBack }: Props) {
         <button
           type="button"
           className={styles.saveButton}
+          data-sfx="save"
           disabled={!isValid || !isChanged || isSaving}
           onClick={handleSave}
         >

@@ -29,6 +29,7 @@ export function BottomNav({ active, onNavigate }: Props) {
           key={item.page}
           type="button"
           className={`${styles.navBtn} ${active === item.page ? styles.navActive : ''}`}
+          data-sfx={active === item.page ? 'none' : 'navigate'}
           aria-current={active === item.page ? 'page' : undefined}
           aria-label={item.ariaLabel}
           onClick={() => item.page !== active && onNavigate(item.page)}

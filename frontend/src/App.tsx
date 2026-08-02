@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Avatar, Page, Profile } from './types'
 import { getIdentity } from './api/identity'
 import { registerUser, updateMyProfile } from './api/users'
+import { useSoundEffects } from './audio/SoundContext'
 import { useProfile } from './hooks/useProfile'
 import { useSavedEvents } from './hooks/useSavedEvents'
 import { useSelectedAvatar } from './hooks/useSelectedAvatar'
@@ -22,6 +23,7 @@ import { AppShell } from './components/AppShell/AppShell'
 import './App.css'
 
 function App() {
+  const { play } = useSoundEffects()
   const [currentPage, setCurrentPage] = useState<Page>('top')
   const [previousPage, setPreviousPage] = useState<Page | null>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
@@ -93,9 +95,10 @@ function App() {
       saveDraft(remote)
       navigate('plaza')
     } catch {
+      play('error')
       alert('プロフィールを登録できませんでした。通信状況を確認して、もう一度お試しください。')
     }
-  }, [navigate, profile, saveDraft, selectAvatar])
+  }, [navigate, play, profile, saveDraft, selectAvatar])
 
   const changeAvatar = useCallback(async (avatar: Avatar) => {
     await updateMyProfile({ avatarId: avatar.id })
@@ -217,7 +220,7 @@ function App() {
       >
         <SettingsAvatar
           avatar={selectedAvatar!}
-          onAvatarChange={selectAvatar}
+          onAvatarChange={changeAvatar}
           onBack={goBack}
         />
       </AppShell>

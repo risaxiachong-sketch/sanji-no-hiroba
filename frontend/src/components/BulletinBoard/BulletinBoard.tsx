@@ -145,6 +145,7 @@ function BoardEventCard({
       <div
         className={styles.cardAction}
         role="button"
+        data-sfx="navigate"
         tabIndex={0}
         aria-label={`${event.title}の詳細を見る`}
         onClick={() => onSelectEvent(event.id)}
@@ -220,6 +221,7 @@ function BoardEventCard({
       <button
         type="button"
         className={`${styles.saveButton} ${saved ? styles.saveButtonActive : ''}`}
+        data-sfx={saved ? 'unsave' : 'save'}
         aria-label={saved ? `${event.title}の保存を解除する` : `${event.title}を保存する`}
         aria-pressed={saved}
         onClick={() => onToggleSave(event.id)}

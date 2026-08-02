@@ -42,11 +42,11 @@ export function AppShell({ avatar, onNavigate, children, showDesktopNav = false 
           </section>
 
           <nav className={styles.shortcuts} aria-label="プロフィールショートカット">
-            <button type="button" onClick={() => onNavigate('settings')}>
+            <button type="button" data-sfx="navigate" onClick={() => onNavigate('settings')}>
               <span aria-hidden="true">⚙</span>
               <span>プロフィールを整える</span>
             </button>
-            <button type="button" onClick={() => onNavigate('plaza')}>
+            <button type="button" data-sfx="navigate" onClick={() => onNavigate('plaza')}>
               <span aria-hidden="true">⌂</span>
               <span>ひろばへ戻る</span>
             </button>

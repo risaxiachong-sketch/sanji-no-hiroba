@@ -1,50 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react'
+import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent } from 'react'
 import type { Avatar } from '../../types'
 import { AVATARS } from '../../data/avatars'
+import { useSoundEffects } from '../../audio/SoundContext'
 import styles from './AvatarPicker.module.css'
 
 const CAROUSEL_STEP = 76
 const MAX_VELOCITY = 0.035
 const MIN_INERTIA_VELOCITY = 0.0012
 const MIN_FLING_DISTANCE = 22
+const CLICK_MOVE_THRESHOLD = 8
 const FRICTION = 0.006
 const SPRING_STRENGTH = 0.00045
 const SPRING_DAMPING = 0.018
-const CAROUSEL_SOUND_INTERVAL = 0.055
-const SILENT_GAIN = 0.0001
-
-interface ToneOptions {
-  startTime: number
-  startFrequency: number
-  endFrequency: number
-  duration: number
-  volume: number
-  type: OscillatorType
-}
-
-function scheduleTone(context: AudioContext, options: ToneOptions) {
-  const oscillator = context.createOscillator()
-  const envelope = context.createGain()
-  const attackEnd = options.startTime + Math.min(0.006, options.duration * 0.15)
-  const endTime = options.startTime + options.duration
-
-  oscillator.type = options.type
-  oscillator.frequency.setValueAtTime(options.startFrequency, options.startTime)
-  oscillator.frequency.exponentialRampToValueAtTime(options.endFrequency, endTime)
-  envelope.gain.setValueAtTime(SILENT_GAIN, options.startTime)
-  envelope.gain.exponentialRampToValueAtTime(options.volume, attackEnd)
-  envelope.gain.exponentialRampToValueAtTime(SILENT_GAIN, endTime)
-
-  oscillator.connect(envelope)
-  envelope.connect(context.destination)
-  oscillator.addEventListener('ended', () => {
-    oscillator.disconnect()
-    envelope.disconnect()
-  }, { once: true })
-  oscillator.start(options.startTime)
-  oscillator.stop(endTime + 0.01)
-}
 
 interface Props {
   initialAvatar?: Avatar | null
@@ -53,19 +21,17 @@ interface Props {
 }
 
 export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
+  const { play, unlock } = useSoundEffects()
   const initialIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === initialAvatar?.id))
   const [carouselPosition, setCarouselPosition] = useState(initialIndex)
   const [isDragging, setIsDragging] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const positionRef = useRef(initialIndex)
   const animationFrameRef = useRef<number | null>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const audioArmedRef = useRef(false)
-  const lastCarouselSoundRef = useRef(-Infinity)
-  const lastScheduledSoundEndRef = useRef(0)
   const lastSoundedIndexRef = useRef(initialIndex)
   const dragState = useRef({
     pointerId: -1,
+    pressedIndex: null as number | null,
     startX: 0,
     startPosition: initialIndex,
     lastX: 0,
@@ -81,67 +47,11 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
   const selected = AVATARS[selectedIndex]
   const isMoving = isDragging || isAnimating
 
-  const prepareAudio = () => {
-    let context = audioContextRef.current
-
-    if (!context || context.state === 'closed') {
-      context = new AudioContext()
-      audioContextRef.current = context
-    }
-    audioArmedRef.current = true
-    if (context.state === 'suspended') {
-      void context.resume()
-    }
-    return context
-  }
-
-  const playCarouselSound = () => {
-    const context = audioContextRef.current
-    if (!audioArmedRef.current || !context || context.state === 'closed') return
-
-    const now = context.currentTime
-    if (now - lastCarouselSoundRef.current < CAROUSEL_SOUND_INTERVAL) return
-
-    lastCarouselSoundRef.current = now
-    lastScheduledSoundEndRef.current = Math.max(lastScheduledSoundEndRef.current, now + 0.065)
-    scheduleTone(context, {
-      startTime: now,
-      startFrequency: 430,
-      endFrequency: 190,
-      duration: 0.055,
-      volume: 0.026,
-      type: 'triangle',
-    })
-  }
-
-  const playConfirmationSound = () => {
-    const context = prepareAudio()
-    const startTime = context.currentTime + 0.008
-
-    scheduleTone(context, {
-      startTime,
-      startFrequency: 523.25,
-      endFrequency: 493.88,
-      duration: 0.22,
-      volume: 0.032,
-      type: 'sine',
-    })
-    scheduleTone(context, {
-      startTime: startTime + 0.085,
-      startFrequency: 659.25,
-      endFrequency: 622.25,
-      duration: 0.25,
-      volume: 0.028,
-      type: 'sine',
-    })
-    lastScheduledSoundEndRef.current = Math.max(lastScheduledSoundEndRef.current, startTime + 0.345)
-  }
-
   const updatePosition = (nextPosition: number) => {
     const nextIndex = getAvatarIndex(nextPosition)
     if (nextIndex !== lastSoundedIndexRef.current) {
       lastSoundedIndexRef.current = nextIndex
-      playCarouselSound()
+      play('carouselTick')
     }
     positionRef.current = nextPosition
     setCarouselPosition(nextPosition)
@@ -239,13 +149,6 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
     if (animationFrameRef.current !== null) {
       window.cancelAnimationFrame(animationFrameRef.current)
     }
-    const context = audioContextRef.current
-    if (context && context.state !== 'closed') {
-      const remainingSoundMs = Math.max(0, lastScheduledSoundEndRef.current - context.currentTime) * 1000
-      window.setTimeout(() => {
-        if (context.state !== 'closed') void context.close()
-      }, remainingSoundMs)
-    }
   }, [])
 
   const moveToPosition = (target: number) => {
@@ -254,10 +157,15 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
-    prepareAudio()
+    const target = event.target
+    const avatarButton = target instanceof Element
+      ? target.closest<HTMLButtonElement>('[data-avatar-index]')
+      : null
+    unlock()
     cancelAnimation()
     dragState.current = {
       pointerId: event.pointerId,
+      pressedIndex: avatarButton ? Number(avatarButton.dataset.avatarIndex) : null,
       startX: event.clientX,
       startPosition: positionRef.current,
       lastX: event.clientX,
@@ -272,7 +180,7 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (dragState.current.pointerId !== event.pointerId) return
     const distance = event.clientX - dragState.current.startX
-    if (Math.abs(distance) > 4) dragState.current.moved = true
+    if (Math.abs(distance) > CLICK_MOVE_THRESHOLD) dragState.current.moved = true
     const deltaTime = Math.max(event.timeStamp - dragState.current.lastTime, 1)
     const instantaneousVelocity = -(event.clientX - dragState.current.lastX) / CAROUSEL_STEP / deltaTime
     dragState.current.velocity = dragState.current.velocity * 0.35 + instantaneousVelocity * 0.65
@@ -284,12 +192,21 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
   const finishDrag = (event: PointerEvent<HTMLDivElement>, useInertia: boolean) => {
     if (dragState.current.pointerId !== event.pointerId) return
     const dragDistance = Math.abs(positionRef.current - dragState.current.startPosition) * CAROUSEL_STEP
+    const wasMoved = dragState.current.moved
+    const pressedIndex = dragState.current.pressedIndex
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
     dragState.current.pointerId = -1
+    dragState.current.pressedIndex = null
+    dragState.current.moved = false
     setIsDragging(false)
+
+    if (useInertia && !wasMoved && pressedIndex !== null) {
+      handleAvatarClick(pressedIndex)
+      return
+    }
 
     if (
       useInertia
@@ -303,11 +220,13 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
   }
 
   const handleAvatarClick = (index: number) => {
-    if (dragState.current.moved) {
-      dragState.current.moved = false
-      return
-    }
+    play('tap')
     moveToPosition(targetPositionForIndex(index))
+  }
+
+  const handleAvatarButtonClick = (event: MouseEvent<HTMLButtonElement>, index: number) => {
+    if (event.detail !== 0) return
+    handleAvatarClick(index)
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -325,7 +244,7 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
 
     if (nextIndex === null) return
     event.preventDefault()
-    prepareAudio()
+    unlock()
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
       moveToPosition(Math.round(positionRef.current) + 1)
     } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
@@ -340,7 +259,7 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
     cancelAnimation()
     const confirmedIndex = getAvatarIndex(positionRef.current)
     updatePosition(confirmedIndex)
-    playConfirmationSound()
+    play('confirm')
     onConfirm(AVATARS[confirmedIndex])
   }
 
@@ -352,7 +271,7 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
 
       <header className={styles.header}>
         {onBack ? (
-          <button type="button" className={styles.backButton} onClick={onBack} aria-label="前の画面に戻る">
+          <button type="button" className={styles.backButton} data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
             <span aria-hidden="true">←</span>
           </button>
         ) : (
@@ -426,9 +345,11 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
                   tabIndex={isSelected ? 0 : -1}
                   aria-checked={isSelected}
                   aria-label={`${avatar.label}を選ぶ`}
+                  data-avatar-index={index}
+                  data-sfx="none"
                   className={`${styles.thumbnailButton} ${isSelected ? styles.selected : ''}`}
                   style={itemStyle}
-                  onClick={() => handleAvatarClick(index)}
+                  onClick={(event) => handleAvatarButtonClick(event, index)}
                 >
                   {avatar.selectionImageUrl ? (
                     <img className={styles.thumbnailImage} src={avatar.selectionImageUrl} alt="" draggable="false" />
@@ -447,8 +368,9 @@ export function AvatarPicker({ initialAvatar, onConfirm, onBack }: Props) {
         <button
           type="button"
           className={styles.confirmButton}
+          data-sfx="none"
           onPointerDown={() => {
-            prepareAudio()
+            unlock()
             cancelAnimation()
           }}
           onClick={handleConfirm}

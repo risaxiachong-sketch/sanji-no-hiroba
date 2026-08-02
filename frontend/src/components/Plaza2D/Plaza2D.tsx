@@ -535,6 +535,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         ref={boardButtonRef}
         type="button"
         className={styles.boardHotspot}
+        data-sfx="navigate"
         aria-label="まちの掲示板を開く"
         onClick={openBulletinBoard}
       >
@@ -545,7 +546,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         <span>↔</span> ドラッグで見渡せます
       </div>
 
-      <button type="button" className={styles.recenterButton} onClick={recenterOnUser}>
+      <button type="button" className={styles.recenterButton} data-sfx="select" onClick={recenterOnUser}>
         <span aria-hidden="true">⌖</span>
         あなたを探す
       </button>

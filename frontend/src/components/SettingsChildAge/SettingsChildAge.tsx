@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AGE_GROUPS } from '../../data/ageGroups'
+import { useSoundEffects } from '../../audio/SoundContext'
 import { useProfile } from '../../hooks/useProfile'
 import styles from './SettingsChildAge.module.css'
 
@@ -9,6 +10,7 @@ interface Props {
 
 export function SettingsChildAge({ onBack }: Props) {
   const { profile, saveProfile } = useProfile()
+  const { play } = useSoundEffects()
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -22,9 +24,11 @@ export function SettingsChildAge({ onBack }: Props) {
     setError('')
     try {
       await saveProfile({ ...profile, childAgeGroup })
+      play('success')
       onBack()
     } catch {
       setError('保存できませんでした。もう一度お試しください。')
+      play('error')
     } finally {
       setIsSaving(false)
     }
@@ -33,7 +37,7 @@ export function SettingsChildAge({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button type="button" className={styles.backButton} onClick={onBack} aria-label="設定に戻る">
+        <button type="button" className={styles.backButton} data-sfx="back" onClick={onBack} aria-label="設定に戻る">
           <span aria-hidden="true">‹</span>
           <span>設定</span>
         </button>
@@ -53,6 +57,7 @@ export function SettingsChildAge({ onBack }: Props) {
               <button
                 type="button"
                 className={styles.optionRow}
+                data-sfx="select"
                 aria-pressed={profile?.childAgeGroup === group.value}
                 disabled={isSaving}
                 onClick={() => void handleSelect(group.value)}
