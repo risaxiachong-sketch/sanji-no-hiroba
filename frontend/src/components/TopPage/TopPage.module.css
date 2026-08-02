@@ -27,6 +27,26 @@
   background: var(--home-cream);
 }
 
+.mobileLayout {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wideLayout {
+  display: none;
+}
+
+.entryArea {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .visuallyHidden {
   position: absolute;
   width: 1px;
@@ -406,5 +426,333 @@
   .buttonMark {
     width: 29px;
     height: 29px;
+  }
+}
+
+/* Tablet, landscape phone, and desktop use a dedicated horizontal welcome card. */
+@media (min-width: 600px), (orientation: landscape) and (max-height: 599px) {
+  .main {
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: auto;
+    align-items: center;
+    padding: 0;
+    overflow-y: auto;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255, 188, 187, 0.34), transparent 26%),
+      radial-gradient(circle at 92% 86%, rgba(190, 224, 205, 0.42), transparent 28%),
+      linear-gradient(135deg, #fff1e4 0%, #fffaf0 50%, #f3f5e9 100%);
+  }
+
+  .screen {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: #fff8eb;
+    box-shadow: none;
+  }
+
+  .mobileLayout {
+    display: none;
+  }
+
+  .wideLayout {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 42vw, 620px);
+  }
+
+  .wideVisual {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    background: #fff3df;
+  }
+
+  .wideVisual::after {
+    position: absolute;
+    inset: 0 -1px 0 auto;
+    width: clamp(70px, 10vw, 150px);
+    content: "";
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, rgba(255, 248, 235, 0.94));
+  }
+
+  .wideHeroImg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: left center;
+  }
+
+  .widePanel {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(24px, 4vw, 60px);
+    background:
+      radial-gradient(circle at 84% 14%, rgba(255, 199, 199, 0.3), transparent 22%),
+      radial-gradient(circle at 10% 88%, rgba(198, 225, 204, 0.34), transparent 23%),
+      #fff8eb;
+  }
+
+  .widePanel::before,
+  .widePanel::after {
+    position: absolute;
+    content: "✿";
+    color: #f3a7b5;
+    font-size: clamp(1.5rem, 2.4vw, 2.5rem);
+    line-height: 1;
+    opacity: 0.72;
+  }
+
+  .widePanel::before {
+    top: clamp(18px, 4vh, 38px);
+    right: clamp(20px, 4vw, 48px);
+    transform: rotate(12deg);
+  }
+
+  .widePanel::after {
+    left: clamp(18px, 3vw, 40px);
+    bottom: clamp(20px, 4vh, 42px);
+    color: #a9cdb9;
+    transform: rotate(-14deg) scale(0.72);
+  }
+
+  .brandLogo {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    margin-bottom: clamp(14px, 2.4vh, 24px);
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+    font-size: clamp(2.25rem, 4.2vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -0.1em;
+    line-height: 1.08;
+    white-space: nowrap;
+    filter: drop-shadow(0 6px 4px rgba(111, 76, 54, 0.16));
+  }
+
+  .brandLogo span {
+    display: inline-block;
+    -webkit-text-stroke: clamp(2px, 0.28vw, 4px) #fffdf7;
+    paint-order: stroke fill;
+    text-shadow:
+      0 2px 0 #a9795f,
+      0 4px 8px rgba(116, 72, 48, 0.14);
+  }
+
+  .brandLogo span:nth-child(2n) {
+    transform: translateY(-0.05em) rotate(2deg);
+  }
+
+  .brandLogo span:nth-child(3n) {
+    transform: translateY(0.04em) rotate(-2deg);
+  }
+
+  .logoCoral { color: #ef9d96; }
+  .logoYellow { color: #f5c268; }
+  .logoGreen { color: #9ecb97; }
+  .logoBrown { color: #9a6a55; }
+  .logoPink { color: #ed9d9b; }
+  .logoOrange { color: #f2b071; }
+  .logoBlue { color: #78bdd4; }
+
+  .wideMessage {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 460px);
+    margin-bottom: clamp(18px, 3vh, 30px);
+    padding: clamp(14px, 2.2vh, 20px) clamp(16px, 2.4vw, 28px);
+    border: 2px solid rgba(242, 171, 166, 0.42);
+    border-radius: 24px;
+    color: #70432d;
+    background: rgba(255, 253, 246, 0.8);
+    box-shadow: 0 10px 24px rgba(135, 91, 61, 0.08);
+    font-size: clamp(0.9rem, 1.35vw, 1.08rem);
+    font-weight: 700;
+    line-height: 1.65;
+  }
+
+  .wideMessage::after {
+    position: absolute;
+    inset: 7px;
+    content: "";
+    border: 1px dashed rgba(239, 157, 150, 0.54);
+    border-radius: 17px;
+    pointer-events: none;
+  }
+
+  .wideMessage p {
+    margin: 0;
+  }
+
+  .wide.entryArea {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 430px);
+  }
+
+  .wide .actions {
+    width: 100%;
+    max-width: none;
+    gap: 12px;
+    margin: 0;
+    filter: drop-shadow(0 12px 20px rgba(130, 82, 54, 0.13));
+  }
+
+  .wide .actionBtn {
+    grid-template-columns: 42px minmax(0, 1fr) 20px;
+    min-height: 62px;
+    padding: 8px 14px;
+    border-radius: 24px;
+    font-size: clamp(1rem, 1.45vw, 1.16rem);
+  }
+
+  .wide .actionBtn::after {
+    inset: 6px;
+    border-radius: 18px;
+  }
+
+  .wide .buttonMark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .wide .adminBtn {
+    min-height: 42px;
+    margin-top: 14px;
+    padding: 7px 18px;
+    font-size: 0.92rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .main {
+    padding: 0;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .wideLayout {
+    grid-template-columns: minmax(0, 1.24fr) minmax(310px, 0.76fr);
+  }
+
+  .widePanel {
+    padding: 12px clamp(18px, 3vw, 30px);
+  }
+
+  .widePanel::before,
+  .widePanel::after {
+    display: none;
+  }
+
+  .brandLogo {
+    margin-bottom: 7px;
+    font-size: clamp(1.9rem, 8vh, 2.55rem);
+  }
+
+  .wideMessage {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: clamp(0.72rem, 2.7vh, 0.88rem);
+    line-height: 1.42;
+  }
+
+  .wideMessage::after {
+    inset: 4px;
+    border-radius: 11px;
+  }
+
+  .wide .actions {
+    gap: 6px;
+  }
+
+  .wide .actionBtn {
+    grid-template-columns: 30px minmax(0, 1fr) 16px;
+    min-height: 44px;
+    padding: 5px 10px;
+    border-radius: 17px;
+    font-size: 0.9rem;
+  }
+
+  .wide .actionBtn::after {
+    inset: 4px;
+    border-radius: 12px;
+  }
+
+  .wide .buttonMark {
+    width: 27px;
+    height: 27px;
+  }
+
+  .wide .enterMark::before {
+    top: 4px;
+    left: 11px;
+    height: 17px;
+  }
+
+  .wide .enterMark::after {
+    top: 14px;
+    right: 4px;
+  }
+
+  .wide .boardMark::before {
+    top: 6px;
+    left: 6px;
+    width: 13px;
+    height: 2px;
+    box-shadow: 0 6px 0 #9d6a8b, 0 12px 0 #9d6a8b;
+  }
+
+  .wide .boardMark::after {
+    right: -5px;
+    width: 9px;
+    height: 2px;
+  }
+
+  .wide .adminBtn {
+    min-height: 34px;
+    margin-top: 7px;
+    padding: 4px 13px;
+    font-size: 0.78rem;
+  }
+
+  .wide .adminIcon {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) and (orientation: portrait) {
+  .wideHeroImg {
+    object-position: 32% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionBtn,
+  .adminBtn {
+    transition: none;
   }
 }
