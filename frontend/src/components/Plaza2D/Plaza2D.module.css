@@ -98,6 +98,30 @@
   font-weight: 800;
   cursor: pointer;
   backdrop-filter: blur(8px);
+  touch-action: manipulation;
+  transition: transform 160ms ease, color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.recenterButton:hover,
+.recenterButton:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(96, 65, 43, 0.22);
+}
+
+.recenterButton:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.recenterButton:focus-visible {
+  outline: 3px solid rgba(239, 143, 137, 0.9);
+  outline-offset: 3px;
+}
+
+.recenterButtonFollowing {
+  border-color: rgba(255, 255, 255, 0.98);
+  color: #fff;
+  background: linear-gradient(135deg, rgba(241, 145, 139, 0.96), rgba(223, 111, 136, 0.96));
+  box-shadow: 0 9px 24px rgba(174, 76, 98, 0.28);
 }
 
 @media (orientation: landscape) {
@@ -120,6 +144,10 @@
   font-size: 1.2rem;
 }
 
+.recenterButtonFollowing span {
+  color: #fff;
+}
+
 .loading {
   position: absolute;
   inset: 0;
@@ -135,6 +163,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .boardHotspot span {
+    transition: none;
+  }
+
+  .recenterButton {
     transition: none;
   }
 }

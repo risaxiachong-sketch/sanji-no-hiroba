@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent } from 'react'
+import type { MouseEvent, PointerEvent } from 'react'
 import type { Avatar, DummyUser, Post } from '../../types'
 import plazaDayUrl from '../../assets/plaza-2d/plaza-day.png'
 import plazaWalkMaskUrl from '../../assets/plaza-2d/plaza-walk-mask.png'
@@ -12,6 +12,9 @@ const MAP_HEIGHT = 1086
 const MAX_DPR = 1.5
 const MAX_ZOOM_FACTOR = 2.4
 const BOARD_RECT = { x: 426, y: 646, width: 282, height: 268 }
+const CAMERA_FOCUS_RATE = 8
+const FOLLOW_LONG_PRESS_MS = 550
+const FOLLOW_PRESS_MOVE_TOLERANCE = 10
 
 type Camera = {
   x: number
@@ -208,6 +211,16 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
     velocityX: 0,
     velocityY: 0,
   })
+  const followUserRef = useRef(false)
+  const cameraFocusTargetRef = useRef<{ x: number; y: number } | null>(null)
+  const followPressTimerRef = useRef<number | null>(null)
+  const followPressRef = useRef({
+    pointerId: null as number | null,
+    startX: 0,
+    startY: 0,
+    moved: false,
+    longPressed: false,
+  })
   const pointerMapRef = useRef(new Map<number, PointerSample>())
   const gestureRef = useRef({
     lastX: 0,
@@ -221,11 +234,18 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
   const postsRef = useRef(posts.map((post) => post.text))
   const [isReady, setIsReady] = useState(false)
   const [loadError, setLoadError] = useState('')
+  const [isFollowingUser, setIsFollowingUser] = useState(false)
 
   useEffect(() => {
     postsRef.current = posts.map((post) => post.text)
     simulationRef.current?.setPosts(postsRef.current)
   }, [posts])
+
+  useEffect(() => () => {
+    if (followPressTimerRef.current !== null) {
+      window.clearTimeout(followPressTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     const frame = frameRef.current
@@ -329,7 +349,32 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         lastTime = time
 
         simulation.step(delta)
-        if (pointerMapRef.current.size === 0 && !reducedMotion) {
+        const currentUser = simulation.userVisitor()
+        const focusTarget = followUserRef.current ? currentUser : cameraFocusTargetRef.current
+
+        if (focusTarget) {
+          const targetCamera = {
+            ...camera,
+            x: focusTarget.x,
+            y: focusTarget.y,
+            velocityX: 0,
+            velocityY: 0,
+          }
+          clampCamera(targetCamera, viewport)
+          const deltaX = targetCamera.x - camera.x
+          const deltaY = targetCamera.y - camera.y
+          const blend = reducedMotion ? 1 : 1 - Math.exp(-CAMERA_FOCUS_RATE * delta)
+          camera.x += deltaX * blend
+          camera.y += deltaY * blend
+          camera.velocityX = 0
+          camera.velocityY = 0
+
+          if (!followUserRef.current && (reducedMotion || Math.hypot(deltaX, deltaY) < 0.5)) {
+            camera.x = targetCamera.x
+            camera.y = targetCamera.y
+            cameraFocusTargetRef.current = null
+          }
+        } else if (pointerMapRef.current.size === 0 && !reducedMotion) {
           camera.x += camera.velocityX * delta
           camera.y += camera.velocityY * delta
           const friction = Math.exp(-7 * delta)
@@ -392,7 +437,6 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
           )
         }
 
-        const currentUser = simulation.userVisitor()
         if (currentUser) drawUserMarker(context, currentUser, camera, viewport)
         positionBoardButton(boardButtonRef.current, camera, viewport)
         animationFrameRef.current = window.requestAnimationFrame(draw)
@@ -413,6 +457,96 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
       }
     }
   }, [avatar, visitors])
+
+  const clearFollowPressTimer = () => {
+    if (followPressTimerRef.current === null) return
+    window.clearTimeout(followPressTimerRef.current)
+    followPressTimerRef.current = null
+  }
+
+  const stopFollowingUser = () => {
+    cameraFocusTargetRef.current = null
+    if (!followUserRef.current) return
+    followUserRef.current = false
+    setIsFollowingUser(false)
+  }
+
+  const focusOnUserOnce = () => {
+    const user = simulationRef.current?.userVisitor()
+    if (!user) return
+    stopFollowingUser()
+    cameraFocusTargetRef.current = { x: user.x, y: user.y }
+    cameraRef.current.velocityX = 0
+    cameraRef.current.velocityY = 0
+  }
+
+  const startFollowingUser = () => {
+    const user = simulationRef.current?.userVisitor()
+    if (!user) return false
+    cameraFocusTargetRef.current = null
+    followUserRef.current = true
+    cameraRef.current.velocityX = 0
+    cameraRef.current.velocityY = 0
+    setIsFollowingUser(true)
+    return true
+  }
+
+  const activateRecenterButton = () => {
+    if (followUserRef.current) {
+      stopFollowingUser()
+      return
+    }
+    focusOnUserOnce()
+  }
+
+  const handleRecenterPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) return
+    event.stopPropagation()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    clearFollowPressTimer()
+    followPressRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+      longPressed: false,
+    }
+
+    if (followUserRef.current) return
+    const pointerId = event.pointerId
+    followPressTimerRef.current = window.setTimeout(() => {
+      const press = followPressRef.current
+      if (press.pointerId !== pointerId || press.moved) return
+      press.longPressed = startFollowingUser()
+      followPressTimerRef.current = null
+    }, FOLLOW_LONG_PRESS_MS)
+  }
+
+  const handleRecenterPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    const press = followPressRef.current
+    if (press.pointerId !== event.pointerId || press.moved) return
+    if (Math.hypot(event.clientX - press.startX, event.clientY - press.startY) <= FOLLOW_PRESS_MOVE_TOLERANCE) return
+    press.moved = true
+    clearFollowPressTimer()
+  }
+
+  const finishRecenterPointer = (event: PointerEvent<HTMLButtonElement>, cancelled = false) => {
+    event.stopPropagation()
+    const press = followPressRef.current
+    if (press.pointerId !== event.pointerId) return
+    clearFollowPressTimer()
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    followPressRef.current.pointerId = null
+    if (!cancelled && !press.moved && !press.longPressed) activateRecenterButton()
+  }
+
+  const handleRecenterClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (event.detail !== 0) return
+    activateRecenterButton()
+  }
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
@@ -443,7 +577,10 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
       const deltaX = event.clientX - gesture.lastX
       const deltaY = event.clientY - gesture.lastY
       const deltaTime = Math.max((event.timeStamp - gesture.lastTime) / 1000, 0.001)
-      if (Math.hypot(deltaX, deltaY) > 2) gesture.moved = true
+      if (Math.hypot(deltaX, deltaY) > 2) {
+        gesture.moved = true
+        stopFollowingUser()
+      }
       camera.x -= deltaX / camera.scale
       camera.y -= deltaY / camera.scale
       camera.velocityX = (-deltaX / camera.scale) / deltaTime
@@ -501,16 +638,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
     gestureRef.current.pinchMidX = (first.x + second.x) / 2
     gestureRef.current.pinchMidY = (first.y + second.y) / 2
     gestureRef.current.moved = true
-  }
-
-  const recenterOnUser = () => {
-    const user = simulationRef.current?.userVisitor()
-    if (!user) return
-    cameraRef.current.x = user.x
-    cameraRef.current.y = user.y
-    cameraRef.current.velocityX = 0
-    cameraRef.current.velocityY = 0
-    clampCamera(cameraRef.current, viewportRef.current)
+    stopFollowingUser()
   }
 
   const openBulletinBoard = () => {
@@ -546,9 +674,22 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         <span>↔</span> ドラッグで見渡せます
       </div>
 
-      <button type="button" className={styles.recenterButton} data-sfx="select" onClick={recenterOnUser}>
+      <button
+        type="button"
+        className={`${styles.recenterButton} ${isFollowingUser ? styles.recenterButtonFollowing : ''}`}
+        data-sfx="select"
+        aria-label={isFollowingUser ? '自分のキャラクターへの追従を解除' : '自分のキャラクターを探す。長押しで追従を固定'}
+        aria-pressed={isFollowingUser}
+        title={isFollowingUser ? '押すと追従を解除' : '長押しで追従を固定'}
+        onClick={handleRecenterClick}
+        onPointerDown={handleRecenterPointerDown}
+        onPointerMove={handleRecenterPointerMove}
+        onPointerUp={(event) => finishRecenterPointer(event)}
+        onPointerCancel={(event) => finishRecenterPointer(event, true)}
+        onContextMenu={(event) => event.preventDefault()}
+      >
         <span aria-hidden="true">⌖</span>
-        あなたを探す
+        {isFollowingUser ? '追従中' : 'あなたを探す'}
       </button>
 
       {!isReady && !loadError && <div className={styles.loading}>広場を準備しています…</div>}
