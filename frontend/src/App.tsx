@@ -15,6 +15,7 @@ import { SettingsNickname } from './components/SettingsNickname/SettingsNickname
 import { SettingsChildAge } from './components/SettingsChildAge/SettingsChildAge'
 import { SettingsAvatar } from './components/SettingsAvatar/SettingsAvatar'
 import { AdminEventForm } from './components/AdminEventForm/AdminEventForm'
+import { AppShell } from './components/AppShell/AppShell'
 import './App.css'
 
 const PROFILE_STORAGE_KEY = 'sanji-profile'
@@ -111,82 +112,119 @@ function App() {
 
   if (currentPage === 'plaza') {
     return (
-      <Plaza
-        avatar={selectedAvatar!}
-        onNavigate={(page) => navigateFromPage(page, 'plaza')}
-        onExit={() => navigate('top')}
-      />
+      <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'plaza')}>
+        <Plaza
+          avatar={selectedAvatar!}
+          onNavigate={(page) => navigateFromPage(page, 'plaza')}
+        />
+      </AppShell>
     )
   }
 
   if (currentPage === 'postArea') {
     return (
-      <PostArea
-        avatar={selectedAvatar!}
-        onClose={() => navigateToMemberPage('plaza', 'postArea')}
-        onNavigate={(page) => navigateFromPage(page, 'postArea')}
-      />
+      <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'postArea')}>
+        <PostArea
+          avatar={selectedAvatar!}
+          onClose={() => navigateToMemberPage('plaza', 'postArea')}
+          onNavigate={(page) => navigateFromPage(page, 'postArea')}
+        />
+      </AppShell>
     )
   }
 
   if (currentPage === 'bulletinBoard') {
     return (
-      <BulletinBoard
-        onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
-        onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}
-        isSaved={isSaved}
-        onToggleSave={toggleSave}
-      />
+      <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}>
+        <BulletinBoard
+          onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
+          onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}
+          isSaved={isSaved}
+          onToggleSave={toggleSave}
+        />
+      </AppShell>
     )
   }
 
   if (currentPage === 'eventDetail') {
     return (
-      <EventDetail
-        eventId={selectedEventId!}
-        isSaved={isSaved(selectedEventId ?? '')}
-        onToggleSave={() => toggleSave(selectedEventId!)}
-        onBack={goBack}
-      />
+      <AppShell
+        avatar={selectedAvatar}
+        onNavigate={(page) => navigateFromPage(page, 'eventDetail')}
+        showDesktopNav
+      >
+        <EventDetail
+          eventId={selectedEventId!}
+          isSaved={isSaved(selectedEventId ?? '')}
+          onToggleSave={() => toggleSave(selectedEventId!)}
+          onBack={goBack}
+        />
+      </AppShell>
     )
   }
 
   if (currentPage === 'savedEvents') {
     return (
-      <SavedEvents
-        savedIds={savedIds}
-        onSelectEvent={(id) => openEvent(id, 'savedEvents')}
-        onBack={() => navigateToMemberPage('plaza', 'savedEvents')}
-        onNavigate={(page) => navigateFromPage(page, 'savedEvents')}
-      />
+      <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'savedEvents')}>
+        <SavedEvents
+          savedIds={savedIds}
+          onSelectEvent={(id) => openEvent(id, 'savedEvents')}
+          onBack={() => navigateToMemberPage('plaza', 'savedEvents')}
+          onNavigate={(page) => navigateFromPage(page, 'savedEvents')}
+        />
+      </AppShell>
     )
   }
 
   if (currentPage === 'settings') {
     return (
-      <Settings
-        avatar={selectedAvatar!}
-        onBack={() => navigate('plaza')}
-        onNavigate={(page) => navigate(page, 'settings')}
-      />
+      <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'settings')}>
+        <Settings
+          avatar={selectedAvatar!}
+          onBack={() => navigate('plaza')}
+          onNavigate={(page) => navigate(page, 'settings')}
+        />
+      </AppShell>
     )
   }
 
   if (currentPage === 'settingsNickname') {
-    return <SettingsNickname onBack={goBack} />
+    return (
+      <AppShell
+        avatar={selectedAvatar}
+        onNavigate={(page) => navigateFromPage(page, 'settingsNickname')}
+        showDesktopNav
+      >
+        <SettingsNickname onBack={goBack} />
+      </AppShell>
+    )
   }
 
   if (currentPage === 'settingsChildAge') {
-    return <SettingsChildAge onBack={goBack} />
+    return (
+      <AppShell
+        avatar={selectedAvatar}
+        onNavigate={(page) => navigateFromPage(page, 'settingsChildAge')}
+        showDesktopNav
+      >
+        <SettingsChildAge onBack={goBack} />
+      </AppShell>
+    )
   }
 
   if (currentPage === 'settingsAvatar') {
     return (
-      <SettingsAvatar
-        avatar={selectedAvatar!}
-        onAvatarChange={selectAvatar}
-        onBack={goBack}
-      />
+      <AppShell
+        avatar={selectedAvatar}
+        onNavigate={(page) => navigateFromPage(page, 'settingsAvatar')}
+        showDesktopNav
+      >
+        <SettingsAvatar
+          avatar={selectedAvatar!}
+          onAvatarChange={selectAvatar}
+          onBack={goBack}
+        />
+      </AppShell>
     )
   }
 

@@ -22,15 +22,27 @@ export function SettingsNickname({ onBack }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button type="button" className="btn-back" onClick={onBack} aria-label="設定に戻る">
-          ← 戻る
+        <button type="button" className={styles.backButton} onClick={onBack} aria-label="設定に戻る">
+          <span aria-hidden="true">‹</span>
+          <span>設定</span>
         </button>
-        <h1 className={styles.title}>ニックネーム</h1>
-        <div style={{ width: '60px' }} />
+        <div className={styles.headingGroup}>
+          <span className={styles.eyebrow}>PROFILE</span>
+          <h1 className={styles.title}>ニックネーム</h1>
+          <p className={styles.subtitle}>ひろばで呼ばれる名前を決めよう</p>
+        </div>
+        <span className={styles.headerSpacer} aria-hidden="true" />
       </header>
 
       <div className={styles.body}>
         <div className={styles.card}>
+          <div className={styles.cardHeading}>
+            <span className={styles.cardIcon} aria-hidden="true">✎</span>
+            <div>
+              <p className={styles.cardTitle}>呼ばれたい名前</p>
+              <p className={styles.cardDescription}>本名でなくても大丈夫です</p>
+            </div>
+          </div>
           <label className={styles.label} htmlFor="settings-nickname">
             ニックネーム
           </label>
@@ -44,12 +56,12 @@ export function SettingsNickname({ onBack }: Props) {
             placeholder="ニックネームを入力"
             autoFocus
           />
-          <span className={styles.hint}>1〜20文字</span>
+          <span className={styles.hint}>{nickname.length} / 20文字</span>
         </div>
 
         <button
           type="button"
-          className="btn-primary"
+          className={styles.saveButton}
           disabled={!isValid || !isChanged}
           onClick={handleSave}
         >

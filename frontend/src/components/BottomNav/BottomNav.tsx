@@ -1,10 +1,8 @@
-import type { CSSProperties } from 'react'
 import type { Page } from '../../types'
 import bulletinBoardIcon from '../../assets/navigation/nav-bulletin-board.png'
 import fountainIcon from '../../assets/navigation/nav-fountain.png'
 import savedHeartIcon from '../../assets/navigation/nav-saved-heart.png'
 import settingsGearIcon from '../../assets/navigation/nav-settings-gear.png'
-import laceBackground from '../../assets/navigation/bottom-nav-lace.png'
 import styles from './BottomNav.module.css'
 
 /** The main sections reachable from the persistent bottom nav. */
@@ -25,29 +23,22 @@ const ITEMS: Array<{ page: BottomNavPage; icon: string; label: string; ariaLabel
 /** Fixed to the viewport bottom, so it stays visible while a page's own content scrolls. */
 export function BottomNav({ active, onNavigate }: Props) {
   return (
-    <>
-      <div
-        className={styles.laceBackdrop}
-        aria-hidden="true"
-        style={{ '--nav-lace-background': `url(${laceBackground})` } as CSSProperties}
-      />
-      <nav className={styles.bottomNav} aria-label="メインナビゲーション">
-        {ITEMS.map((item) => (
-          <button
-            key={item.page}
-            type="button"
-            className={`${styles.navBtn} ${active === item.page ? styles.navActive : ''}`}
-            aria-current={active === item.page ? 'page' : undefined}
-            aria-label={item.ariaLabel}
-            onClick={() => item.page !== active && onNavigate(item.page)}
-          >
-            <span className={styles.navIcon} aria-hidden="true">
-              <img src={item.icon} alt="" />
-            </span>
-            <span className={styles.navLabel}>{item.label}</span>
-          </button>
-        ))}
-      </nav>
-    </>
+    <nav className={styles.bottomNav} aria-label="メインナビゲーション">
+      {ITEMS.map((item) => (
+        <button
+          key={item.page}
+          type="button"
+          className={`${styles.navBtn} ${active === item.page ? styles.navActive : ''}`}
+          aria-current={active === item.page ? 'page' : undefined}
+          aria-label={item.ariaLabel}
+          onClick={() => item.page !== active && onNavigate(item.page)}
+        >
+          <span className={styles.navIcon} aria-hidden="true">
+            <img src={item.icon} alt="" />
+          </span>
+          <span className={styles.navLabel}>{item.label}</span>
+        </button>
+      ))}
+    </nav>
   )
 }

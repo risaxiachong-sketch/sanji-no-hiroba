@@ -11,7 +11,7 @@ interface Props {
 }
 
 /** Settings is a menu of editable fields; tapping a row opens its own editor screen. */
-export function Settings({ avatar, onBack, onNavigate }: Props) {
+export function Settings({ avatar, onNavigate }: Props) {
   const { profile } = useProfile()
   const nickname = profile?.nickname || '未設定'
   const childAgeLabel = AGE_GROUPS.find(group => group.value === profile?.childAgeGroup)?.label
@@ -21,10 +21,6 @@ export function Settings({ avatar, onBack, onNavigate }: Props) {
   return (
     <div className={styles.page}>
       <header className={styles.hero}>
-        <button type="button" className={styles.backButton} onClick={onBack} aria-label="広場に戻る">
-          <span aria-hidden="true">‹</span>
-          <span>ひろば</span>
-        </button>
         <div className={styles.titleBlock}>
           <p className={styles.eyebrow}>Settings</p>
           <h1 className={styles.title}>設定</h1>
