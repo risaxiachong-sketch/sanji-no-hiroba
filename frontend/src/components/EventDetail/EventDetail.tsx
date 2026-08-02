@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fetchEvent } from '../../api/events'
-=======
-import { useEffect, useRef } from 'react'
-import { EVENTS } from '../../data/events'
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
 import { EVENT_STATUS_LABELS } from '../../types'
 import type { Event, FacilityType } from '../../types'
 import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
@@ -73,9 +68,10 @@ interface Props {
 }
 
 export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
-<<<<<<< HEAD
   const [event, setEvent] = useState<Event | null>(null)
   const [loadError, setLoadError] = useState(false)
+  const calendarDialogRef = useRef<HTMLDialogElement>(null)
+  const appleDownloadUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -84,17 +80,12 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
       .catch(() => { if (!cancelled) setLoadError(true) })
     return () => { cancelled = true }
   }, [eventId])
-=======
-  const event = EVENTS.find((ev) => ev.id === eventId)
-  const calendarDialogRef = useRef<HTMLDialogElement>(null)
-  const appleDownloadUrlRef = useRef<string | null>(null)
 
   useEffect(() => () => {
     if (appleDownloadUrlRef.current) {
       URL.revokeObjectURL(appleDownloadUrlRef.current)
     }
   }, [])
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
 
   if (!event) {
     return (

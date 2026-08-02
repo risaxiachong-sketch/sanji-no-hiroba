@@ -112,9 +112,6 @@ function App() {
     return <AvatarSelect onSelect={selectInitialAvatar} />
   }
   if (currentPage === 'plaza') {
-<<<<<<< HEAD
-    return <Plaza avatar={selectedAvatar!} onNavigate={(page) => navigateFromPage(page, 'plaza')} onExit={() => navigate('top')} />
-=======
     return (
       <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'plaza')}>
         <Plaza
@@ -123,12 +120,8 @@ function App() {
         />
       </AppShell>
     )
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
   }
   if (currentPage === 'postArea') {
-<<<<<<< HEAD
-    return <PostArea avatar={selectedAvatar!} onClose={() => navigateToMemberPage('plaza', 'postArea')} onNavigate={(page) => navigateFromPage(page, 'postArea')} />
-=======
     return (
       <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'postArea')}>
         <PostArea
@@ -138,12 +131,8 @@ function App() {
         />
       </AppShell>
     )
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
   }
   if (currentPage === 'bulletinBoard') {
-<<<<<<< HEAD
-    return <BulletinBoard onSelectEvent={(id) => openEvent(id, 'bulletinBoard')} onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')} isSaved={isSaved} onToggleSave={toggleSave} />
-=======
     return (
       <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}>
         <BulletinBoard
@@ -154,12 +143,8 @@ function App() {
         />
       </AppShell>
     )
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
   }
   if (currentPage === 'eventDetail') {
-<<<<<<< HEAD
-    return <EventDetail eventId={selectedEventId!} isSaved={isSaved(selectedEventId ?? '')} onToggleSave={() => toggleSave(selectedEventId!)} onBack={goBack} />
-=======
     return (
       <AppShell
         avatar={selectedAvatar}
@@ -174,12 +159,8 @@ function App() {
         />
       </AppShell>
     )
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
   }
   if (currentPage === 'savedEvents') {
-<<<<<<< HEAD
-    return <SavedEvents savedIds={savedIds} onSelectEvent={(id) => openEvent(id, 'savedEvents')} onBack={() => navigateToMemberPage('plaza', 'savedEvents')} onNavigate={(page) => navigateFromPage(page, 'savedEvents')} />
-=======
     return (
       <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'savedEvents')}>
         <SavedEvents
@@ -190,17 +171,8 @@ function App() {
         />
       </AppShell>
     )
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
   }
   if (currentPage === 'settings') {
-<<<<<<< HEAD
-    return <Settings avatar={selectedAvatar!} onBack={() => navigate('plaza')} onNavigate={(page) => navigate(page, 'settings')} />
-  }
-  if (currentPage === 'settingsNickname') return <SettingsNickname onBack={goBack} />
-  if (currentPage === 'settingsChildAge') return <SettingsChildAge onBack={goBack} />
-  if (currentPage === 'settingsAvatar') {
-    return <SettingsAvatar avatar={selectedAvatar!} onAvatarChange={changeAvatar} onBack={goBack} />
-=======
     return (
       <AppShell avatar={selectedAvatar} onNavigate={(page) => navigateFromPage(page, 'settings')}>
         <Settings
@@ -250,7 +222,6 @@ function App() {
         />
       </AppShell>
     )
->>>>>>> 76f1a578627b79c231209b8709d98386bae5f879
   }
   if (currentPage === 'adminEvent') return <AdminEventForm onBack={() => navigate('top')} />
   return null
