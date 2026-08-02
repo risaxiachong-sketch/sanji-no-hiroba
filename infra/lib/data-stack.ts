@@ -1,53 +1,52 @@
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 export class DataStack extends cdk.Stack {
-  public readonly table: dynamodb.Table;
+  public readonly postsTable: dynamodb.ITable;
+  public readonly reactionsTable: dynamodb.ITable;
+  public readonly eventsTable: dynamodb.ITable;
+  public readonly usersTable: dynamodb.ITable;
+  public readonly savedEventsTable: dynamodb.ITable;
+  public readonly imagesBucket: s3.IBucket;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // DynamoDB Single Table
-    this.table = new dynamodb.Table(this, 'SanjiHirobaTable', {
-      tableName: 'SanjiHiroba',
-      partitionKey: {
-        name: 'PK',
-        type: dynamodb.AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'SK',
-        type: dynamodb.AttributeType.STRING,
-      },
+    const postsTableName = this.node.tryGetContext('postsTableName') ?? 'sanji-demo-posts';
+    const reactionsTableName = this.node.tryGetContext('reactionsTableName') ?? 'sanji-demo-reactions';
+    const eventsTableName = this.node.tryGetContext('eventsTableName') ?? 'sanji-demo-events';
+    const usersTableName = this.node.tryGetContext('usersTableName') ?? 'sanji-demo-users';
+    const savedEventsTableName = this.node.tryGetContext('savedEventsTableName') ?? 'sanji-demo-saved-events';
+    const imagesBucketName = this.node.tryGetContext('imagesBucketName') ?? 'sanji-demo-images';
+
+    // Existing production data stays outside this stack and is only referenced.
+    this.postsTable = dynamodb.Table.fromTableName(this, 'ExistingPostsTable', postsTableName);
+    this.reactionsTable = dynamodb.Table.fromTableName(this, 'ExistingReactionsTable', reactionsTableName);
+    this.eventsTable = dynamodb.Table.fromTableName(this, 'ExistingEventsTable', eventsTableName);
+    this.imagesBucket = s3.Bucket.fromBucketName(this, 'ExistingImagesBucket', imagesBucketName);
+
+    // Only the two new data stores are created by this stack.
+    this.usersTable = new dynamodb.Table(this, 'UsersTable', {
+      tableName: usersTableName,
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      timeToLiveAttribute: 'expiresAt',
+      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
       removalPolicy: cdk.RemovalPolicy.RETAIN,
-      pointInTimeRecovery: true,
     });
 
-    // GSI1 for time-series and classification queries
-    this.table.addGlobalSecondaryIndex({
-      indexName: 'GSI1',
-      partitionKey: {
-        name: 'GSI1PK',
-        type: dynamodb.AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'GSI1SK',
-        type: dynamodb.AttributeType.STRING,
-      },
-      projectionType: dynamodb.ProjectionType.ALL,
+    this.savedEventsTable = new dynamodb.Table(this, 'SavedEventsTable', {
+      tableName: savedEventsTableName,
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
-    // Stack outputs
-    new cdk.CfnOutput(this, 'TableName', {
-      value: this.table.tableName,
-      exportName: 'SanjiHiroba-TableName',
-    });
-
-    new cdk.CfnOutput(this, 'TableArn', {
-      value: this.table.tableArn,
-      exportName: 'SanjiHiroba-TableArn',
-    });
+    new cdk.CfnOutput(this, 'UsersTableName', { value: this.usersTable.tableName });
+    new cdk.CfnOutput(this, 'SavedEventsTableName', { value: this.savedEventsTable.tableName });
   }
 }

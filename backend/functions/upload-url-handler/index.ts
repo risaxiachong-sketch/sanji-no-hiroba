@@ -3,6 +3,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { success, error } from '../../shared/response.js';
 import { validateUpload, validateApiKey } from '../../shared/validation.js';
+import { routeKey } from '../../shared/routing.js';
 import { ulid } from 'ulid';
 
 const s3 = new S3Client({ region: 'ap-northeast-1' });
@@ -49,9 +50,9 @@ async function generateUploadUrl(event: APIGatewayProxyEventV2) {
 }
 
 export const handler = async (event: APIGatewayProxyEventV2) => {
-  const routeKey = event.routeKey;
+  const route = routeKey(event);
 
-  switch (routeKey) {
+  switch (route) {
     case 'POST /admin/events/upload-url':
       return generateUploadUrl(event);
     default:

@@ -1,5 +1,8 @@
-import { useState, useCallback } from 'react'
-import type { Page } from './types'
+import { useCallback, useEffect, useState } from 'react'
+import type { Avatar, Page, Profile } from './types'
+import { getIdentity } from './api/identity'
+import { registerUser, updateMyProfile } from './api/users'
+import { useProfile } from './hooks/useProfile'
 import { useSavedEvents } from './hooks/useSavedEvents'
 import { useSelectedAvatar } from './hooks/useSelectedAvatar'
 import { TopPage } from './components/TopPage/TopPage'
@@ -17,29 +20,23 @@ import { SettingsAvatar } from './components/SettingsAvatar/SettingsAvatar'
 import { AdminEventForm } from './components/AdminEventForm/AdminEventForm'
 import './App.css'
 
-const PROFILE_STORAGE_KEY = 'sanji-profile'
-
-function hasSavedProfile() {
-  try {
-    return localStorage.getItem(PROFILE_STORAGE_KEY) !== null
-  } catch {
-    return false
-  }
-}
-
 function App() {
-  // ── 画面管理 ──────────────────────────────────
   const [currentPage, setCurrentPage] = useState<Page>('top')
   const [previousPage, setPreviousPage] = useState<Page | null>(null)
-
-  // ── セッション情報 ────────────────────────────
-  const { selectedAvatar, selectAvatar } = useSelectedAvatar()
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const { selectedAvatar, selectAvatar } = useSelectedAvatar()
+  const { profile, saveDraft } = useProfile()
+  const { savedIds, toggleSave, isSaved } = useSavedEvents(profile?.userId)
 
-  // ── 保存済みイベント ──────────────────────────
-  const { savedIds, toggleSave, isSaved } = useSavedEvents()
+  useEffect(() => {
+    if (!profile || !selectedAvatar || getIdentity()?.userId) return
+    registerUser({
+      nickname: profile.nickname,
+      childAgeGroup: profile.childAgeGroup,
+      avatarId: selectedAvatar.id,
+    }).then(saveDraft).catch((cause) => console.error('profile migration failed', cause))
+  }, [profile, saveDraft, selectedAvatar])
 
-  // ── ナビゲーション ────────────────────────────
   const navigate = useCallback((page: Page, from?: Page) => {
     setPreviousPage(from ?? currentPage)
     setCurrentPage(page)
@@ -58,147 +55,85 @@ function App() {
   }, [navigate])
 
   const navigateToMemberPage = useCallback((page: 'plaza' | 'postArea', from: Page) => {
-    if (!hasSavedProfile()) {
+    if (!profile) {
       navigate('profileSetup', from)
       return
     }
-
     if (!selectedAvatar) {
       navigate('avatarSelect', from)
       return
     }
-
     navigate(page, from)
-  }, [navigate, selectedAvatar])
+  }, [navigate, profile, selectedAvatar])
 
   const navigateFromPage = useCallback((page: Page, from: Page) => {
-    if (page === 'plaza' || page === 'postArea') {
-      navigateToMemberPage(page, from)
-      return
-    }
-    navigate(page, from)
+    if (page === 'plaza' || page === 'postArea') navigateToMemberPage(page, from)
+    else navigate(page, from)
   }, [navigate, navigateToMemberPage])
 
-  // ── レンダリング ──────────────────────────────
+  const completeProfileSetup = useCallback((draft: Profile) => {
+    saveDraft(draft)
+    navigate('avatarSelect')
+  }, [navigate, saveDraft])
+
+  const selectInitialAvatar = useCallback(async (avatar: Avatar) => {
+    selectAvatar(avatar)
+    const draft = profile
+    if (!draft) {
+      navigate('profileSetup')
+      return
+    }
+    try {
+      const remote = await registerUser({
+        nickname: draft.nickname,
+        childAgeGroup: draft.childAgeGroup,
+        avatarId: avatar.id,
+      })
+      saveDraft(remote)
+      navigate('plaza')
+    } catch {
+      alert('プロフィールを登録できませんでした。通信状況を確認して、もう一度お試しください。')
+    }
+  }, [navigate, profile, saveDraft, selectAvatar])
+
+  const changeAvatar = useCallback(async (avatar: Avatar) => {
+    await updateMyProfile({ avatarId: avatar.id })
+    selectAvatar(avatar)
+  }, [selectAvatar])
+
   if (currentPage === 'top') {
-    return (
-      <TopPage
-        onEnter={() => navigateToMemberPage('plaza', 'top')}
-        onOpenBulletinBoard={() => navigate('bulletinBoard', 'top')}
-        onAdminAccess={() => navigate('adminEvent', 'top')}
-      />
-    )
+    return <TopPage onEnter={() => navigateToMemberPage('plaza', 'top')} onOpenBulletinBoard={() => navigate('bulletinBoard', 'top')} onAdminAccess={() => navigate('adminEvent', 'top')} />
   }
-
   if (currentPage === 'profileSetup') {
-    return (
-      <ProfileSetup
-        onComplete={() => navigate('avatarSelect')}
-      />
-    )
+    return <ProfileSetup onComplete={completeProfileSetup} />
   }
-
   if (currentPage === 'avatarSelect') {
-    return (
-      <AvatarSelect
-        onSelect={(avatar) => {
-          selectAvatar(avatar)
-          navigate('plaza')
-        }}
-      />
-    )
+    return <AvatarSelect onSelect={selectInitialAvatar} />
   }
-
   if (currentPage === 'plaza') {
-    return (
-      <Plaza
-        avatar={selectedAvatar!}
-        onNavigate={(page) => navigateFromPage(page, 'plaza')}
-        onExit={() => navigate('top')}
-      />
-    )
+    return <Plaza avatar={selectedAvatar!} onNavigate={(page) => navigateFromPage(page, 'plaza')} onExit={() => navigate('top')} />
   }
-
   if (currentPage === 'postArea') {
-    return (
-      <PostArea
-        avatar={selectedAvatar!}
-        onClose={() => navigateToMemberPage('plaza', 'postArea')}
-        onNavigate={(page) => navigateFromPage(page, 'postArea')}
-      />
-    )
+    return <PostArea avatar={selectedAvatar!} onClose={() => navigateToMemberPage('plaza', 'postArea')} onNavigate={(page) => navigateFromPage(page, 'postArea')} />
   }
-
   if (currentPage === 'bulletinBoard') {
-    return (
-      <BulletinBoard
-        onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
-        onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}
-        isSaved={isSaved}
-        onToggleSave={toggleSave}
-      />
-    )
+    return <BulletinBoard onSelectEvent={(id) => openEvent(id, 'bulletinBoard')} onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')} isSaved={isSaved} onToggleSave={toggleSave} />
   }
-
   if (currentPage === 'eventDetail') {
-    return (
-      <EventDetail
-        eventId={selectedEventId!}
-        isSaved={isSaved(selectedEventId ?? '')}
-        onToggleSave={() => toggleSave(selectedEventId!)}
-        onBack={goBack}
-      />
-    )
+    return <EventDetail eventId={selectedEventId!} isSaved={isSaved(selectedEventId ?? '')} onToggleSave={() => toggleSave(selectedEventId!)} onBack={goBack} />
   }
-
   if (currentPage === 'savedEvents') {
-    return (
-      <SavedEvents
-        savedIds={savedIds}
-        onSelectEvent={(id) => openEvent(id, 'savedEvents')}
-        onBack={() => navigateToMemberPage('plaza', 'savedEvents')}
-        onNavigate={(page) => navigateFromPage(page, 'savedEvents')}
-      />
-    )
+    return <SavedEvents savedIds={savedIds} onSelectEvent={(id) => openEvent(id, 'savedEvents')} onBack={() => navigateToMemberPage('plaza', 'savedEvents')} onNavigate={(page) => navigateFromPage(page, 'savedEvents')} />
   }
-
   if (currentPage === 'settings') {
-    return (
-      <Settings
-        avatar={selectedAvatar!}
-        onBack={() => navigate('plaza')}
-        onNavigate={(page) => navigate(page, 'settings')}
-      />
-    )
+    return <Settings avatar={selectedAvatar!} onBack={() => navigate('plaza')} onNavigate={(page) => navigate(page, 'settings')} />
   }
-
-  if (currentPage === 'settingsNickname') {
-    return <SettingsNickname onBack={goBack} />
-  }
-
-  if (currentPage === 'settingsChildAge') {
-    return <SettingsChildAge onBack={goBack} />
-  }
-
+  if (currentPage === 'settingsNickname') return <SettingsNickname onBack={goBack} />
+  if (currentPage === 'settingsChildAge') return <SettingsChildAge onBack={goBack} />
   if (currentPage === 'settingsAvatar') {
-    return (
-      <SettingsAvatar
-        avatar={selectedAvatar!}
-        onAvatarChange={selectAvatar}
-        onBack={goBack}
-      />
-    )
+    return <SettingsAvatar avatar={selectedAvatar!} onAvatarChange={changeAvatar} onBack={goBack} />
   }
-
-  if (currentPage === 'adminEvent') {
-    return (
-      <AdminEventForm
-        onBack={() => navigate('top')}
-      />
-    )
-  }
-
-  // フォールバック（到達しないはず）
+  if (currentPage === 'adminEvent') return <AdminEventForm onBack={() => navigate('top')} />
   return null
 }
 

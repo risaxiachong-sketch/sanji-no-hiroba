@@ -17,7 +17,7 @@ for (const entry of entries) {
     entryPoints: [join(functionsDir, entry, 'index.ts')],
     bundle: true,
     platform: 'node',
-    target: 'node20',
+    target: 'node24',
     format: 'esm',
     outfile: join('dist', entry, 'index.mjs'),
     external: ['@aws-sdk/*'],

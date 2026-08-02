@@ -1,134 +1,39 @@
-// ===================================================
-// イベント API
-// ===================================================
+import type { Event, EventStatus } from '../types'
+import { EVENTS } from '../data/events'
+import { apiGet, apiPatch, apiPost, uploadToSignedUrl, USE_MOCK } from './client'
 
-import type { Event, EventStatus } from '../types';
-import { EVENTS } from '../data/events';
-import { USE_MOCK, apiGet, apiPost, apiPatch } from './client';
-
-/** イベント一覧レスポンス */
-interface FetchEventsResponse {
-  events: Event[];
+export async function fetchEvents(ids?: string[]): Promise<{ events: Event[] }> {
+  if (USE_MOCK) return { events: ids?.length ? EVENTS.filter((event) => ids.includes(event.id)) : EVENTS }
+  const query = ids?.length ? `?ids=${ids.map(encodeURIComponent).join(',')}` : ''
+  return apiGet<{ events: Event[] }>(`/events${query}`)
 }
 
-/** イベント登録リクエスト */
-interface CreateEventBody {
-  providerName: string;
-  eventName: string;
-  eventDate: string;
-  startTime: string;
-  endTime: string;
-  ageGroup: string;
-  location: string;
-  description: string;
-  tags: string[];
-  officialUrl?: string;
-  imageUrl?: string;
-}
-
-/** イベント登録レスポンス */
-interface CreateEventResponse {
-  eventId: string;
-  status: string;
-  createdAt: string;
-}
-
-/** 状態変更レスポンス */
-interface UpdateStatusResponse {
-  eventId: string;
-  status: string;
-  updatedAt: string;
-}
-
-/** 署名付きURL取得レスポンス */
-interface UploadUrlResponse {
-  uploadUrl: string;
-  key: string;
-  expiresIn: number;
-}
-
-/**
- * イベント一覧を取得する
- * ids指定時は「行ってみたい」一覧用
- */
-export async function fetchEvents(ids?: string[]): Promise<FetchEventsResponse> {
-  if (USE_MOCK) {
-    if (ids && ids.length > 0) {
-      const filtered = EVENTS.filter(e => ids.includes(e.id));
-      return { events: filtered };
-    }
-    return { events: EVENTS };
-  }
-  const params = ids && ids.length > 0 ? `?ids=${ids.join(',')}` : '';
-  return apiGet<FetchEventsResponse>(`/events${params}`);
-}
-
-/**
- * イベント詳細を取得する
- */
 export async function fetchEvent(id: string): Promise<Event> {
   if (USE_MOCK) {
-    const event = EVENTS.find(e => e.id === id);
-    if (!event) throw new Error(`Event not found: ${id}`);
-    return event;
+    const event = EVENTS.find((item) => item.id === id)
+    if (!event) throw new Error('イベントが見つかりません。')
+    return event
   }
-  return apiGet<Event>(`/events/${encodeURIComponent(id)}`);
+  return apiGet<Event>(`/events/${encodeURIComponent(id)}`)
 }
 
-/**
- * イベントを登録する（施設側・APIキー必須）
- */
-export async function createEvent(body: CreateEventBody, apiKey: string): Promise<CreateEventResponse> {
-  if (USE_MOCK) {
-    return {
-      eventId: `ev-${Date.now()}`,
-      status: '開催予定',
-      createdAt: new Date().toISOString(),
-    };
-  }
-  return apiPost<CreateEventResponse>('/admin/events', body, { apiKey });
+export async function createEvent(event: Omit<Event, 'id'>, apiKey: string): Promise<Event> {
+  if (USE_MOCK) return { ...event, id: `ev-${Date.now()}` }
+  return apiPost<Event>('/admin/events', event, { apiKey })
 }
 
-/**
- * イベントの開催状態を変更する（施設側・APIキー必須）
- */
-export async function updateEventStatus(
-  id: string,
-  status: EventStatus,
-  apiKey: string,
-): Promise<UpdateStatusResponse> {
-  if (USE_MOCK) {
-    return {
-      eventId: id,
-      status,
-      updatedAt: new Date().toISOString(),
-    };
-  }
-  return apiPatch<UpdateStatusResponse>(
-    `/admin/events/${encodeURIComponent(id)}/status`,
-    { status },
-    { apiKey },
-  );
+export async function updateEventStatus(id: string, status: EventStatus, apiKey: string) {
+  if (USE_MOCK) return { id, status, updatedAt: new Date().toISOString() }
+  return apiPatch(`/admin/events/${encodeURIComponent(id)}/status`, { status }, { apiKey })
 }
 
-/**
- * 画像アップロード用署名付きURLを取得する（施設側・APIキー必須）
- */
-export async function getUploadUrl(
-  contentType: string,
-  fileSize: number,
-  apiKey: string,
-): Promise<UploadUrlResponse> {
-  if (USE_MOCK) {
-    return {
-      uploadUrl: 'https://example.com/mock-upload-url',
-      key: `events/mock-${Date.now()}/image.jpg`,
-      expiresIn: 300,
-    };
-  }
-  return apiPost<UploadUrlResponse>(
+export async function uploadEventImage(file: File, apiKey: string): Promise<string> {
+  if (USE_MOCK) return URL.createObjectURL(file)
+  const response = await apiPost<{ uploadUrl: string; key: string }>(
     '/admin/events/upload-url',
-    { contentType, fileSize },
+    { contentType: file.type, fileSize: file.size },
     { apiKey },
-  );
+  )
+  await uploadToSignedUrl(response.uploadUrl, file)
+  return response.key
 }

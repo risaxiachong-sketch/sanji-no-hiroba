@@ -1,190 +1,121 @@
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { success, error } from '../../shared/response.js';
-import { validatePost } from '../../shared/validation.js';
-import { docClient, TABLE_POSTS, TABLE_REACTIONS } from '../../shared/dynamodb.js';
+import { PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { ulid } from 'ulid';
-import { QueryCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { authenticate } from '../../shared/auth.js';
+import { docClient, TABLE_POSTS, TABLE_REACTIONS } from '../../shared/dynamodb.js';
+import { error, success } from '../../shared/response.js';
+import { routeKey } from '../../shared/routing.js';
 
-/** リアクション種別一覧（集計用） */
-const EMOJI_TYPES = [
-  'wakaru',
-  'otsukare',
-  'kokoniiruyo',
-  'watashimo',
-  'ouen',
-  'kyoumo',
-  'yokattane',
-  'hitoiki',
+const REACTION_TYPES = [
+  'wakaru', 'otsukare', 'kokoniiruyo', 'watashimo',
+  'ouen', 'kyoumo', 'yokattane', 'hitoiki',
 ] as const;
 
-/**
- * 投稿のリアクション集計を取得する
- */
-async function getReactionCounts(postId: string): Promise<Record<string, number>> {
-  const counts: Record<string, number> = {};
-  for (const emoji of EMOJI_TYPES) {
-    counts[emoji] = 0;
-  }
-
-  const result = await docClient.send(
-    new QueryCommand({
-      TableName: TABLE_REACTIONS,
-      KeyConditionExpression: 'pk = :pk',
-      ExpressionAttributeValues: { ':pk': `POST#${postId}` },
-    }),
+function activeReactionItems(items: Record<string, unknown>[]) {
+  const newKeys = new Set(
+    items
+      .map((item) => String(item.sk ?? ''))
+      .filter((key) => key.split('#').length >= 3),
   );
+  return items.filter((item) => {
+    const key = String(item.sk ?? '');
+    if (key.split('#').length >= 3) return true;
+    if (item.legacyMigratedAt) return false;
+    return !newKeys.has(`REACTION#${item.userId}#${item.emoji}`);
+  });
+}
+async function reactionSummary(postId: string, currentUserId?: string) {
+  const counts = Object.fromEntries(REACTION_TYPES.map((type) => [type, 0])) as Record<string, number>;
+  const myReactions: string[] = [];
+  const result = await docClient.send(new QueryCommand({
+    TableName: TABLE_REACTIONS,
+    KeyConditionExpression: 'pk = :pk',
+    ExpressionAttributeValues: { ':pk': `POST#${postId}` },
+  }));
 
-  if (result.Items) {
-    for (const item of result.Items) {
-      const emoji = item.emoji as string;
-      if (emoji in counts) {
-        counts[emoji]++;
-      }
-    }
+  for (const item of activeReactionItems(result.Items ?? [])) {
+    const type = String(item.emoji ?? '');
+    if (type in counts) counts[type] += 1;
+    if (currentUserId && item.userId === currentUserId && type in counts) myReactions.push(type);
   }
-
-  return counts;
+  return { reactions: counts, myReactions };
 }
 
-/**
- * 投稿一覧を取得する
- * GET /posts?limit=20&cursor=xxx
- */
 async function getPosts(event: APIGatewayProxyEventV2) {
-  try {
-    const params = event.queryStringParameters ?? {};
-    const limit = Math.min(Math.max(Number(params.limit) || 20, 1), 100);
-    const cursor = params.cursor;
-
-    const queryParams: {
-      TableName: string;
-      KeyConditionExpression: string;
-      ExpressionAttributeValues: Record<string, string>;
-      ScanIndexForward: boolean;
-      Limit: number;
-      ExclusiveStartKey?: Record<string, string>;
-    } = {
-      TableName: TABLE_POSTS,
-      KeyConditionExpression: 'pk = :pk',
-      ExpressionAttributeValues: { ':pk': 'POSTS' },
-      ScanIndexForward: false,
-      Limit: limit,
-    };
-
-    if (cursor) {
-      queryParams.ExclusiveStartKey = {
-        pk: 'POSTS',
-        sk: `POST#${cursor}`,
-      };
-    }
-
-    const result = await docClient.send(new QueryCommand(queryParams));
-
-    const posts = await Promise.all(
-      (result.Items ?? []).map(async (item) => {
-        const reactions = await getReactionCounts(item.postId as string);
-        return {
-          id: item.postId,
-          text: item.text,
-          nickname: item.nickname,
-          avatarId: item.avatarId,
-          createdAt: item.createdAt,
-          reactions,
-        };
-      }),
-    );
-
-    // nextCursor: LastEvaluatedKey がある場合はpostIdを返す
-    let nextCursor: string | null = null;
-    if (result.LastEvaluatedKey) {
-      const lastSk = result.LastEvaluatedKey.sk as string;
-      nextCursor = lastSk.replace('POST#', '');
-    }
-
-    return success({ posts, nextCursor });
-  } catch (err) {
-    console.error(
-      JSON.stringify({
-        level: 'ERROR',
-        function: 'posts-handler',
-        action: 'getPosts',
-        error: (err as Error).message,
-        timestamp: new Date().toISOString(),
-      }),
-    );
-    return error(500, 'INTERNAL_ERROR', 'サーバーエラーが発生しました');
-  }
+  const currentUser = await authenticate(event);
+  const params = event.queryStringParameters ?? {};
+  const limit = Math.min(Math.max(Number(params.limit) || 20, 1), 100);
+  const cursor = params.cursor;
+  const query = {
+    TableName: TABLE_POSTS,
+    KeyConditionExpression: 'pk = :pk',
+    ExpressionAttributeValues: { ':pk': 'POSTS' },
+    ScanIndexForward: false,
+    Limit: limit,
+    ...(cursor ? { ExclusiveStartKey: { pk: 'POSTS', sk: `POST#${cursor}` } } : {}),
+  };
+  const result = await docClient.send(new QueryCommand(query));
+  const posts = await Promise.all((result.Items ?? []).map(async (item) => ({
+    id: String(item.postId),
+    text: String(item.text),
+    nickname: String(item.nickname),
+    avatarId: String(item.avatarId),
+    userId: String(item.userId ?? ''),
+    createdAt: String(item.createdAt),
+    ...await reactionSummary(String(item.postId), currentUser?.userId),
+  })));
+  const nextCursor = result.LastEvaluatedKey
+    ? String(result.LastEvaluatedKey.sk).replace('POST#', '')
+    : null;
+  return success({ posts, nextCursor });
 }
 
-/**
- * 投稿を登録する
- * POST /posts
- */
 async function createPost(event: APIGatewayProxyEventV2) {
-  try {
-    const body = JSON.parse(event.body ?? '{}');
-
-    const validation = validatePost(body);
-    if (!validation.valid) {
-      return error(400, 'VALIDATION_ERROR', validation.error);
-    }
-
-    const postId = ulid();
-    const createdAt = new Date().toISOString();
-
-    await docClient.send(
-      new PutCommand({
-        TableName: TABLE_POSTS,
-        Item: {
-          pk: 'POSTS',
-          sk: `POST#${postId}`,
-          postId,
-          text: body.text,
-          nickname: body.nickname,
-          avatarId: body.avatarId,
-          userId: body.userId,
-          createdAt,
-        },
-      }),
-    );
-
-    return success(
-      {
-        id: postId,
-        text: body.text,
-        nickname: body.nickname,
-        avatarId: body.avatarId,
-        createdAt,
-      },
-      201,
-    );
-  } catch (err) {
-    console.error(
-      JSON.stringify({
-        level: 'ERROR',
-        function: 'posts-handler',
-        action: 'createPost',
-        error: (err as Error).message,
-        timestamp: new Date().toISOString(),
-      }),
-    );
-    return error(500, 'INTERNAL_ERROR', 'サーバーエラーが発生しました');
+  const user = await authenticate(event);
+  if (!user) return error(401, 'UNAUTHORIZED', '認証が必要です。');
+  const body = JSON.parse(event.body ?? '{}') as { text?: string };
+  const text = body.text?.trim() ?? '';
+  if (!text || text.length > 60) {
+    return error(400, 'VALIDATION_ERROR', '投稿は1〜60文字で入力してください。');
   }
+
+  const id = ulid();
+  const createdAt = new Date().toISOString();
+  await docClient.send(new PutCommand({
+    TableName: TABLE_POSTS,
+    Item: {
+      pk: 'POSTS',
+      sk: `POST#${id}`,
+      postId: id,
+      text,
+      nickname: user.nickname,
+      avatarId: user.avatarId,
+      userId: user.userId,
+      createdAt,
+    },
+  }));
+
+  return success({
+    id,
+    text,
+    nickname: user.nickname,
+    avatarId: user.avatarId,
+    userId: user.userId,
+    createdAt,
+    reactions: Object.fromEntries(REACTION_TYPES.map((type) => [type, 0])),
+    myReactions: [],
+  }, 201);
 }
 
-/**
- * Lambda ハンドラー
- * routeKey に基づいてルーティングを行う
- */
 export const handler = async (event: APIGatewayProxyEventV2) => {
-  const routeKey = event.routeKey;
-
-  switch (routeKey) {
-    case 'GET /posts':
-      return getPosts(event);
-    case 'POST /posts':
-      return createPost(event);
-    default:
-      return error(404, 'NOT_FOUND', 'Not Found');
+  try {
+    switch (routeKey(event)) {
+      case 'GET /posts': return await getPosts(event);
+      case 'POST /posts': return await createPost(event);
+      default: return error(404, 'NOT_FOUND', 'Not Found');
+    }
+  } catch (cause) {
+    console.error('posts-handler', cause);
+    return error(500, 'INTERNAL_ERROR', '投稿処理中にエラーが発生しました。');
   }
 };

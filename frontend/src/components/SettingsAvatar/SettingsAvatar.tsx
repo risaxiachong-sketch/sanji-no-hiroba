@@ -3,20 +3,24 @@ import { AvatarPicker } from '../AvatarPicker/AvatarPicker'
 
 interface Props {
   avatar: Avatar
-  onAvatarChange: (avatar: Avatar) => void
+  onAvatarChange: (avatar: Avatar) => Promise<void> | void
   onBack: () => void
 }
 
 export function SettingsAvatar({ avatar, onAvatarChange, onBack }: Props) {
-  const handleConfirm = (next: Avatar) => {
-    if (next.id !== avatar.id) onAvatarChange(next)
-    onBack()
+  const handleConfirm = async (next: Avatar) => {
+    try {
+      if (next.id !== avatar.id) await onAvatarChange(next)
+      onBack()
+    } catch {
+      alert('アバターを保存できませんでした。通信状況を確認して、もう一度お試しください。')
+    }
   }
 
   return (
     <AvatarPicker
       initialAvatar={avatar}
-      onConfirm={handleConfirm}
+      onConfirm={(next) => void handleConfirm(next)}
       onBack={onBack}
     />
   )

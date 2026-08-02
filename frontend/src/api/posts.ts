@@ -1,59 +1,52 @@
-// ===================================================
-// 投稿 API
-// ===================================================
+import type { Post, ReactionType } from '../types'
+import { INITIAL_POSTS } from '../data/posts'
+import { AVATARS } from '../data/avatars'
+import { apiGet, apiPost, USE_MOCK } from './client'
 
-import type { Post } from '../types';
-import { INITIAL_POSTS } from '../data/posts';
-import { USE_MOCK, apiGet, apiPost } from './client';
+interface RawPost {
+  id: string
+  text: string
+  nickname: string
+  avatarId: string
+  userId?: string
+  createdAt: string
+  reactions: Record<ReactionType, number>
+  myReactions: ReactionType[]
+}
 
-/** GET /posts レスポンス型 */
 interface FetchPostsResponse {
-  posts: Post[];
-  nextCursor: string | null;
+  posts: RawPost[]
+  nextCursor: string | null
 }
 
-/** POST /posts リクエストボディ */
-interface CreatePostBody {
-  text: string;
-  nickname: string;
-  avatarId: string;
-  userId: string;
-}
-
-/**
- * 投稿一覧を取得する
- */
-export async function fetchPosts(cursor?: string): Promise<FetchPostsResponse> {
-  if (USE_MOCK) {
-    return { posts: INITIAL_POSTS, nextCursor: null };
+function hydrate(post: RawPost): Post {
+  return {
+    ...post,
+    avatar: AVATARS.find((avatar) => avatar.id === post.avatarId) ?? AVATARS[0],
+    reactionUsers: {
+      wakaru: [], otsukare: [], kokoniiruyo: [], watashimo: [],
+      ouen: [], kyoumo: [], yokattane: [], hitoiki: [],
+    },
   }
-  const params = cursor ? `?cursor=${encodeURIComponent(cursor)}` : '';
-  return apiGet<FetchPostsResponse>(`/posts${params}`);
 }
 
-/**
- * 投稿を登録する
- */
-export async function createPost(body: CreatePostBody): Promise<Post> {
+export async function fetchPosts(cursor?: string): Promise<{ posts: Post[]; nextCursor: string | null }> {
+  if (USE_MOCK) return { posts: INITIAL_POSTS, nextCursor: null }
+  const params = cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''
+  const response = await apiGet<FetchPostsResponse>(`/posts${params}`)
+  return { ...response, posts: response.posts.map(hydrate) }
+}
+
+export async function createPost(text: string): Promise<Post> {
   if (USE_MOCK) {
-    // ローカルでダミー投稿を生成して返す
-    const newPost: Post = {
+    return {
+      ...INITIAL_POSTS[0],
       id: `post-${Date.now()}`,
-      nickname: body.nickname,
-      avatar: { id: body.avatarId, emoji: '😊', label: body.nickname, color: '#e0f7fa' },
-      text: body.text,
-      reactions: {
-        wakaru: 0, otsukare: 0, kokoniiruyo: 0, watashimo: 0,
-        ouen: 0, kyoumo: 0, yokattane: 0, hitoiki: 0,
-      },
-      reactionUsers: {
-        wakaru: [], otsukare: [], kokoniiruyo: [], watashimo: [],
-        ouen: [], kyoumo: [], yokattane: [], hitoiki: [],
-      },
+      text,
+      createdAt: new Date().toISOString(),
+      reactions: Object.fromEntries(Object.keys(INITIAL_POSTS[0].reactions).map((key) => [key, 0])) as Record<ReactionType, number>,
       myReactions: [],
-      timestamp: new Date().toISOString(),
-    };
-    return newPost;
+    }
   }
-  return apiPost<Post>('/posts', body);
+  return hydrate(await apiPost<RawPost>('/posts', { text }))
 }

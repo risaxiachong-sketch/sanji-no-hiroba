@@ -1,7 +1,7 @@
-import { useMemo, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
 import type { Event as BoardEvent, FacilityType, FilterCondition, Page } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
-import { EVENTS } from '../../data/events'
+import { fetchEvents } from '../../api/events'
 import boardAlpaca from '../../assets/bulletin-board/board-alpaca.png'
 import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
 import { BottomNav } from '../BottomNav/BottomNav'
@@ -71,8 +71,8 @@ function hasConditionFilter(filter: BoardFilter) {
   return filter.price === 'free' || filter.indoor === true || filter.reservationRequired === false
 }
 
-function applyFilter(filter: BoardFilter) {
-  return EVENTS.filter((event) => {
+function applyFilter(events: BoardEvent[], filter: BoardFilter) {
+  return events.filter((event) => {
     if (filter.date === 'today' && event.date !== todayStr()) return false
     if (filter.date === 'tomorrow' && event.date !== tomorrowStr()) return false
     if (filter.childAges?.length) {
@@ -233,8 +233,16 @@ function BoardEventCard({
 
 export function BulletinBoard({ onSelectEvent, onNavigate, isSaved, onToggleSave }: Props) {
   const [filter, setFilter] = useState<BoardFilter>(INITIAL_FILTER)
+  const [events, setEvents] = useState<BoardEvent[]>([])
+  const [loadError, setLoadError] = useState(false)
 
-  const filtered = useMemo(() => applyFilter(filter), [filter])
+  const loadEvents = () => fetchEvents()
+    .then((response) => { setEvents(response.events); setLoadError(false) })
+    .catch(() => setLoadError(true))
+
+  useEffect(() => { void loadEvents() }, [])
+
+  const filtered = useMemo(() => applyFilter(events, filter), [events, filter])
   const conditionSelected = hasConditionFilter(filter)
 
   const toggleSingle = <K extends keyof BoardFilter>(key: K, value: BoardFilter[K]) => {
@@ -420,6 +428,7 @@ export function BulletinBoard({ onSelectEvent, onNavigate, isSaved, onToggleSave
       </section>
 
       <main className={styles.list} aria-label="イベント一覧">
+        {loadError && <div className={styles.empty} role="alert"><p>イベントを読み込めませんでした</p><button type="button" onClick={loadEvents}>再試行</button></div>}
         {filtered.length === 0 ? (
           <div className={styles.empty}>
             <span className={styles.emptyIcon} aria-hidden="true">♡</span>

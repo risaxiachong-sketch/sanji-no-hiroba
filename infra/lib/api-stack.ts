@@ -1,15 +1,18 @@
+import * as path from 'node:path';
 import * as cdk from 'aws-cdk-lib';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 export interface ApiStackProps extends cdk.StackProps {
-  userPool: cognito.IUserPool;
-  userPoolClient: cognito.IUserPoolClient;
-  table: dynamodb.ITable;
+  postsTable: dynamodb.ITable;
+  reactionsTable: dynamodb.ITable;
+  eventsTable: dynamodb.ITable;
+  usersTable: dynamodb.ITable;
+  savedEventsTable: dynamodb.ITable;
+  imagesBucket: s3.IBucket;
 }
 
 export class ApiStack extends cdk.Stack {
@@ -18,174 +21,123 @@ export class ApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, props);
 
-    // ─── REST API ───────────────────────────────────────────────
-    this.api = new apigateway.RestApi(this, 'SanjiHirobaApi', {
-      restApiName: 'sanji-no-hiroba-api',
+    const adminApiKey = new cdk.CfnParameter(this, 'AdminApiKey', {
+      type: 'String',
+      noEcho: true,
+      minLength: 16,
+      description: 'Facility API key. Supply at deploy time and do not commit it.',
+    });
+
+    this.api = new apigateway.RestApi(this, 'SanjiHirobaApiV2', {
+      restApiName: 'sanji-no-hiroba-api-v2',
       deployOptions: {
         stageName: 'prod',
-        throttlingRateLimit: 1000,
-        throttlingBurstLimit: 500,
+        throttlingRateLimit: 100,
+        throttlingBurstLimit: 50,
       },
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: ['Content-Type', 'Authorization'],
+        allowHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-api-key'],
       },
     });
 
-    // ─── Cognito Authorizer ─────────────────────────────────────
-    const authorizer = new apigateway.CognitoUserPoolsAuthorizer(this, 'CognitoAuthorizer', {
-      cognitoUserPools: [props.userPool as cognito.UserPool],
-      identitySource: 'method.request.header.Authorization',
+    const environment = {
+      TABLE_POSTS: props.postsTable.tableName,
+      TABLE_REACTIONS: props.reactionsTable.tableName,
+      TABLE_EVENTS: props.eventsTable.tableName,
+      TABLE_USERS: props.usersTable.tableName,
+      TABLE_SAVED_EVENTS: props.savedEventsTable.tableName,
+      S3_BUCKET: props.imagesBucket.bucketName,
+      ADMIN_API_KEY: adminApiKey.valueAsString,
+    };
+
+    const createFunction = (id: string, assetName: string) => new lambda.Function(this, id, {
+      functionName: `sanji-v2-${assetName}`,
+      runtime: lambda.Runtime.NODEJS_24_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset(path.resolve(process.cwd(), '../backend/dist', assetName)),
+      environment,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
     });
 
-    const defaultMethodOptions: apigateway.MethodOptions = {
-      authorizer,
-      authorizationType: apigateway.AuthorizationType.COGNITO,
-    };
+    const usersFunction = createFunction('UsersFunction', 'users-handler');
+    const postsFunction = createFunction('PostsFunction', 'posts-handler');
+    const reactionsFunction = createFunction('ReactionsFunction', 'reactions-handler');
+    const eventsFunction = createFunction('EventsFunction', 'events-handler');
+    const savedEventsFunction = createFunction('SavedEventsFunction', 'saved-events-handler');
+    const plazaFunction = createFunction('PlazaFunction', 'plaza-handler');
+    const uploadFunction = createFunction('UploadFunction', 'upload-url-handler');
 
-    // ─── Common Lambda config ───────────────────────────────────
-    const lambdaEnv = {
-      TABLE_NAME: props.table.tableName,
-      REGION: cdk.Stack.of(this).region,
-    };
+    props.usersTable.grantReadWriteData(usersFunction);
 
-    const createFunction = (name: string, extraEnv?: Record<string, string>): lambda.Function => {
-      return new lambda.Function(this, name, {
-        functionName: `sanji-${name}`,
-        runtime: lambda.Runtime.NODEJS_20_X,
-        handler: 'index.handler',
-        code: lambda.Code.fromInline(
-          'exports.handler = async (event) => ({ statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: "TODO" }) });'
-        ),
-        environment: { ...lambdaEnv, ...extraEnv },
-        timeout: cdk.Duration.seconds(30),
-        memorySize: 256,
-      });
-    };
+    props.postsTable.grantReadWriteData(postsFunction);
+    props.reactionsTable.grantReadData(postsFunction);
+    props.usersTable.grantReadData(postsFunction);
 
-    // ─── Lambda functions ───────────────────────────────────────
-    const apiUser = createFunction('api-user');
-    const apiPost = createFunction('api-post');
-    const apiReaction = createFunction('api-reaction');
-    const apiEvent = createFunction('api-event');
-    const apiSaved = createFunction('api-saved');
-    const apiAiSearch = createFunction('api-ai-search', {
-      BEDROCK_MODEL_ID: 'anthropic.claude-3-haiku-20240307-v1:0',
-    });
-    const apiPlaza = createFunction('api-plaza');
-    const apiAdmin = createFunction('api-admin');
+    props.reactionsTable.grantReadWriteData(reactionsFunction);
+    props.usersTable.grantReadData(reactionsFunction);
 
-    // ─── DynamoDB permissions ───────────────────────────────────
-    const allFunctions = [apiUser, apiPost, apiReaction, apiEvent, apiSaved, apiAiSearch, apiPlaza, apiAdmin];
-    allFunctions.forEach((fn) => props.table.grantReadWriteData(fn));
+    props.eventsTable.grantReadWriteData(eventsFunction);
+    props.imagesBucket.grantRead(eventsFunction);
 
-    // ─── Bedrock permission for ai-search ───────────────────────
-    apiAiSearch.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ['bedrock:InvokeModel'],
-        resources: ['*'],
-      })
-    );
+    props.savedEventsTable.grantReadWriteData(savedEventsFunction);
+    props.usersTable.grantReadData(savedEventsFunction);
 
-    // ─── API Routes ─────────────────────────────────────────────
+    props.postsTable.grantReadData(plazaFunction);
+    props.usersTable.grantReadData(plazaFunction);
 
-    // /users
+    props.imagesBucket.grantPut(uploadFunction);
+
+    const integrate = (fn: lambda.IFunction) => new apigateway.LambdaIntegration(fn);
+
     const users = this.api.root.addResource('users');
-    const usersProfile = users.addResource('profile');
-    usersProfile.addMethod('POST', new apigateway.LambdaIntegration(apiUser), defaultMethodOptions);
-    usersProfile.addMethod('GET', new apigateway.LambdaIntegration(apiUser), defaultMethodOptions);
-    usersProfile.addMethod('PUT', new apigateway.LambdaIntegration(apiUser), defaultMethodOptions);
+    users.addResource('register').addMethod('POST', integrate(usersFunction));
+    const me = users.addResource('me');
+    me.addMethod('GET', integrate(usersFunction));
+    me.addMethod('PATCH', integrate(usersFunction));
 
-    const usersAvatar = users.addResource('avatar');
-    usersAvatar.addMethod('POST', new apigateway.LambdaIntegration(apiUser), defaultMethodOptions);
-    usersAvatar.addMethod('GET', new apigateway.LambdaIntegration(apiUser), defaultMethodOptions);
-    usersAvatar.addMethod('PUT', new apigateway.LambdaIntegration(apiUser), defaultMethodOptions);
-
-    // /posts
     const posts = this.api.root.addResource('posts');
-    posts.addMethod('POST', new apigateway.LambdaIntegration(apiPost), defaultMethodOptions);
-    posts.addMethod('GET', new apigateway.LambdaIntegration(apiPost), defaultMethodOptions);
+    posts.addMethod('GET', integrate(postsFunction));
+    posts.addMethod('POST', integrate(postsFunction));
+    const post = posts.addResource('{postId}');
+    const postReactions = post.addResource('reactions');
+    postReactions.addMethod('GET', integrate(reactionsFunction));
+    const postReactionType = postReactions.addResource('{type}');
+    postReactionType.addMethod('POST', integrate(reactionsFunction));
+    postReactionType.addMethod('DELETE', integrate(reactionsFunction));
 
-    const postId = posts.addResource('{postId}');
-    postId.addMethod('DELETE', new apigateway.LambdaIntegration(apiPost), defaultMethodOptions);
+    // Keep the old reaction route available during the frontend migration.
+    const legacyReactions = this.api.root.addResource('reactions');
+    legacyReactions.addMethod('GET', integrate(reactionsFunction));
+    legacyReactions.addMethod('POST', integrate(reactionsFunction));
+    legacyReactions.addMethod('DELETE', integrate(reactionsFunction));
 
-    // /posts/{postId}/reactions
-    const reactions = postId.addResource('reactions');
-    reactions.addMethod('POST', new apigateway.LambdaIntegration(apiReaction), defaultMethodOptions);
-
-    const reactionType = reactions.addResource('{type}');
-    reactionType.addMethod('DELETE', new apigateway.LambdaIntegration(apiReaction), defaultMethodOptions);
-
-    const reactionsCounts = reactions.addResource('counts');
-    reactionsCounts.addMethod('GET', new apigateway.LambdaIntegration(apiReaction), defaultMethodOptions);
-
-    const reactionsMine = reactions.addResource('mine');
-    reactionsMine.addMethod('GET', new apigateway.LambdaIntegration(apiReaction), defaultMethodOptions);
-
-    // /events
     const events = this.api.root.addResource('events');
-    events.addMethod('GET', new apigateway.LambdaIntegration(apiEvent), defaultMethodOptions);
+    events.addMethod('GET', integrate(eventsFunction));
+    const event = events.addResource('{eventId}');
+    event.addMethod('GET', integrate(eventsFunction));
 
-    const eventId = events.addResource('{eventId}');
-    eventId.addMethod('GET', new apigateway.LambdaIntegration(apiEvent), defaultMethodOptions);
-
-    // /saved-events
     const savedEvents = this.api.root.addResource('saved-events');
-    savedEvents.addMethod('GET', new apigateway.LambdaIntegration(apiSaved), defaultMethodOptions);
+    savedEvents.addMethod('GET', integrate(savedEventsFunction));
+    const savedEvent = savedEvents.addResource('{eventId}');
+    savedEvent.addMethod('POST', integrate(savedEventsFunction));
+    savedEvent.addMethod('DELETE', integrate(savedEventsFunction));
 
-    const savedEventId = savedEvents.addResource('{eventId}');
-    savedEventId.addMethod('POST', new apigateway.LambdaIntegration(apiSaved), defaultMethodOptions);
-    savedEventId.addMethod('DELETE', new apigateway.LambdaIntegration(apiSaved), defaultMethodOptions);
-
-    // /ai-search
-    const aiSearch = this.api.root.addResource('ai-search');
-    const aiSearchManual = aiSearch.addResource('manual');
-    aiSearchManual.addMethod('POST', new apigateway.LambdaIntegration(apiAiSearch), defaultMethodOptions);
-
-    const aiSearchNatural = aiSearch.addResource('natural');
-    aiSearchNatural.addMethod('POST', new apigateway.LambdaIntegration(apiAiSearch), defaultMethodOptions);
-
-    // /plaza
     const plaza = this.api.root.addResource('plaza');
-    const plazaVisit = plaza.addResource('visit');
-    plazaVisit.addMethod('POST', new apigateway.LambdaIntegration(apiPlaza), defaultMethodOptions);
+    plaza.addResource('recent-users').addMethod('GET', integrate(plazaFunction));
 
-    const plazaTodayCount = plaza.addResource('today-count');
-    plazaTodayCount.addMethod('GET', new apigateway.LambdaIntegration(apiPlaza), defaultMethodOptions);
-
-    const plazaAvatars = plaza.addResource('avatars');
-    plazaAvatars.addMethod('GET', new apigateway.LambdaIntegration(apiPlaza), defaultMethodOptions);
-
-    // /admin
     const admin = this.api.root.addResource('admin');
-
-    const adminReports = admin.addResource('reports');
-    adminReports.addMethod('GET', new apigateway.LambdaIntegration(apiAdmin), defaultMethodOptions);
-
-    const adminPosts = admin.addResource('posts');
-    const adminPostId = adminPosts.addResource('{postId}');
-    const adminPostHide = adminPostId.addResource('hide');
-    adminPostHide.addMethod('POST', new apigateway.LambdaIntegration(apiAdmin), defaultMethodOptions);
-
     const adminEvents = admin.addResource('events');
-    const adminEventsReview = adminEvents.addResource('review');
-    adminEventsReview.addMethod('GET', new apigateway.LambdaIntegration(apiAdmin), defaultMethodOptions);
+    adminEvents.addMethod('POST', integrate(eventsFunction));
+    adminEvents.addResource('upload-url').addMethod('POST', integrate(uploadFunction));
+    const adminEvent = adminEvents.addResource('{eventId}');
+    adminEvent.addResource('status').addMethod('PATCH', integrate(eventsFunction));
 
-    const adminEventId = adminEvents.addResource('{eventId}');
-    const adminEventPublish = adminEventId.addResource('publish');
-    adminEventPublish.addMethod('POST', new apigateway.LambdaIntegration(apiAdmin), defaultMethodOptions);
-
-    const adminEventHide = adminEventId.addResource('hide');
-    adminEventHide.addMethod('POST', new apigateway.LambdaIntegration(apiAdmin), defaultMethodOptions);
-
-    const adminCollectLogs = admin.addResource('collect-logs');
-    adminCollectLogs.addMethod('GET', new apigateway.LambdaIntegration(apiAdmin), defaultMethodOptions);
-
-    // ─── Stack output ───────────────────────────────────────────
     new cdk.CfnOutput(this, 'ApiUrl', {
       value: this.api.url,
-      exportName: 'SanjiHiroba-ApiUrl',
+      description: 'Set this value as VITE_API_BASE_URL in Amplify.',
     });
   }
 }

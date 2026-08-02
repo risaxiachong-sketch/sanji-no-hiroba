@@ -1,4 +1,5 @@
-import { EVENTS } from '../../data/events'
+import { useEffect, useState } from 'react'
+import { fetchEvent } from '../../api/events'
 import { EVENT_STATUS_LABELS } from '../../types'
 import type { Event, FacilityType } from '../../types'
 import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
@@ -61,7 +62,16 @@ interface Props {
 }
 
 export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
-  const event = EVENTS.find((ev) => ev.id === eventId)
+  const [event, setEvent] = useState<Event | null>(null)
+  const [loadError, setLoadError] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchEvent(eventId)
+      .then((value) => { if (!cancelled) { setEvent(value); setLoadError(false) } })
+      .catch(() => { if (!cancelled) setLoadError(true) })
+    return () => { cancelled = true }
+  }, [eventId])
 
   if (!event) {
     return (
@@ -73,7 +83,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
         </header>
         <main className={styles.body}>
           <div className={styles.emptyCard}>
-            <p>イベントが見つかりませんでした</p>
+            <p>{loadError ? 'イベントを読み込めませんでした' : '読み込み中…'}</p>
           </div>
         </main>
       </div>

@@ -12,10 +12,14 @@
     "build": "npm run build --workspace=frontend",
     "build:backend": "npm run build --workspace=backend",
     "build:infra": "npm run build --workspace=infra",
+    "build:all": "npm run build:backend && npm run build:infra && npm run build",
     "lint": "npm run lint --workspace=frontend",
     "preview": "npm run preview --workspace=frontend",
     "cdk": "npm run cdk --workspace=infra",
-    "synth": "npm run synth --workspace=infra",
-    "deploy": "npm run deploy --workspace=infra"
+    "synth": "npm run build:backend && npm run synth --workspace=infra",
+    "deploy": "npm run build:backend && npm run deploy --workspace=infra",
+    "preflight": "npm run preflight --workspace=backend",
+    "deploy:safe": "npm run deploy:safe --workspace=backend",
+    "rollback": "npm run rollback --workspace=backend"
   }
 }

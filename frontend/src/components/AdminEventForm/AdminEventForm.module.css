@@ -182,3 +182,35 @@
 .removeBtn:hover {
   background: rgba(0, 0, 0, 0.8);
 }
+
+.options {
+  margin: 0;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.options legend {
+  padding: 0 var(--space-xs);
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-main);
+  font-size: var(--font-size-sm);
+}
+
+.options input {
+  accent-color: var(--color-primary);
+}
+
+.form button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}

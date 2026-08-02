@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react'
 import type { Event, FacilityType, Page } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
-import { EVENTS } from '../../data/events'
+import { fetchEvents } from '../../api/events'
 import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './SavedEvents.module.css'
@@ -152,7 +153,13 @@ function SavedEventCard({ event, onSelectEvent }: SavedEventCardProps) {
 }
 
 export function SavedEvents({ savedIds, onSelectEvent, onBack, onNavigate }: Props) {
-  const saved = EVENTS.filter(ev => savedIds.includes(ev.id))
+  const [saved, setSaved] = useState<Event[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    fetchEvents(savedIds).then((response) => { if (!cancelled) setSaved(response.events) }).catch(() => { if (!cancelled) setSaved([]) })
+    return () => { cancelled = true }
+  }, [savedIds])
 
   return (
     <div className={styles.page}>
