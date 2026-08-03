@@ -127,30 +127,46 @@ export function AdminEventForm({ onBack }: Props) {
 
   if (!authenticated) {
     return (
-      <div className={styles.page}>
-        <header className={styles.header}>
-          <button type="button" className="btn-back" data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
-            ← 戻る
+      <div className={`${styles.page} ${styles.authPage}`}>
+        <header className={styles.authHeader}>
+          <button type="button" className={styles.authBack} data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
+            <span className={styles.authBackArrow} aria-hidden="true">←</span>
+            戻る
           </button>
-          <h1 className={styles.headerTitle}>施設担当者ログイン</h1>
-          <div style={{ width: '60px' }} />
+          <span className={styles.authBrand}>アルパカのあくび</span>
         </header>
-        <form className={styles.authCard} onSubmit={handleCodeSubmit}>
-          <p className={styles.authText}>
-            施設からイベントを登録する画面です。発行された施設コードを入力してください。
-          </p>
-          <input
-            type="password"
-            className={styles.input}
-            value={facilityCode}
-            onChange={(event) => setFacilityCode(event.target.value)}
-            placeholder="施設コード"
-            aria-label="施設コード"
-            autoComplete="off"
-          />
-          {authError && <p className={styles.error}>{authError}</p>}
-          <button type="submit" className="btn-primary" data-sfx="navigate">イベント登録へ</button>
-        </form>
+        <main className={styles.authMain}>
+          <section className={styles.authIntro} aria-labelledby="facility-login-title">
+            <p className={styles.authEyebrow}>施設担当者向け</p>
+            <h1 id="facility-login-title" className={styles.authTitle}>イベント登録</h1>
+            <span className={styles.authRule} aria-hidden="true" />
+            <p className={styles.authLead}>地域の親子へ、施設のイベント情報を届けます。</p>
+          </section>
+
+          <form className={styles.authCard} onSubmit={handleCodeSubmit}>
+            <div className={styles.authCardHeader}>
+              <h2>施設コードでログイン</h2>
+              <p>発行された施設コードを入力してください。</p>
+            </div>
+            <div className={styles.authField}>
+              <label htmlFor="facilityCode">施設コード</label>
+              <input
+                id="facilityCode"
+                type="password"
+                className={`${styles.input} ${styles.authInput}`}
+                value={facilityCode}
+                onChange={(event) => setFacilityCode(event.target.value)}
+                placeholder="施設コードを入力"
+                autoComplete="off"
+              />
+            </div>
+            {authError && <p className={styles.error} role="alert">{authError}</p>}
+            <button type="submit" className={styles.authSubmit} data-sfx="navigate">
+              <span>イベント登録画面へ</span>
+              <span className={styles.authSubmitArrow} aria-hidden="true">→</span>
+            </button>
+          </form>
+        </main>
       </div>
     )
   }
