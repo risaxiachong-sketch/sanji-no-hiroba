@@ -173,35 +173,40 @@ export function AdminEventForm({ onBack }: Props) {
 
   if (submitted) {
     return (
-      <div className={styles.page}>
-        <header className={styles.header}>
-          <button type="button" className="btn-back" data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
-            ← 戻る
+      <div className={`${styles.page} ${styles.adminPage}`}>
+        <header className={styles.adminHeader}>
+          <button type="button" className={styles.adminHeaderButton} data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
+            <span aria-hidden="true">←</span>
+            戻る
           </button>
-          <h1 className={styles.headerTitle}>登録完了</h1>
-          <div style={{ width: '60px' }} />
+          <span className={styles.adminHeaderTitle}>イベント登録</span>
+          <span className={styles.headerSpacer} aria-hidden="true" />
         </header>
-        <div className={styles.successCard}>
-          <p className={styles.successText}>イベントを登録しました。掲示板にも反映されます。</p>
-          <button type="button" className="btn-primary" data-sfx="navigate" onClick={() => setSubmitted(false)}>
+        <main className={styles.successMain}>
+          <div className={styles.successMark} aria-hidden="true">✓</div>
+          <p className={styles.successEyebrow}>登録が完了しました</p>
+          <h1 className={styles.successTitle}>イベントを公開しました</h1>
+          <p className={styles.successText}>登録した情報は、まちの掲示板にも反映されます。</p>
+          <button type="button" className={styles.adminPrimaryButton} data-sfx="navigate" onClick={() => setSubmitted(false)}>
             続けて登録する
           </button>
-          <button type="button" className="btn-secondary" data-sfx="back" onClick={onBack}>トップに戻る</button>
-        </div>
+          <button type="button" className={styles.adminSecondaryButton} data-sfx="back" onClick={onBack}>トップに戻る</button>
+        </main>
       </div>
     )
   }
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <button type="button" className="btn-back" data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
-          ← 戻る
+    <div className={`${styles.page} ${styles.adminPage}`}>
+      <header className={styles.adminHeader}>
+        <button type="button" className={styles.adminHeaderButton} data-sfx="back" onClick={onBack} aria-label="前の画面に戻る">
+          <span aria-hidden="true">←</span>
+          戻る
         </button>
-        <h1 className={styles.headerTitle}>イベント登録</h1>
+        <span className={styles.adminHeaderTitle}>イベント登録</span>
         <button
           type="button"
-          className="btn-back"
+          className={`${styles.adminHeaderButton} ${styles.logoutButton}`}
           data-sfx="back"
           onClick={() => {
             sessionStorage.removeItem(ADMIN_CODE_KEY)
@@ -213,30 +218,53 @@ export function AdminEventForm({ onBack }: Props) {
         </button>
       </header>
 
+      <section className={styles.formIntro} aria-labelledby="event-form-title">
+        <p className={styles.formEyebrow}>施設担当者向け</p>
+        <h1 id="event-form-title">イベント情報を登録</h1>
+        <p>掲示板に掲載する内容を入力してください。</p>
+      </section>
+
       <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="providerName">施設名 *</label>
-          <input id="providerName" className={styles.input} value={providerName} onChange={(event) => setProviderName(event.target.value)} required />
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="eventName">イベント名 *</label>
-          <input id="eventName" className={styles.input} value={eventName} onChange={(event) => setEventName(event.target.value)} required maxLength={100} />
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="eventDate">開催日 *</label>
-          <input id="eventDate" type="date" className={styles.input} value={eventDate} onChange={(event) => setEventDate(event.target.value)} required />
-        </div>
-        <div className={styles.row}>
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="startTime">開始 *</label>
-            <input id="startTime" type="time" className={styles.input} value={startTime} onChange={(event) => setStartTime(event.target.value)} required />
+        <section className={styles.formSection} aria-labelledby="section-basic">
+          <div className={styles.sectionHeading}>
+            <span className={styles.sectionNumber}>01</span>
+            <div>
+              <h2 id="section-basic">基本情報</h2>
+              <p>主催する施設とイベント名を入力します。</p>
+            </div>
           </div>
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="endTime">終了 *</label>
-            <input id="endTime" type="time" className={styles.input} value={endTime} onChange={(event) => setEndTime(event.target.value)} required />
+            <label className={styles.label} htmlFor="providerName">施設名 <span className={styles.required}>必須</span></label>
+            <input id="providerName" className={styles.input} value={providerName} onChange={(event) => setProviderName(event.target.value)} placeholder="例：さくら公民館" required />
           </div>
-        </div>
-        <div className={styles.row}>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="eventName">イベント名 <span className={styles.required}>必須</span></label>
+            <input id="eventName" className={styles.input} value={eventName} onChange={(event) => setEventName(event.target.value)} placeholder="例：親子でリトミック" required maxLength={100} />
+          </div>
+        </section>
+
+        <section className={styles.formSection} aria-labelledby="section-schedule">
+          <div className={styles.sectionHeading}>
+            <span className={styles.sectionNumber}>02</span>
+            <div>
+              <h2 id="section-schedule">日時と対象</h2>
+              <p>開催日時と参加できる年齢を設定します。</p>
+            </div>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="eventDate">開催日 <span className={styles.required}>必須</span></label>
+            <input id="eventDate" type="date" className={styles.input} value={eventDate} onChange={(event) => setEventDate(event.target.value)} required />
+          </div>
+          <div className={styles.row}>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="startTime">開始 <span className={styles.required}>必須</span></label>
+              <input id="startTime" type="time" className={styles.input} value={startTime} onChange={(event) => setStartTime(event.target.value)} required />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="endTime">終了 <span className={styles.required}>必須</span></label>
+              <input id="endTime" type="time" className={styles.input} value={endTime} onChange={(event) => setEndTime(event.target.value)} required />
+            </div>
+          </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="ageGroup">対象年齢</label>
             <select id="ageGroup" className={styles.input} value={ageGroup} onChange={(event) => setAgeGroup(event.target.value)}>
@@ -244,6 +272,16 @@ export function AdminEventForm({ onBack }: Props) {
               <option>2〜3歳</option>
               <option>4歳〜就学前</option>
             </select>
+          </div>
+        </section>
+
+        <section className={styles.formSection} aria-labelledby="section-place">
+          <div className={styles.sectionHeading}>
+            <span className={styles.sectionNumber}>03</span>
+            <div>
+              <h2 id="section-place">会場</h2>
+              <p>参加者が迷わないよう、会場情報を入力します。</p>
+            </div>
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="facilityType">施設種別</label>
@@ -255,49 +293,86 @@ export function AdminEventForm({ onBack }: Props) {
               <option value="other">その他</option>
             </select>
           </div>
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="location">会場名 *</label>
-          <input id="location" className={styles.input} value={location} onChange={(event) => setLocation(event.target.value)} required />
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="address">住所</label>
-          <input id="address" className={styles.input} value={address} onChange={(event) => setAddress(event.target.value)} />
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="description">イベント内容</label>
-          <textarea id="description" className={styles.textarea} value={description} onChange={(event) => setDescription(event.target.value)} rows={4} />
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="officialUrl">公式サイトURL</label>
-          <input id="officialUrl" type="url" className={styles.input} value={officialUrl} onChange={(event) => setOfficialUrl(event.target.value)} placeholder="https://..." />
-        </div>
-        <fieldset className={styles.options}>
-          <legend className={styles.label}>参加条件・設備</legend>
-          <label><input type="radio" name="price" checked={price === 'free'} onChange={() => setPrice('free')} /> 無料</label>
-          <label><input type="radio" name="price" checked={price === 'paid'} onChange={() => setPrice('paid')} /> 有料</label>
-          <label><input type="checkbox" checked={indoor} onChange={(event) => setIndoor(event.target.checked)} /> 屋内</label>
-          <label><input type="checkbox" checked={reservationRequired} onChange={(event) => setReservationRequired(event.target.checked)} /> 予約が必要</label>
-          <label><input type="checkbox" checked={nursingRoom} onChange={(event) => setNursingRoom(event.target.checked)} /> 授乳室</label>
-          <label><input type="checkbox" checked={diaperChange} onChange={(event) => setDiaperChange(event.target.checked)} /> おむつ交換</label>
-          <label><input type="checkbox" checked={strollerOk} onChange={(event) => setStrollerOk(event.target.checked)} /> ベビーカー対応</label>
-        </fieldset>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="imageFile">イベント画像（JPEG/PNG・5MB以下）</label>
-          <input id="imageFile" type="file" accept="image/jpeg,image/png" className={styles.fileInput} onChange={handleImageChange} />
-          {imagePreview && (
-            <div className={styles.preview}>
-              <img src={imagePreview} alt="選択したイベント画像" className={styles.previewImg} />
-              <button type="button" className={styles.removeBtn} onClick={() => { setImageFile(null); setImagePreview(null) }}>
-                削除
-              </button>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="location">会場名 <span className={styles.required}>必須</span></label>
+            <input id="location" className={styles.input} value={location} onChange={(event) => setLocation(event.target.value)} placeholder="例：2階 和室" required />
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="address">住所</label>
+            <input id="address" className={styles.input} value={address} onChange={(event) => setAddress(event.target.value)} placeholder="例：宮崎市○○町1-2-3" />
+          </div>
+        </section>
+
+        <section className={styles.formSection} aria-labelledby="section-details">
+          <div className={styles.sectionHeading}>
+            <span className={styles.sectionNumber}>04</span>
+            <div>
+              <h2 id="section-details">イベント内容</h2>
+              <p>当日の内容や案内ページを掲載できます。</p>
             </div>
-          )}
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="description">説明</label>
+            <textarea id="description" className={styles.textarea} value={description} onChange={(event) => setDescription(event.target.value)} rows={5} placeholder="持ち物や当日の流れなどを入力してください。" />
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="officialUrl">公式サイトURL</label>
+            <input id="officialUrl" type="url" className={styles.input} value={officialUrl} onChange={(event) => setOfficialUrl(event.target.value)} placeholder="https://example.jp/event" />
+          </div>
+        </section>
+
+        <section className={styles.formSection} aria-labelledby="section-options">
+          <div className={styles.sectionHeading}>
+            <span className={styles.sectionNumber}>05</span>
+            <div>
+              <h2 id="section-options">参加条件・設備</h2>
+              <p>該当する項目を選択してください。</p>
+            </div>
+          </div>
+          <fieldset className={styles.priceOptions}>
+            <legend className={styles.label}>参加費</legend>
+            <label className={styles.choiceLabel}><input type="radio" name="price" checked={price === 'free'} onChange={() => setPrice('free')} /><span>無料</span></label>
+            <label className={styles.choiceLabel}><input type="radio" name="price" checked={price === 'paid'} onChange={() => setPrice('paid')} /><span>有料</span></label>
+          </fieldset>
+          <fieldset className={styles.equipmentOptions}>
+            <legend className={styles.label}>設備・利用条件</legend>
+            <label className={styles.checkLabel}><input type="checkbox" checked={indoor} onChange={(event) => setIndoor(event.target.checked)} /><span>屋内</span></label>
+            <label className={styles.checkLabel}><input type="checkbox" checked={reservationRequired} onChange={(event) => setReservationRequired(event.target.checked)} /><span>予約が必要</span></label>
+            <label className={styles.checkLabel}><input type="checkbox" checked={nursingRoom} onChange={(event) => setNursingRoom(event.target.checked)} /><span>授乳室</span></label>
+            <label className={styles.checkLabel}><input type="checkbox" checked={diaperChange} onChange={(event) => setDiaperChange(event.target.checked)} /><span>おむつ交換</span></label>
+            <label className={styles.checkLabel}><input type="checkbox" checked={strollerOk} onChange={(event) => setStrollerOk(event.target.checked)} /><span>ベビーカー対応</span></label>
+          </fieldset>
+        </section>
+
+        <section className={styles.formSection} aria-labelledby="section-image">
+          <div className={styles.sectionHeading}>
+            <span className={styles.sectionNumber}>06</span>
+            <div>
+              <h2 id="section-image">イベント画像</h2>
+              <p>JPEGまたはPNG、5MB以下の画像を選択できます。</p>
+            </div>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.fileLabel} htmlFor="imageFile">画像を選択</label>
+            <input id="imageFile" type="file" accept="image/jpeg,image/png" className={styles.fileInput} onChange={handleImageChange} />
+            {imagePreview && (
+              <div className={styles.preview}>
+                <img src={imagePreview} alt="選択したイベント画像" className={styles.previewImg} />
+                <button type="button" className={styles.removeBtn} onClick={() => { setImageFile(null); setImagePreview(null) }}>
+                  削除
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <div className={styles.submitArea}>
+          {submitError && <p className={styles.error} role="alert">{submitError}</p>}
+          <button type="submit" className={styles.adminPrimaryButton} data-sfx="send" disabled={submitting}>
+            {submitting ? '登録しています…' : 'イベントを登録する'}
+          </button>
+          <p>入力した内容は、登録後にまちの掲示板へ反映されます。</p>
         </div>
-        {submitError && <p className={styles.error}>{submitError}</p>}
-        <button type="submit" className="btn-primary" data-sfx="send" disabled={submitting}>
-          {submitting ? '登録しています…' : 'イベントを登録する'}
-        </button>
       </form>
     </div>
   )
