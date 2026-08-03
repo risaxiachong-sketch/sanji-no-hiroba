@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import type { Event as BoardEvent, FacilityType, FilterCondition, Page } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
 import { fetchEvents } from '../../api/events'
@@ -237,12 +237,17 @@ export function BulletinBoard({ onSelectEvent, onNavigate, isSaved, onToggleSave
   const [filter, setFilter] = useState<BoardFilter>(INITIAL_FILTER)
   const [events, setEvents] = useState<BoardEvent[]>([])
   const [loadError, setLoadError] = useState(false)
+  const pageRef = useRef<HTMLDivElement>(null)
 
   const loadEvents = () => fetchEvents()
     .then((response) => { setEvents(response.events); setLoadError(false) })
     .catch(() => setLoadError(true))
 
   useEffect(() => { void loadEvents() }, [])
+
+  useEffect(() => {
+    pageRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+  }, [])
 
   const filtered = useMemo(() => applyFilter(events, filter), [events, filter])
   const conditionSelected = hasConditionFilter(filter)
@@ -282,7 +287,7 @@ export function BulletinBoard({ onSelectEvent, onNavigate, isSaved, onToggleSave
   const clearAll = () => setFilter({})
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={pageRef}>
       <header className={styles.hero}>
         <span className={`${styles.heroCloud} ${styles.heroCloudOne}`} aria-hidden="true" />
         <span className={`${styles.heroCloud} ${styles.heroCloudTwo}`} aria-hidden="true" />

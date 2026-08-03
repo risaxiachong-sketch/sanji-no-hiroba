@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Event, FacilityType, Page } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
 import { fetchEvents } from '../../api/events'
@@ -155,6 +155,7 @@ function SavedEventCard({ event, onSelectEvent }: SavedEventCardProps) {
 
 export function SavedEvents({ savedIds, onSelectEvent, onNavigate }: Props) {
   const [saved, setSaved] = useState<Event[]>([])
+  const pageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -162,8 +163,12 @@ export function SavedEvents({ savedIds, onSelectEvent, onNavigate }: Props) {
     return () => { cancelled = true }
   }, [savedIds])
 
+  useEffect(() => {
+    pageRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+  }, [])
+
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={pageRef}>
       <header className={styles.hero}>
         <div className={styles.titleBlock}>
           <p className={styles.eyebrow}>My list</p>

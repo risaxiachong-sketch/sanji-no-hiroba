@@ -72,12 +72,6 @@
   text-rendering: optimizeLegibility;
 }
 
-@media (orientation: landscape) {
-  :root {
-    --bottom-nav-height: clamp(76px, 11vw, 96px);
-  }
-}
-
 @media (min-width: 1024px) {
   :root {
     --bottom-nav-height: 116px;
@@ -93,13 +87,31 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
-  margin: 0;
+  width: 100%;
+  height: 100%;
   min-width: 320px;
-  min-height: 100vh;
-  overflow-x: hidden;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
   font-size: var(--font-size-base);
   line-height: 1.7;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 button,

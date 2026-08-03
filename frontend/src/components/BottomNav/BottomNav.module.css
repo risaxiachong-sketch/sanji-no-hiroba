@@ -138,53 +138,6 @@
   }
 }
 
-/* 横画面では下ではなく右端に縦帯として表示 */
-@media (orientation: landscape) {
-  .bottomNav {
-    top: 0;
-    bottom: 0;
-    left: auto;
-    right: 0;
-    width: min(clamp(76px, 11vw, 96px), calc((100dvh + 16px) / 4));
-    max-width: none;
-    min-height: 0;
-    height: auto;
-    margin: 0;
-  }
-
-  .bottomNav {
-    padding: clamp(6px, 1.5vh, 10px) 5px env(safe-area-inset-right, 7px);
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    gap: 4px;
-  }
-
-  .navBtn {
-    flex: none;
-    width: 100%;
-    min-height: var(--tap-min);
-    aspect-ratio: 1;
-    padding: 3px 2px;
-    border-radius: 16px;
-  }
-
-  .navIcon {
-    height: min(48px, 52%);
-  }
-
-  .navIcon img {
-    width: 100%;
-    height: 100%;
-    max-width: 48px;
-    max-height: 48px;
-  }
-
-  .navLabel {
-    font-size: clamp(0.62rem, 2vh, 0.72rem);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .navBtn {
     transition: none;

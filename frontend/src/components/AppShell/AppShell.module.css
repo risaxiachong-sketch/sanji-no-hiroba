@@ -1,6 +1,9 @@
 .shell {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
   background:
     radial-gradient(circle at 0 0, rgba(242, 166, 160, 0.2), transparent 28%),
     radial-gradient(circle at 100% 100%, rgba(131, 191, 176, 0.2), transparent 30%),
@@ -9,7 +12,9 @@
 
 .layout,
 .content {
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .content {

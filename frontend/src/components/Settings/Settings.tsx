@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { Avatar, Page } from '../../types'
 import { AGE_GROUPS } from '../../data/ageGroups'
 import { useSoundEffects } from '../../audio/SoundContext'
@@ -19,9 +20,14 @@ export function Settings({ avatar, onNavigate }: Props) {
   const childAgeLabel = AGE_GROUPS.find(group => group.value === profile?.childAgeGroup)?.label
     ?? profile?.childAgeGroup
     ?? '未設定'
+  const pageRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    pageRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+  }, [])
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={pageRef}>
       <header className={styles.hero}>
         <div className={styles.titleBlock}>
           <p className={styles.eyebrow}>Settings</p>
