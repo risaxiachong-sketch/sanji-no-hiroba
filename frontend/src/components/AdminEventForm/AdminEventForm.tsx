@@ -220,18 +220,14 @@ export function AdminEventForm({ onBack }: Props) {
 
       <section className={styles.formIntro} aria-labelledby="event-form-title">
         <p className={styles.formEyebrow}>施設担当者向け</p>
-        <h1 id="event-form-title">イベント情報を登録</h1>
-        <p>掲示板に掲載する内容を入力してください。</p>
+        <h1 id="event-form-title">イベント登録</h1>
+        <p>掲示板に掲載する情報を入力してください。</p>
       </section>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <section className={styles.formSection} aria-labelledby="section-basic">
           <div className={styles.sectionHeading}>
-            <span className={styles.sectionNumber}>01</span>
-            <div>
-              <h2 id="section-basic">基本情報</h2>
-              <p>主催する施設とイベント名を入力します。</p>
-            </div>
+            <h2 id="section-basic">基本情報</h2>
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="providerName">施設名 <span className={styles.required}>必須</span></label>
@@ -245,11 +241,7 @@ export function AdminEventForm({ onBack }: Props) {
 
         <section className={styles.formSection} aria-labelledby="section-schedule">
           <div className={styles.sectionHeading}>
-            <span className={styles.sectionNumber}>02</span>
-            <div>
-              <h2 id="section-schedule">日時と対象</h2>
-              <p>開催日時と参加できる年齢を設定します。</p>
-            </div>
+            <h2 id="section-schedule">開催日時</h2>
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="eventDate">開催日 <span className={styles.required}>必須</span></label>
@@ -277,11 +269,7 @@ export function AdminEventForm({ onBack }: Props) {
 
         <section className={styles.formSection} aria-labelledby="section-place">
           <div className={styles.sectionHeading}>
-            <span className={styles.sectionNumber}>03</span>
-            <div>
-              <h2 id="section-place">会場</h2>
-              <p>参加者が迷わないよう、会場情報を入力します。</p>
-            </div>
+            <h2 id="section-place">会場情報</h2>
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="facilityType">施設種別</label>
@@ -305,11 +293,7 @@ export function AdminEventForm({ onBack }: Props) {
 
         <section className={styles.formSection} aria-labelledby="section-details">
           <div className={styles.sectionHeading}>
-            <span className={styles.sectionNumber}>04</span>
-            <div>
-              <h2 id="section-details">イベント内容</h2>
-              <p>当日の内容や案内ページを掲載できます。</p>
-            </div>
+            <h2 id="section-details">イベント詳細</h2>
           </div>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="description">説明</label>
@@ -323,11 +307,7 @@ export function AdminEventForm({ onBack }: Props) {
 
         <section className={styles.formSection} aria-labelledby="section-options">
           <div className={styles.sectionHeading}>
-            <span className={styles.sectionNumber}>05</span>
-            <div>
-              <h2 id="section-options">参加条件・設備</h2>
-              <p>該当する項目を選択してください。</p>
-            </div>
+            <h2 id="section-options">参加費・設備</h2>
           </div>
           <fieldset className={styles.priceOptions}>
             <legend className={styles.label}>参加費</legend>
@@ -346,14 +326,11 @@ export function AdminEventForm({ onBack }: Props) {
 
         <section className={styles.formSection} aria-labelledby="section-image">
           <div className={styles.sectionHeading}>
-            <span className={styles.sectionNumber}>06</span>
-            <div>
-              <h2 id="section-image">イベント画像</h2>
-              <p>JPEGまたはPNG、5MB以下の画像を選択できます。</p>
-            </div>
+            <h2 id="section-image">掲載画像</h2>
           </div>
           <div className={styles.field}>
             <label className={styles.fileLabel} htmlFor="imageFile">画像を選択</label>
+            <p className={styles.fileHint}>JPEGまたはPNG、5MB以下</p>
             <input id="imageFile" type="file" accept="image/jpeg,image/png" className={styles.fileInput} onChange={handleImageChange} />
             {imagePreview && (
               <div className={styles.preview}>

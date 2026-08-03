@@ -1,4 +1,5 @@
 .page {
+  width: 100%;
   max-width: 430px;
   margin: 0 auto;
   height: 100%;
@@ -322,46 +323,25 @@
 .formSection {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 24px 18px 26px;
+  gap: 16px;
+  padding: 22px 18px 24px;
   border-bottom: 1px solid rgba(181, 137, 102, 0.17);
 }
 
 .sectionHeading {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.sectionNumber {
-  width: 32px;
-  height: 26px;
-  flex: 0 0 auto;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  margin-top: 1px;
-  border-radius: 4px;
-  background: #f4d7cb;
-  color: #8a594c;
-  font-size: 0.7rem;
-  font-weight: 900;
+  min-height: 26px;
+  padding-left: 11px;
+  border-left: 3px solid #cf8d7e;
 }
 
 .sectionHeading h2 {
   margin: 0;
   color: #523d34;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 800;
   line-height: 1.4;
-}
-
-.sectionHeading p {
-  margin: 3px 0 0;
-  color: #8a766d;
-  font-size: 0.74rem;
-  font-weight: 600;
-  line-height: 1.55;
 }
 
 .field {
@@ -520,6 +500,14 @@ select.input {
   border: 0;
 }
 
+.fileHint {
+  margin: -1px 0 0;
+  color: #8d7a71;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 .preview {
   position: relative;
   margin-top: 4px;
@@ -669,5 +657,71 @@ select.input {
   .authCard {
     margin-top: 28px;
     padding: 20px 16px;
+  }
+}
+
+@media (min-width: 600px) {
+  .adminPage {
+    max-width: 820px;
+  }
+
+  .adminHeader {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+
+  .formIntro {
+    padding-top: 28px;
+    padding-bottom: 20px;
+  }
+
+  .form {
+    width: calc(100% - 56px);
+    max-width: 720px;
+    margin-bottom: 36px;
+  }
+
+  .formSection {
+    padding: 24px 28px 26px;
+  }
+
+  .input {
+    min-height: 46px;
+    padding: 9px 12px;
+    font-size: 0.9rem;
+  }
+
+  .textarea {
+    min-height: 112px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .row {
+    gap: 16px;
+  }
+
+  .submitArea {
+    padding: 24px 28px 28px;
+  }
+
+  .successMain {
+    max-width: 560px;
+  }
+}
+
+@media (min-width: 960px) {
+  .adminPage {
+    max-width: 980px;
+  }
+
+  .form {
+    max-width: 820px;
+  }
+
+  .formSection,
+  .submitArea {
+    padding-right: 36px;
+    padding-left: 36px;
   }
 }
