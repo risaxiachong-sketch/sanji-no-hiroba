@@ -1,19 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent, PointerEvent } from 'react'
 import type { Avatar, DummyUser, Post, ReactionOption, ReactionType } from '../../types'
-import plazaDayUrl from '../../assets/plaza-2d/plaza-day.png'
-import plazaWalkMaskUrl from '../../assets/plaza-2d/plaza-walk-mask.png'
 import { useCharacterScale } from '../../characterScale/CharacterScaleContext'
 import type { CharacterScale } from '../../characterScale/CharacterScaleContext'
+import type { MapDefinition } from '../../maps/MapContext'
 import { buildWalkGrid } from './pathfinding'
 import { PlazaSimulation, type PlazaParticipant, type PlazaVisitor2D } from './plazaSimulation'
 import styles from './Plaza2D.module.css'
 
-const MAP_WIDTH = 1448
-const MAP_HEIGHT = 1086
 const MAX_DPR = 1.5
 const MAX_ZOOM_FACTOR = 2.4
-const BOARD_RECT = { x: 426, y: 646, width: 282, height: 268 }
 
 /** キャラクタースプライトの一辺のサイズ（px）。影・ラベル位置はこの値を基準に比例計算する。 */
 const SPRITE_SIZE: Record<CharacterScale, number> = {
@@ -69,6 +65,7 @@ type PointerSample = {
 
 interface Props {
   avatar: Avatar
+  map: MapDefinition
   visitors: DummyUser[]
   posts: Post[]
   onOpenBulletinBoard: () => void
@@ -87,15 +84,15 @@ function loadImage(url: string) {
   })
 }
 
-function clampCamera(camera: Camera, viewport: Viewport) {
+function clampCamera(camera: Camera, viewport: Viewport, map: MapDefinition) {
   const halfWidth = viewport.width / camera.scale / 2
   const halfHeight = viewport.height / camera.scale / 2
-  camera.x = halfWidth * 2 >= MAP_WIDTH
-    ? MAP_WIDTH / 2
-    : Math.max(halfWidth, Math.min(MAP_WIDTH - halfWidth, camera.x))
-  camera.y = halfHeight * 2 >= MAP_HEIGHT
-    ? MAP_HEIGHT / 2
-    : Math.max(halfHeight, Math.min(MAP_HEIGHT - halfHeight, camera.y))
+  camera.x = halfWidth * 2 >= map.width
+    ? map.width / 2
+    : Math.max(halfWidth, Math.min(map.width - halfWidth, camera.x))
+  camera.y = halfHeight * 2 >= map.height
+    ? map.height / 2
+    : Math.max(halfHeight, Math.min(map.height - halfHeight, camera.y))
 }
 
 function worldToScreen(point: { x: number; y: number }, camera: Camera, viewport: Viewport) {
@@ -231,6 +228,7 @@ function wrapSpeechText(context: CanvasRenderingContext2D, text: string, maxText
 
 export function Plaza2D({
   avatar,
+  map,
   visitors,
   posts,
   onOpenBulletinBoard,
@@ -258,8 +256,8 @@ export function Plaza2D({
     rightInset: 8,
   })
   const cameraRef = useRef<Camera>({
-    x: MAP_WIDTH / 2,
-    y: MAP_HEIGHT / 2,
+    x: map.width / 2,
+    y: map.height / 2,
     scale: 1,
     minScale: 1,
     maxScale: 2.4,
@@ -326,19 +324,19 @@ export function Plaza2D({
 
       const camera = cameraRef.current
       const previousMinScale = camera.minScale
-      camera.minScale = Math.max(viewport.width / MAP_WIDTH, viewport.height / MAP_HEIGHT)
+      camera.minScale = Math.max(viewport.width / map.width, viewport.height / map.height)
       camera.maxScale = camera.minScale * MAX_ZOOM_FACTOR
       camera.scale = previousMinScale === 1
         ? camera.minScale
         : Math.max(camera.minScale, Math.min(camera.maxScale, camera.scale))
-      clampCamera(camera, viewport)
+      clampCamera(camera, viewport, map)
     }
 
     resize()
     const observer = new ResizeObserver(resize)
     observer.observe(frame)
     return () => observer.disconnect()
-  }, [])
+  }, [map])
 
   useEffect(() => {
     let cancelled = false
@@ -365,18 +363,18 @@ export function Plaza2D({
     const spriteUrls = [...new Set(participants.map((participant) => participant.spriteUrl).filter(Boolean))]
 
     void Promise.all([
-      loadImage(plazaDayUrl),
-      loadImage(plazaWalkMaskUrl),
+      loadImage(map.backgroundUrl),
+      loadImage(map.walkMaskUrl),
       ...spriteUrls.map(loadImage),
     ]).then(([mapImage, maskImage, ...spriteImages]) => {
       if (cancelled) return
       const maskCanvas = document.createElement('canvas')
-      maskCanvas.width = MAP_WIDTH
-      maskCanvas.height = MAP_HEIGHT
+      maskCanvas.width = map.width
+      maskCanvas.height = map.height
       const maskContext = maskCanvas.getContext('2d', { willReadFrequently: true })
       if (!maskContext) throw new Error('移動マスクを読み込めませんでした')
-      maskContext.drawImage(maskImage, 0, 0, MAP_WIDTH, MAP_HEIGHT)
-      const grid = buildWalkGrid(maskContext.getImageData(0, 0, MAP_WIDTH, MAP_HEIGHT))
+      maskContext.drawImage(maskImage, 0, 0, map.width, map.height)
+      const grid = buildWalkGrid(maskContext.getImageData(0, 0, map.width, map.height))
       const simulation = new PlazaSimulation(grid, participants, postsRef.current)
       const spriteMap = new Map(spriteUrls.map((url, index) => [url, spriteImages[index]]))
       simulationRef.current = simulation
@@ -386,7 +384,7 @@ export function Plaza2D({
       if (user) {
         cameraRef.current.x = user.x
         cameraRef.current.y = user.y
-        clampCamera(cameraRef.current, viewportRef.current)
+        clampCamera(cameraRef.current, viewportRef.current, map)
       }
 
       let lastTime = window.performance.now()
@@ -410,7 +408,7 @@ export function Plaza2D({
           if (Math.abs(camera.velocityX) < 1) camera.velocityX = 0
           if (Math.abs(camera.velocityY) < 1) camera.velocityY = 0
         }
-        clampCamera(camera, viewport)
+        clampCamera(camera, viewport, map)
 
         context.setTransform(viewport.dpr, 0, 0, viewport.dpr, 0, 0)
         context.clearRect(0, 0, viewport.width, viewport.height)
@@ -420,7 +418,7 @@ export function Plaza2D({
           viewport.height / 2 - camera.y * camera.scale,
         )
         context.scale(camera.scale, camera.scale)
-        context.drawImage(mapImage, 0, 0, MAP_WIDTH, MAP_HEIGHT)
+        context.drawImage(mapImage, 0, 0, map.width, map.height)
 
         const sortedVisitors = [...simulation.visitors].sort((left, right) => left.y - right.y)
         for (const visitor of sortedVisitors) {
@@ -495,7 +493,7 @@ export function Plaza2D({
 
         const currentUser = simulation.userVisitor()
         if (currentUser) drawUserMarker(context, currentUser, camera, viewport, spriteSize)
-        positionBoardButton(boardButtonRef.current, camera, viewport)
+        positionBoardButton(boardButtonRef.current, camera, viewport, map.boardRect)
         animationFrameRef.current = window.requestAnimationFrame(draw)
       }
 
@@ -513,7 +511,7 @@ export function Plaza2D({
         animationFrameRef.current = null
       }
     }
-  }, [avatar, visitors, characterScale])
+  }, [avatar, visitors, characterScale, map])
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
@@ -554,7 +552,7 @@ export function Plaza2D({
       gesture.lastX = event.clientX
       gesture.lastY = event.clientY
       gesture.lastTime = event.timeStamp
-      clampCamera(camera, viewport)
+      clampCamera(camera, viewport, map)
       return
     }
 
@@ -576,7 +574,7 @@ export function Plaza2D({
         camera.x = worldBefore.x - (midX - viewport.width / 2) / camera.scale
         camera.y = worldBefore.y - (midY - viewport.height / 2) / camera.scale
         gesture.moved = true
-        clampCamera(camera, viewport)
+        clampCamera(camera, viewport, map)
       }
       gesture.pinchDistance = distance
       gesture.pinchMidX = midX
@@ -613,7 +611,7 @@ export function Plaza2D({
     cameraRef.current.y = user.y
     cameraRef.current.velocityX = 0
     cameraRef.current.velocityY = 0
-    clampCamera(cameraRef.current, viewportRef.current)
+    clampCamera(cameraRef.current, viewportRef.current, map)
   }
 
   const openBulletinBoard = () => {
@@ -783,11 +781,12 @@ function positionBoardButton(
   button: HTMLButtonElement | null,
   camera: Camera,
   viewport: Viewport,
+  boardRect: MapDefinition['boardRect'],
 ) {
   if (!button) return
-  const position = worldToScreen({ x: BOARD_RECT.x, y: BOARD_RECT.y }, camera, viewport)
-  const width = BOARD_RECT.width * camera.scale
-  const height = BOARD_RECT.height * camera.scale
+  const position = worldToScreen({ x: boardRect.x, y: boardRect.y }, camera, viewport)
+  const width = boardRect.width * camera.scale
+  const height = boardRect.height * camera.scale
   button.style.left = `${position.x}px`
   button.style.top = `${position.y}px`
   button.style.width = `${width}px`

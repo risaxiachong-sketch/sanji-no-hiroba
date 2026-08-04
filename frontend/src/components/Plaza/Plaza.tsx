@@ -6,6 +6,7 @@ import { addReaction, removeReaction } from '../../api/reactions'
 import { useSoundEffects } from '../../audio/SoundContext'
 import postStarButton from '../../assets/navigation/post-star-button.png'
 import { loadCachedProfile } from '../../hooks/useProfile'
+import { useMap } from '../../maps/MapContext'
 import { BottomNav } from '../BottomNav/BottomNav'
 import { Plaza2D } from '../Plaza2D/Plaza2D'
 import styles from './Plaza.module.css'
@@ -28,6 +29,7 @@ function latestPostFor(posts: Post[], userId: string | null) {
 
 export function Plaza({ avatar, onNavigate }: Props) {
   const { play } = useSoundEffects()
+  const { map } = useMap()
   const currentUserId = loadCachedProfile()?.userId
   const [posts, setPosts] = useState<Post[]>([])
   const [visitors, setVisitors] = useState<DummyUser[]>([])
@@ -96,6 +98,7 @@ export function Plaza({ avatar, onNavigate }: Props) {
       <div className={styles.plazaScene}>
         <Plaza2D
           avatar={avatar}
+          map={map}
           visitors={visibleVisitors}
           posts={posts}
           onOpenBulletinBoard={() => onNavigate('bulletinBoard')}

@@ -10,6 +10,7 @@
     "backup:tables": "tsx scripts/backup-tables.ts",
     "migrate:reactions": "tsx scripts/migrate-reactions.ts",
     "seed:events": "tsx scripts/seed-events.ts",
+    "seed:posts": "tsx scripts/seed-posts.ts",
     "preflight": "tsx scripts/preflight-check.ts",
     "deploy:safe": "tsx scripts/deploy-safe.ts",
     "rollback": "tsx scripts/rollback.ts"

@@ -4,6 +4,9 @@ import { AGE_GROUPS } from '../../data/ageGroups'
 import { useSoundEffects } from '../../audio/SoundContext'
 import { useCharacterScale } from '../../characterScale/CharacterScaleContext'
 import type { CharacterScale } from '../../characterScale/CharacterScaleContext'
+import { useMap } from '../../maps/MapContext'
+import { MAPS } from '../../maps/maps'
+import type { MapId } from '../../maps/MapContext'
 import { useProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './Settings.module.css'
@@ -26,11 +29,14 @@ const CHARACTER_SCALE_LABEL: Record<CharacterScale, string> = {
   large: '大きめ',
 }
 
+const MAP_OPTIONS: MapId[] = ['garden', 'fountain']
+
 /** Settings is a menu of editable fields; tapping a row opens its own editor screen. */
 export function Settings({ avatar, onNavigate }: Props) {
   const { profile } = useProfile()
   const { enabled: soundEnabled, setEnabled: setSoundEnabled } = useSoundEffects()
   const { scale: characterScale, setScale: setCharacterScale } = useCharacterScale()
+  const { mapId, map, setMapId } = useMap()
   const nickname = profile?.nickname || '未設定'
   const childAgeLabel = AGE_GROUPS.find(group => group.value === profile?.childAgeGroup)?.label
     ?? profile?.childAgeGroup
@@ -172,6 +178,35 @@ export function Settings({ avatar, onNavigate }: Props) {
                     onClick={() => setCharacterScale(option.value)}
                   >
                     {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </li>
+          <li>
+            <div className={styles.scaleRow}>
+              <div className={styles.scaleRowHead}>
+                <span className={styles.menuIcon} aria-hidden="true">
+                  <span className={styles.menuSymbol}>⌖</span>
+                </span>
+                <span className={styles.menuText}>
+                  <span className={styles.menuLabel}>ひろばのマップ</span>
+                  <span className={styles.menuValue}>{map.label}</span>
+                </span>
+              </div>
+              <div className={styles.mapOptions} role="radiogroup" aria-label="ひろばのマップ">
+                {MAP_OPTIONS.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="radio"
+                    aria-checked={mapId === option}
+                    className={`${styles.mapOption} ${mapId === option ? styles.mapOptionActive : ''}`}
+                    data-sfx="select"
+                    onClick={() => setMapId(option)}
+                  >
+                    <span className={styles.mapOptionLabel}>{MAPS[option].label}</span>
+                    <span className={styles.mapOptionDescription}>{MAPS[option].description}</span>
                   </button>
                 ))}
               </div>

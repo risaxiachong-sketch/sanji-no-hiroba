@@ -1,6 +1,6 @@
 import type { Event } from '../types';
 
-// 日付ヘルパー：今日・明日・来週の日付文字列を生成
+// 日付ヘルパー：今日から N 日後の日付文字列を生成
 function dateOffset(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
