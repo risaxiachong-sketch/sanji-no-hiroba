@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent, PointerEvent } from 'react'
-import type { Avatar, DummyUser, Post } from '../../types'
+import type { Avatar, DummyUser, Post, ReactionOption, ReactionType } from '../../types'
 import plazaDayUrl from '../../assets/plaza-2d/plaza-day.png'
 import plazaWalkMaskUrl from '../../assets/plaza-2d/plaza-walk-mask.png'
 import { useCharacterScale } from '../../characterScale/CharacterScaleContext'
@@ -26,6 +26,21 @@ const SHADOW_RADIUS_Y_WALK_RATIO = 11 / 148
 const SHADOW_RADIUS_Y_IDLE_RATIO = 12 / 148
 const BUBBLE_OFFSET_RATIO = 141 / 148
 const LABEL_OFFSET_RATIO = 153 / 148
+const REACTION_BAR_OFFSET_RATIO = 0.12
+const REACTION_BAR_WIDTH = 176
+const REACTION_BAR_HEIGHT = 64
+const REACTION_BAR_MARGIN = 8
+
+const REACTIONS: ReactionOption[] = [
+  { value: 'wakaru', label: 'わかるよ', emoji: '🫶' },
+  { value: 'otsukare', label: 'おつかれさま', emoji: '☕' },
+  { value: 'kokoniiruyo', label: 'ここにいるよ', emoji: '🌿' },
+  { value: 'watashimo', label: '私も同じ', emoji: '🙋' },
+  { value: 'ouen', label: '応援してるよ', emoji: '📣' },
+  { value: 'kyoumo', label: '今日もおつかれさま', emoji: '🌙' },
+  { value: 'yokattane', label: 'よかったね', emoji: '🎉' },
+  { value: 'hitoiki', label: 'ひと息ついてね', emoji: '🍀' },
+]
 
 type Camera = {
   x: number
@@ -57,7 +72,10 @@ interface Props {
   visitors: DummyUser[]
   posts: Post[]
   onOpenBulletinBoard: () => void
-  onVisitorTap: (visitorId: string) => void
+  onVisitorTap: (visitorId: string | null) => void
+  selectedVisitorId: string | null
+  selectedPost: Post | null
+  onReact: (postId: string, type: ReactionType) => void
 }
 
 function loadImage(url: string) {
@@ -211,11 +229,23 @@ function wrapSpeechText(context: CanvasRenderingContext2D, text: string, maxText
   return lines
 }
 
-export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisitorTap }: Props) {
+export function Plaza2D({
+  avatar,
+  visitors,
+  posts,
+  onOpenBulletinBoard,
+  onVisitorTap,
+  selectedVisitorId,
+  selectedPost,
+  onReact,
+}: Props) {
   const { scale: characterScale } = useCharacterScale()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const frameRef = useRef<HTMLDivElement | null>(null)
   const boardButtonRef = useRef<HTMLButtonElement | null>(null)
+  const reactionBarRef = useRef<HTMLDivElement | null>(null)
+  const selectedVisitorIdRef = useRef(selectedVisitorId)
+  const selectedPostRef = useRef(selectedPost)
   const animationFrameRef = useRef<number | null>(null)
   const simulationRef = useRef<PlazaSimulation | null>(null)
   const viewportRef = useRef<Viewport>({
@@ -256,6 +286,18 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
   }, [posts])
 
   useEffect(() => {
+    selectedVisitorIdRef.current = selectedVisitorId
+  }, [selectedVisitorId])
+
+  useEffect(() => {
+    selectedPostRef.current = selectedPost
+  }, [selectedPost])
+
+  useEffect(() => {
+    simulationRef.current?.setFrozen(selectedVisitorId)
+  }, [selectedVisitorId])
+
+  useEffect(() => {
     const frame = frameRef.current
     const canvas = canvasRef.current
     if (!frame || !canvas) return
@@ -263,7 +305,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
     const resize = () => {
       const bounds = frame.getBoundingClientRect()
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
-      const isLandscape = window.matchMedia('(orientation: landscape)').matches
+      const isDesktopNav = window.matchMedia('(min-width: 1024px)').matches
       const navSize = Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height'),
       ) || 0
@@ -272,9 +314,9 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
         height: Math.max(1, bounds.height),
         dpr,
         topInset: 8,
-        bottomInset: isLandscape ? 8 : navSize,
+        bottomInset: isDesktopNav ? 8 : navSize,
         leftInset: 8,
-        rightInset: isLandscape ? navSize : 8,
+        rightInset: isDesktopNav ? navSize : 8,
       }
       viewportRef.current = viewport
       canvas.width = Math.round(viewport.width * dpr)
@@ -338,6 +380,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
       const simulation = new PlazaSimulation(grid, participants, postsRef.current)
       const spriteMap = new Map(spriteUrls.map((url, index) => [url, spriteImages[index]]))
       simulationRef.current = simulation
+      simulation.setFrozen(selectedVisitorIdRef.current)
 
       const user = simulation.userVisitor()
       if (user) {
@@ -427,6 +470,29 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
           )
         }
 
+        const selectedVisitor2D = selectedVisitorIdRef.current
+          ? simulation.visitors.find((item) => item.id === selectedVisitorIdRef.current)
+          : undefined
+        if (selectedVisitor2D) {
+          const fallbackMessage = visitors.find((item) => item.id === selectedVisitor2D.id)?.message ?? ''
+          const bubbleText = selectedPostRef.current?.text ?? fallbackMessage
+          if (bubbleText) {
+            const position = worldToScreen(
+              { x: selectedVisitor2D.x, y: selectedVisitor2D.y - spriteSize * BUBBLE_OFFSET_RATIO },
+              camera,
+              viewport,
+            )
+            drawSpeechBubble(context, position.x, position.y, bubbleText, viewport.width, viewport.height, viewport)
+          }
+        }
+        positionReactionBar(
+          reactionBarRef.current,
+          selectedPostRef.current ? selectedVisitor2D : undefined,
+          camera,
+          viewport,
+          spriteSize,
+        )
+
         const currentUser = simulation.userVisitor()
         if (currentUser) drawUserMarker(context, currentUser, camera, viewport, spriteSize)
         positionBoardButton(boardButtonRef.current, camera, viewport)
@@ -451,6 +517,8 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
+    if (event.target instanceof HTMLButtonElement) return
+    if (reactionBarRef.current?.contains(event.target as Node)) return
     event.currentTarget.setPointerCapture(event.pointerId)
     pointerMapRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
     cameraRef.current.velocityX = 0
@@ -556,6 +624,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
   const handleFrameClick = (event: MouseEvent<HTMLDivElement>) => {
     if (gestureRef.current.moved) return
     if (event.target instanceof HTMLButtonElement) return
+    if (reactionBarRef.current?.contains(event.target as Node)) return
     const frame = frameRef.current
     const simulation = simulationRef.current
     if (!frame || !simulation) return
@@ -578,7 +647,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
       }
     }
 
-    if (nearest) onVisitorTap(nearest.id)
+    onVisitorTap(nearest ? nearest.id : null)
   }
 
   return (
@@ -615,6 +684,33 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisito
         あなたを探す
       </button>
 
+      {selectedPost && (
+        <div
+          ref={reactionBarRef}
+          className={styles.reactionBar}
+          aria-label={`${selectedPost.nickname}の投稿へのリアクション`}
+        >
+          {REACTIONS.map((reaction) => {
+            const count = selectedPost.reactions[reaction.value]
+            const isMine = selectedPost.myReactions.includes(reaction.value)
+            return (
+              <button
+                key={reaction.value}
+                type="button"
+                className={`${styles.reactionBtn} ${isMine ? styles.reactionBtnActive : ''}`}
+                data-sfx="select"
+                aria-pressed={isMine}
+                aria-label={reaction.label + (count ? `（${count}件）` : '')}
+                onClick={() => onReact(selectedPost.id, reaction.value)}
+              >
+                <span aria-hidden="true">{reaction.emoji}</span>
+                {count > 0 && <span className={styles.reactionCount}>{count}</span>}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {!isReady && !loadError && <div className={styles.loading}>広場を準備しています…</div>}
       {loadError && <div className={styles.loading}>{loadError}</div>}
     </div>
@@ -649,6 +745,40 @@ function drawUserMarker(
   context.fillStyle = '#76503e'
   context.fillText('あなた', position.x, position.y)
   context.restore()
+}
+
+function positionReactionBar(
+  element: HTMLDivElement | null,
+  visitor: PlazaVisitor2D | undefined,
+  camera: Camera,
+  viewport: Viewport,
+  spriteSize: number,
+) {
+  if (!element) return
+  if (!visitor) {
+    element.hidden = true
+    return
+  }
+  const position = worldToScreen(
+    { x: visitor.x, y: visitor.y + spriteSize * REACTION_BAR_OFFSET_RATIO },
+    camera,
+    viewport,
+  )
+  const halfWidth = REACTION_BAR_WIDTH / 2
+  const clampedX = Math.max(
+    viewport.leftInset + REACTION_BAR_MARGIN + halfWidth,
+    Math.min(viewport.width - viewport.rightInset - REACTION_BAR_MARGIN - halfWidth, position.x),
+  )
+  const clampedY = Math.max(
+    viewport.topInset + REACTION_BAR_MARGIN,
+    Math.min(
+      viewport.height - viewport.bottomInset - REACTION_BAR_HEIGHT - REACTION_BAR_MARGIN,
+      position.y,
+    ),
+  )
+  element.style.left = `${clampedX}px`
+  element.style.top = `${clampedY}px`
+  element.hidden = false
 }
 
 function positionBoardButton(

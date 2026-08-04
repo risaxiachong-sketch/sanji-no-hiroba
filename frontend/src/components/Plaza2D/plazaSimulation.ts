@@ -26,6 +26,7 @@ export type PlazaVisitor2D = {
   waitTimer: number
   conversationCooldown: number
   partnerId: string | null
+  frozen: boolean
 }
 
 export type PlazaBubble2D = {
@@ -75,6 +76,7 @@ export class PlazaSimulation {
   private conversations: Conversation[] = []
   private conversationTimer = 1.5
   private postCursor = 0
+  private frozenVisitorId: string | null = null
 
   constructor(grid: WalkGrid, participants: PlazaParticipant[], posts: string[], seed = 20260801) {
     this.grid = grid
@@ -103,12 +105,37 @@ export class PlazaSimulation {
         waitTimer: 0.4 + this.random() * 3,
         conversationCooldown: this.random() * 4,
         partnerId: null,
+        frozen: false,
       } satisfies PlazaVisitor2D
     })
   }
 
   setPosts(posts: string[]) {
     this.posts = posts.filter(Boolean)
+  }
+
+  /** 指定visitorだけをその場に固定する。同時に固定できるのは1人まで。 */
+  setFrozen(visitorId: string | null) {
+    if (this.frozenVisitorId === visitorId) return
+    const previous = this.frozenVisitorId
+      ? this.visitors.find((visitor) => visitor.id === this.frozenVisitorId)
+      : undefined
+    if (previous) previous.frozen = false
+    this.frozenVisitorId = visitorId
+    if (!visitorId) return
+
+    const next = this.visitors.find((visitor) => visitor.id === visitorId)
+    if (!next) return
+    next.frozen = true
+
+    const conversation = this.conversations.find(
+      (item) => item.firstId === next.id || item.secondId === next.id,
+    )
+    if (conversation) {
+      const first = this.visitors.find((visitor) => visitor.id === conversation.firstId)
+      const second = this.visitors.find((visitor) => visitor.id === conversation.secondId)
+      if (first && second) this.endConversation(conversation, first, second)
+    }
   }
 
   userVisitor() {
@@ -129,6 +156,7 @@ export class PlazaSimulation {
   step(delta: number) {
     const elapsed = Math.min(delta, 0.05)
     for (const visitor of this.visitors) {
+      if (visitor.frozen) continue
       visitor.conversationCooldown = Math.max(0, visitor.conversationCooldown - elapsed)
       if (visitor.mode === 'walk' || visitor.mode === 'approach') {
         this.moveVisitor(visitor, elapsed)
@@ -197,7 +225,8 @@ export class PlazaSimulation {
 
   private tryStartConversation() {
     const eligible = this.visitors.filter((visitor) => (
-      visitor.mode !== 'approach'
+      !visitor.frozen
+      && visitor.mode !== 'approach'
       && visitor.mode !== 'talk'
       && visitor.conversationCooldown <= 0
       && visitor.partnerId === null

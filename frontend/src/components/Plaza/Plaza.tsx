@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react'
 import type { Avatar, DummyUser, Page, Post, ReactionType } from '../../types'
 import { fetchPosts } from '../../api/posts'
 import { fetchRecentPlazaUsers } from '../../api/plaza'
-import { addReaction, fetchReactionUsers, removeReaction } from '../../api/reactions'
+import { addReaction, removeReaction } from '../../api/reactions'
 import { useSoundEffects } from '../../audio/SoundContext'
 import postStarButton from '../../assets/navigation/post-star-button.png'
 import { BottomNav } from '../BottomNav/BottomNav'
 import { Plaza2D } from '../Plaza2D/Plaza2D'
-import { VisitorPostModal } from '../VisitorPostModal/VisitorPostModal'
 import styles from './Plaza.module.css'
 
 interface Props {
@@ -76,18 +75,6 @@ export function Plaza({ avatar, onNavigate }: Props) {
     }
   }
 
-  const handleLoadReactionUsers = async (postId: string, type: ReactionType) => {
-    try {
-      const users = await fetchReactionUsers(postId, type)
-      setPosts((current) => current.map((post) => post.id === postId
-        ? { ...post, reactionUsers: { ...post.reactionUsers, [type]: users } }
-        : post))
-    } catch {
-      play('error')
-    }
-  }
-
-  const selectedVisitor = visitors.find((visitor) => visitor.id === selectedVisitorId) ?? null
   const selectedPost = latestPostFor(posts, selectedVisitorId)
 
   return (
@@ -98,7 +85,10 @@ export function Plaza({ avatar, onNavigate }: Props) {
           visitors={visitors}
           posts={posts}
           onOpenBulletinBoard={() => onNavigate('bulletinBoard')}
-          onVisitorTap={setSelectedVisitorId}
+          onVisitorTap={(id) => setSelectedVisitorId((current) => (id === null || current === id ? null : id))}
+          selectedVisitorId={selectedVisitorId}
+          selectedPost={selectedPost}
+          onReact={(postId, type) => void handleReaction(postId, type)}
         />
       </div>
 
@@ -110,16 +100,6 @@ export function Plaza({ avatar, onNavigate }: Props) {
       </button>
 
       <BottomNav active="plaza" onNavigate={onNavigate} />
-
-      {selectedVisitor && (
-        <VisitorPostModal
-          visitor={selectedVisitor}
-          post={selectedPost}
-          onClose={() => setSelectedVisitorId(null)}
-          onReact={(postId, type) => void handleReaction(postId, type)}
-          onLoadReactionUsers={handleLoadReactionUsers}
-        />
-      )}
     </div>
   )
 }

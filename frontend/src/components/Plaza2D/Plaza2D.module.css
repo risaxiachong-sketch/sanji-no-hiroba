@@ -120,6 +120,62 @@
   font-size: 1.2rem;
 }
 
+.reactionBar {
+  position: absolute;
+  z-index: 9;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  width: 176px;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.reactionBtn {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.92);
+  color: #74584e;
+  box-shadow: 0 6px 14px rgba(96, 65, 43, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.2;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.reactionBtn:hover {
+  transform: translateY(-1px);
+}
+
+.reactionBtn:active {
+  transform: scale(0.96);
+}
+
+.reactionBtnActive {
+  border-color: rgba(225, 113, 129, 0.72);
+  background: #ffe7ec;
+  color: #df6f80;
+}
+
+.reactionCount {
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reactionBtn {
+    transition: none;
+  }
+}
+
 .loading {
   position: absolute;
   inset: 0;
