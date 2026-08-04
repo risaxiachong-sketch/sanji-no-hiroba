@@ -3,6 +3,7 @@ import type { Avatar, Page } from '../../types'
 import { AGE_GROUPS } from '../../data/ageGroups'
 import { useProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
+import { MuteButton } from '../MuteButton/MuteButton'
 import styles from './AppShell.module.css'
 
 interface Props {
@@ -62,6 +63,7 @@ export function AppShell({ avatar, onNavigate, children, showDesktopNav = false 
           </div>
         )}
       </div>
+      <MuteButton />
     </div>
   )
 }

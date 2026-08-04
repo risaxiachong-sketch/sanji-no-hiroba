@@ -19,15 +19,14 @@
 
 .postButton {
   position: fixed;
-  left: 50%;
-  bottom: calc(var(--bottom-nav-height) - 128px);
+  left: 6px;
+  bottom: calc(var(--bottom-nav-height) + 14px);
   z-index: 41;
-  width: 170px;
-  height: 170px;
+  width: 132px;
+  height: 132px;
   padding: 0;
   border: 0;
   background: transparent;
-  transform: translateX(-50%);
   cursor: pointer;
   filter: drop-shadow(0 8px 12px rgba(122, 71, 79, 0.18));
   transition: transform 160ms ease, filter 160ms ease;
@@ -35,12 +34,12 @@
 
 .postButton:hover,
 .postButton:focus-visible {
-  transform: translateX(-50%) translateY(-4px) scale(1.03);
+  transform: translateY(-4px) scale(1.03);
   filter: drop-shadow(0 11px 15px rgba(122, 71, 79, 0.24));
 }
 
 .postButton:active {
-  transform: translateX(-50%) translateY(1px) scale(0.97);
+  transform: translateY(1px) scale(0.97);
 }
 
 .postButton:focus-visible {
@@ -75,7 +74,7 @@
   top: 48%;
   left: 50%;
   color: #fff;
-  font-size: 1.22rem;
+  font-size: 0.95rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-shadow: 0 2px 0 #db7f8c, 0 0 8px rgba(193, 80, 101, 0.5);
@@ -121,10 +120,16 @@
   }
 
   .postButton {
-    right: calc(var(--bottom-nav-height) + 12px);
-    bottom: 18px;
-    left: auto;
+    left: 6px;
+    right: auto;
+    bottom: calc(var(--bottom-nav-height) + 8px);
+    width: 104px;
+    height: 104px;
     transform: none;
+  }
+
+  .postButtonLabel {
+    font-size: 0.78rem;
   }
 
   .postButton:hover,
@@ -149,20 +154,14 @@
 
 @media (max-width: 599px) and (orientation: portrait) {
   .postButton {
-    bottom: calc(var(--bottom-nav-height) - clamp(100px, 27vw, 116px));
-    left: clamp(76px, 23vw, 100px);
-    width: clamp(116px, 31vw, 132px);
-    height: clamp(116px, 31vw, 132px);
+    bottom: calc(var(--bottom-nav-height) + 8px);
+    left: clamp(4px, 1.5vw, 8px);
+    width: clamp(88px, 24vw, 100px);
+    height: clamp(88px, 24vw, 100px);
   }
 
   .postButtonLabel {
-    font-size: clamp(0.92rem, 4.1vw, 1.06rem);
-  }
-}
-
-@media (max-width: 380px) and (orientation: portrait) {
-  .postButton span {
-    font-size: 0.96rem;
+    font-size: clamp(0.68rem, 3vw, 0.78rem);
   }
 }
 
@@ -190,6 +189,10 @@
     width: 182px;
     height: 182px;
     transform: none;
+  }
+
+  .postButtonLabel {
+    font-size: 1.22rem;
   }
 
   .postButton:hover,

@@ -15,7 +15,7 @@
   display: flex;
   align-items: flex-end;
   gap: clamp(4px, 1.5vw, 7px);
-  padding: clamp(16px, 5vw, 22px) clamp(7px, 2.8vw, 12px) env(safe-area-inset-bottom, 8px);
+  padding: clamp(16px, 5vw, 22px) clamp(7px, 2.8vw, 12px) calc(env(safe-area-inset-bottom, 0px) + 10px);
   background: transparent;
   pointer-events: none;
 }
@@ -35,7 +35,7 @@
   gap: 1px;
   border: clamp(2px, 0.9vw, 4px) solid rgba(255, 255, 255, 0.82);
   border-radius: clamp(28px, 8vw, 36px) clamp(28px, 8vw, 36px) clamp(23px, 6.5vw, 30px) clamp(23px, 6.5vw, 30px);
-  background: linear-gradient(180deg, #fff 0%, #fffdfb 68%, #fff0ef 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 253, 251, 0.88) 68%, rgba(255, 240, 239, 0.88) 100%);
   color: #7f5660;
   cursor: pointer;
   box-shadow: 0 8px 18px rgba(100, 59, 74, 0.14), inset 0 1px 0 #fff;
@@ -55,7 +55,7 @@
 
 .navBtn.navActive {
   border-color: #df6f88;
-  background: linear-gradient(180deg, #ffe9ec 0%, #ffcdd5 100%);
+  background: linear-gradient(180deg, rgba(255, 233, 236, 0.88) 0%, rgba(255, 205, 213, 0.88) 100%);
   color: #fff;
   box-shadow:
     0 9px 18px rgba(180, 91, 107, 0.2),
@@ -134,6 +134,13 @@
 @media (min-width: 431px) and (orientation: portrait) {
   .bottomNav {
     width: min(calc(100% - 20px), 460px);
+    max-width: none;
+  }
+}
+
+@media (orientation: landscape) {
+  .bottomNav {
+    width: min(calc(100% - 24px), 430px);
     max-width: none;
   }
 }

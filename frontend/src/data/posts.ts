@@ -41,6 +41,7 @@ function makeReactionUsers(entries: Partial<Record<ReactionType, number[]>>): Re
 export const INITIAL_POSTS: Post[] = [
   {
     id: 'post-01',
+    userId: 'du-01',
     nickname: 'ひまわりママ',
     avatar: { id: 'avatar-sunflower', emoji: '🌻', label: 'ひまわりママ', color: '#fff9c4' },
     text: '今日は子どもがなかなか寝なくて、ちょっと疲れた…でも寝顔見たら癒された。',
@@ -51,6 +52,7 @@ export const INITIAL_POSTS: Post[] = [
   },
   {
     id: 'post-02',
+    userId: 'du-02',
     nickname: 'くまさんパパ',
     avatar: { id: 'avatar-bear', emoji: '🐻', label: 'くまさんパパ', color: '#ffe0b2' },
     text: '初めての離乳食、全然食べてくれなかった。明日またチャレンジ！',
@@ -61,6 +63,7 @@ export const INITIAL_POSTS: Post[] = [
   },
   {
     id: 'post-03',
+    userId: 'du-03',
     nickname: 'ことりちゃん',
     avatar: { id: 'avatar-bird', emoji: '🐦', label: 'ことりちゃん', color: '#e3f2fd' },
     text: '公園でママ友できた！嬉しい。子ども同士も仲良くなれそう。',
@@ -71,6 +74,7 @@ export const INITIAL_POSTS: Post[] = [
   },
   {
     id: 'post-04',
+    userId: 'du-04',
     nickname: 'りんごママ',
     avatar: { id: 'avatar-apple', emoji: '🍎', label: 'りんごママ', color: '#ffcdd2' },
     text: '雨の日が続いてお出かけできない…室内遊びのネタが尽きてきた。',
@@ -81,6 +85,7 @@ export const INITIAL_POSTS: Post[] = [
   },
   {
     id: 'post-05',
+    userId: 'du-05',
     nickname: 'そらパパ',
     avatar: { id: 'avatar-cloud', emoji: '☁️', label: 'そらパパ', color: '#e0f7fa' },
     text: '子どもが「パパ」って初めて言った！感動で泣きそうになった。',
@@ -91,6 +96,7 @@ export const INITIAL_POSTS: Post[] = [
   },
   {
     id: 'post-06',
+    userId: 'du-06',
     nickname: 'ひまわりママ',
     avatar: { id: 'avatar-sunflower', emoji: '🌻', label: 'ひまわりママ', color: '#fff9c4' },
     text: '今週末のリトミック教室、行ってみようかな。同じくらいの月齢の子いるかな。',
@@ -101,6 +107,7 @@ export const INITIAL_POSTS: Post[] = [
   },
   {
     id: 'post-07',
+    userId: 'du-07',
     nickname: 'ことりちゃん',
     avatar: { id: 'avatar-bird', emoji: '🐦', label: 'ことりちゃん', color: '#e3f2fd' },
     text: '夜泣きが続いてつらい…同じ経験の方いますか？',

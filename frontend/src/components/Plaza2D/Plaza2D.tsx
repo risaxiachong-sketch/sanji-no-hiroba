@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent } from 'react'
+import type { MouseEvent, PointerEvent } from 'react'
 import type { Avatar, DummyUser, Post } from '../../types'
 import plazaDayUrl from '../../assets/plaza-2d/plaza-day.png'
 import plazaWalkMaskUrl from '../../assets/plaza-2d/plaza-walk-mask.png'
+import { useCharacterScale } from '../../characterScale/CharacterScaleContext'
+import type { CharacterScale } from '../../characterScale/CharacterScaleContext'
 import { buildWalkGrid } from './pathfinding'
 import { PlazaSimulation, type PlazaParticipant, type PlazaVisitor2D } from './plazaSimulation'
 import styles from './Plaza2D.module.css'
@@ -12,6 +14,18 @@ const MAP_HEIGHT = 1086
 const MAX_DPR = 1.5
 const MAX_ZOOM_FACTOR = 2.4
 const BOARD_RECT = { x: 426, y: 646, width: 282, height: 268 }
+
+/** キャラクタースプライトの一辺のサイズ（px）。影・ラベル位置はこの値を基準に比例計算する。 */
+const SPRITE_SIZE: Record<CharacterScale, number> = {
+  small: 120,
+  medium: 148,
+  large: 180,
+}
+const SHADOW_RADIUS_X_RATIO = 36 / 148
+const SHADOW_RADIUS_Y_WALK_RATIO = 11 / 148
+const SHADOW_RADIUS_Y_IDLE_RATIO = 12 / 148
+const BUBBLE_OFFSET_RATIO = 141 / 148
+const LABEL_OFFSET_RATIO = 153 / 148
 
 type Camera = {
   x: number
@@ -43,6 +57,7 @@ interface Props {
   visitors: DummyUser[]
   posts: Post[]
   onOpenBulletinBoard: () => void
+  onVisitorTap: (visitorId: string) => void
 }
 
 function loadImage(url: string) {
@@ -155,25 +170,37 @@ function drawSpeechBubble(
 }
 
 function wrapSpeechText(context: CanvasRenderingContext2D, text: string, maxTextWidth: number) {
-  const characters = Array.from(text.trim())
+  // 改行は段落の区切りとして扱う（空行は詰めて2行分の表示枠を無駄にしない）。
+  const paragraphs = text.trim().split('\n').filter((paragraph) => paragraph.length > 0)
+  const totalContentLength = paragraphs.reduce((sum, paragraph) => sum + Array.from(paragraph).length, 0)
   const lines: string[] = []
-  let currentLine = ''
+  let consumedLength = 0
 
-  for (const character of characters) {
-    const candidate = currentLine + character
-    if (currentLine && context.measureText(candidate).width > maxTextWidth) {
+  for (const paragraph of paragraphs) {
+    if (lines.length >= 2) break
+    let currentLine = ''
+
+    for (const character of Array.from(paragraph)) {
+      const candidate = currentLine + character
+      if (currentLine && context.measureText(candidate).width > maxTextWidth) {
+        lines.push(currentLine)
+        consumedLength += Array.from(currentLine).length
+        currentLine = character
+        if (lines.length === 2) break
+      } else {
+        currentLine = candidate
+      }
+    }
+
+    if (lines.length < 2) {
       lines.push(currentLine)
-      currentLine = character
-      if (lines.length === 2) break
-    } else {
-      currentLine = candidate
+      consumedLength += Array.from(currentLine).length
     }
   }
 
-  if (lines.length < 2 && currentLine) lines.push(currentLine)
   if (lines.length === 0) lines.push('…')
 
-  if (lines.join('').length < characters.length) {
+  if (consumedLength < totalContentLength) {
     let lastLine = lines[lines.length - 1]
     while (lastLine && context.measureText(`${lastLine}…`).width > maxTextWidth) {
       lastLine = lastLine.slice(0, -1)
@@ -184,7 +211,8 @@ function wrapSpeechText(context: CanvasRenderingContext2D, text: string, maxText
   return lines
 }
 
-export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props) {
+export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard, onVisitorTap }: Props) {
+  const { scale: characterScale } = useCharacterScale()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const frameRef = useRef<HTMLDivElement | null>(null)
   const boardButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -273,6 +301,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
   useEffect(() => {
     let cancelled = false
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const spriteSize = SPRITE_SIZE[characterScale]
 
     const participants: PlazaParticipant[] = [
       {
@@ -359,12 +388,18 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
           context.save()
           context.fillStyle = 'rgba(75, 59, 43, 0.2)'
           context.beginPath()
-          context.ellipse(visitor.x, visitor.y + 2, 23, isWalking ? 7 : 8, 0, 0, Math.PI * 2)
+          context.ellipse(
+            visitor.x,
+            visitor.y + 2,
+            spriteSize * SHADOW_RADIUS_X_RATIO,
+            spriteSize * (isWalking ? SHADOW_RADIUS_Y_WALK_RATIO : SHADOW_RADIUS_Y_IDLE_RATIO),
+            0, 0, Math.PI * 2,
+          )
           context.fill()
           if (sprite) {
             context.translate(visitor.x, visitor.y - bob)
             context.scale(visitor.facing, 1)
-            context.drawImage(sprite, -47, -94, 94, 94)
+            context.drawImage(sprite, -spriteSize / 2, -spriteSize, spriteSize, spriteSize)
           }
           context.restore()
         }
@@ -374,7 +409,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         for (const bubble of simulation.bubbles()) {
           const visitor = simulation.visitors.find((item) => item.id === bubble.visitorId)
           if (!visitor) continue
-          const position = worldToScreen({ x: visitor.x, y: visitor.y - 88 }, camera, viewport)
+          const position = worldToScreen({ x: visitor.x, y: visitor.y - spriteSize * BUBBLE_OFFSET_RATIO }, camera, viewport)
           if (
             position.x < -180
             || position.x > viewport.width + 180
@@ -393,7 +428,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         }
 
         const currentUser = simulation.userVisitor()
-        if (currentUser) drawUserMarker(context, currentUser, camera, viewport)
+        if (currentUser) drawUserMarker(context, currentUser, camera, viewport, spriteSize)
         positionBoardButton(boardButtonRef.current, camera, viewport)
         animationFrameRef.current = window.requestAnimationFrame(draw)
       }
@@ -412,7 +447,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
         animationFrameRef.current = null
       }
     }
-  }, [avatar, visitors])
+  }, [avatar, visitors, characterScale])
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
@@ -518,6 +553,34 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
     onOpenBulletinBoard()
   }
 
+  const handleFrameClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (gestureRef.current.moved) return
+    if (event.target instanceof HTMLButtonElement) return
+    const frame = frameRef.current
+    const simulation = simulationRef.current
+    if (!frame || !simulation) return
+
+    const bounds = frame.getBoundingClientRect()
+    const point = { x: event.clientX - bounds.left, y: event.clientY - bounds.top }
+    const world = screenToWorld(point, cameraRef.current, viewportRef.current)
+    const spriteSize = SPRITE_SIZE[characterScale]
+    const hitRadius = spriteSize / 2
+
+    let nearest: PlazaVisitor2D | null = null
+    let nearestDistance = Infinity
+    for (const visitor of simulation.visitors) {
+      if (visitor.isUser) continue
+      const characterCenterY = visitor.y - spriteSize / 2
+      const distance = Math.hypot(visitor.x - world.x, characterCenterY - world.y)
+      if (distance <= hitRadius && distance < nearestDistance) {
+        nearest = visitor
+        nearestDistance = distance
+      }
+    }
+
+    if (nearest) onVisitorTap(nearest.id)
+  }
+
   return (
     <div
       ref={frameRef}
@@ -528,6 +591,7 @@ export function Plaza2D({ avatar, visitors, posts, onOpenBulletinBoard }: Props)
       onPointerMove={handlePointerMove}
       onPointerUp={finishPointer}
       onPointerCancel={finishPointer}
+      onClick={handleFrameClick}
     >
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
 
@@ -562,8 +626,9 @@ function drawUserMarker(
   visitor: PlazaVisitor2D,
   camera: Camera,
   viewport: Viewport,
+  spriteSize: number,
 ) {
-  const position = worldToScreen({ x: visitor.x, y: visitor.y - 98 }, camera, viewport)
+  const position = worldToScreen({ x: visitor.x, y: visitor.y - spriteSize * LABEL_OFFSET_RATIO }, camera, viewport)
   if (position.x < -60 || position.x > viewport.width + 60 || position.y < -40 || position.y > viewport.height + 40) {
     return
   }

@@ -1,0 +1,245 @@
+.dialog {
+  width: min(calc(100vw - 28px), 420px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(218, 186, 147, 0.6);
+  border-radius: 28px;
+  background: #fffdf8;
+  color: #56392f;
+  box-shadow: 0 24px 60px rgba(80, 54, 43, 0.26);
+}
+
+.dialog::backdrop {
+  background: rgba(83, 57, 47, 0.38);
+  backdrop-filter: blur(3px);
+}
+
+.content {
+  position: relative;
+  padding: 26px 20px 22px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(218, 186, 147, 0.42);
+  border-radius: 999px;
+  background: #fffaf4;
+  color: #785f55;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  background: rgba(255, 239, 233, 0.78);
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 40px;
+  margin-bottom: 14px;
+}
+
+.avatarCircle {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow:
+    0 8px 14px rgba(132, 93, 63, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.avatarEmoji {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.userMeta {
+  min-width: 0;
+}
+
+.nickname {
+  margin: 0;
+  color: #5a4035;
+  font-size: 1.02rem;
+  font-weight: 900;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.time {
+  margin: 2px 0 0;
+  color: #9a7d70;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.text {
+  margin: 0 0 16px;
+  color: #56392f;
+  font-size: 0.98rem;
+  font-weight: 650;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.emptyNote {
+  margin: 0;
+  color: #9a897f;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.reactionWrapper {
+  position: relative;
+}
+
+.reactionBtn {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border: 1px solid rgba(218, 186, 147, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #74584e;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.reactionBtn:hover {
+  border-color: rgba(232, 137, 150, 0.58);
+  background: #fff4f6;
+  transform: translateY(-1px);
+}
+
+.reactionBtnActive {
+  border-color: rgba(225, 113, 129, 0.64);
+  background: #ffe7ec;
+  color: #df6f80;
+}
+
+.reactionBtn:active {
+  transform: scale(0.97);
+}
+
+.reactionCount {
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.groupToggle {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fffdf8;
+  border-radius: 999px;
+  background: #df8796;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.48rem;
+  line-height: 1;
+}
+
+.reactionGroup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  min-width: 144px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 5px;
+  padding: 9px;
+  border: 1px solid rgba(218, 186, 147, 0.5);
+  border-radius: 16px;
+  background: rgba(255, 253, 248, 0.98);
+  box-shadow: 0 12px 24px rgba(132, 93, 63, 0.16);
+  animation: fadeIn 0.15s ease;
+}
+
+.reactionGroupUser {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reactionGroupAvatar {
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.reactionGroupName {
+  color: #5a4035;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reactionGroup {
+    animation: none;
+  }
+}

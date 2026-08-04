@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
-import type { Avatar, DummyUser, Page, Post } from '../../types'
+import type { Avatar, DummyUser, Page, Post, ReactionType } from '../../types'
 import { fetchPosts } from '../../api/posts'
 import { fetchRecentPlazaUsers } from '../../api/plaza'
+import { addReaction, fetchReactionUsers, removeReaction } from '../../api/reactions'
+import { useSoundEffects } from '../../audio/SoundContext'
 import postStarButton from '../../assets/navigation/post-star-button.png'
 import { BottomNav } from '../BottomNav/BottomNav'
 import { Plaza2D } from '../Plaza2D/Plaza2D'
+import { VisitorPostModal } from '../VisitorPostModal/VisitorPostModal'
 import styles from './Plaza.module.css'
 
 interface Props {
@@ -12,9 +15,27 @@ interface Props {
   onNavigate: (page: Page) => void
 }
 
+function latestPostFor(posts: Post[], userId: string | null) {
+  if (!userId) return null
+  const matches = posts.filter((post) => post.userId === userId)
+  if (matches.length === 0) return null
+  return matches.reduce((latest, post) => {
+    const latestTime = new Date(latest.createdAt ?? latest.timestamp ?? 0).getTime()
+    const postTime = new Date(post.createdAt ?? post.timestamp ?? 0).getTime()
+    return postTime > latestTime ? post : latest
+  })
+}
+
 export function Plaza({ avatar, onNavigate }: Props) {
+  const { play } = useSoundEffects()
   const [posts, setPosts] = useState<Post[]>([])
   const [visitors, setVisitors] = useState<DummyUser[]>([])
+  const [selectedVisitorId, setSelectedVisitorId] = useState<string | null>(null)
+
+  const reloadPosts = async () => {
+    const response = await fetchPosts()
+    setPosts(response.posts)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -34,10 +55,51 @@ export function Plaza({ avatar, onNavigate }: Props) {
     return () => { cancelled = true }
   }, [])
 
+  const handleReaction = async (postId: string, type: ReactionType) => {
+    const target = posts.find((post) => post.id === postId)
+    if (!target) return
+    const wasMine = target.myReactions.includes(type)
+    setPosts((current) => current.map((post) => {
+      if (post.id !== postId) return post
+      return {
+        ...post,
+        reactions: { ...post.reactions, [type]: Math.max(0, post.reactions[type] + (wasMine ? -1 : 1)) },
+        myReactions: wasMine ? post.myReactions.filter((item) => item !== type) : [...post.myReactions, type],
+      }
+    }))
+    try {
+      if (wasMine) await removeReaction(postId, type)
+      else await addReaction(postId, type)
+    } catch {
+      await reloadPosts().catch(() => undefined)
+      play('error')
+    }
+  }
+
+  const handleLoadReactionUsers = async (postId: string, type: ReactionType) => {
+    try {
+      const users = await fetchReactionUsers(postId, type)
+      setPosts((current) => current.map((post) => post.id === postId
+        ? { ...post, reactionUsers: { ...post.reactionUsers, [type]: users } }
+        : post))
+    } catch {
+      play('error')
+    }
+  }
+
+  const selectedVisitor = visitors.find((visitor) => visitor.id === selectedVisitorId) ?? null
+  const selectedPost = latestPostFor(posts, selectedVisitorId)
+
   return (
     <div className={styles.page}>
       <div className={styles.plazaScene}>
-        <Plaza2D avatar={avatar} visitors={visitors} posts={posts} onOpenBulletinBoard={() => onNavigate('bulletinBoard')} />
+        <Plaza2D
+          avatar={avatar}
+          visitors={visitors}
+          posts={posts}
+          onOpenBulletinBoard={() => onNavigate('bulletinBoard')}
+          onVisitorTap={setSelectedVisitorId}
+        />
       </div>
 
       <button type="button" className={styles.postButton} data-sfx="navigate" data-testid="plaza-post-button" aria-label="つぶやく" onClick={() => onNavigate('postArea')}>
@@ -48,6 +110,16 @@ export function Plaza({ avatar, onNavigate }: Props) {
       </button>
 
       <BottomNav active="plaza" onNavigate={onNavigate} />
+
+      {selectedVisitor && (
+        <VisitorPostModal
+          visitor={selectedVisitor}
+          post={selectedPost}
+          onClose={() => setSelectedVisitorId(null)}
+          onReact={(postId, type) => void handleReaction(postId, type)}
+          onLoadReactionUsers={handleLoadReactionUsers}
+        />
+      )}
     </div>
   )
 }

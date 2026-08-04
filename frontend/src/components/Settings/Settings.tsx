@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import type { Avatar, Page } from '../../types'
 import { AGE_GROUPS } from '../../data/ageGroups'
 import { useSoundEffects } from '../../audio/SoundContext'
+import { useCharacterScale } from '../../characterScale/CharacterScaleContext'
+import type { CharacterScale } from '../../characterScale/CharacterScaleContext'
 import { useProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './Settings.module.css'
@@ -12,10 +14,23 @@ interface Props {
   onNavigate: (page: Page) => void
 }
 
+const CHARACTER_SCALE_OPTIONS: { value: CharacterScale; label: string }[] = [
+  { value: 'small', label: '小' },
+  { value: 'medium', label: '中' },
+  { value: 'large', label: '大' },
+]
+
+const CHARACTER_SCALE_LABEL: Record<CharacterScale, string> = {
+  small: '小さめ',
+  medium: 'ふつう',
+  large: '大きめ',
+}
+
 /** Settings is a menu of editable fields; tapping a row opens its own editor screen. */
 export function Settings({ avatar, onNavigate }: Props) {
   const { profile } = useProfile()
   const { enabled: soundEnabled, setEnabled: setSoundEnabled } = useSoundEffects()
+  const { scale: characterScale, setScale: setCharacterScale } = useCharacterScale()
   const nickname = profile?.nickname || '未設定'
   const childAgeLabel = AGE_GROUPS.find(group => group.value === profile?.childAgeGroup)?.label
     ?? profile?.childAgeGroup
@@ -133,6 +148,34 @@ export function Settings({ avatar, onNavigate }: Props) {
                 <span className={styles.soundSwitchKnob} />
               </span>
             </button>
+          </li>
+          <li>
+            <div className={styles.scaleRow}>
+              <div className={styles.scaleRowHead}>
+                <span className={styles.menuIcon} aria-hidden="true">
+                  <span className={styles.menuSymbol}>👤</span>
+                </span>
+                <span className={styles.menuText}>
+                  <span className={styles.menuLabel}>キャラクターの大きさ</span>
+                  <span className={styles.menuValue}>{CHARACTER_SCALE_LABEL[characterScale]}</span>
+                </span>
+              </div>
+              <div className={styles.scaleOptions} role="radiogroup" aria-label="キャラクターの大きさ">
+                {CHARACTER_SCALE_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={characterScale === option.value}
+                    className={`${styles.scaleOption} ${characterScale === option.value ? styles.scaleOptionActive : ''}`}
+                    data-sfx="select"
+                    onClick={() => setCharacterScale(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </li>
         </ul>
       </main>
