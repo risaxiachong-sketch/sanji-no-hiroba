@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Avatar, DummyUser, Page, Post, ReactionType } from '../../types'
 import { fetchPosts } from '../../api/posts'
 import { fetchRecentPlazaUsers } from '../../api/plaza'
 import { addReaction, removeReaction } from '../../api/reactions'
 import { useSoundEffects } from '../../audio/SoundContext'
 import postStarButton from '../../assets/navigation/post-star-button.png'
+import { loadCachedProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
 import { Plaza2D } from '../Plaza2D/Plaza2D'
 import styles from './Plaza.module.css'
@@ -27,6 +28,7 @@ function latestPostFor(posts: Post[], userId: string | null) {
 
 export function Plaza({ avatar, onNavigate }: Props) {
   const { play } = useSoundEffects()
+  const currentUserId = loadCachedProfile()?.userId
   const [posts, setPosts] = useState<Post[]>([])
   const [visitors, setVisitors] = useState<DummyUser[]>([])
   const [selectedVisitorId, setSelectedVisitorId] = useState<string | null>(null)
@@ -35,6 +37,18 @@ export function Plaza({ avatar, onNavigate }: Props) {
     const response = await fetchPosts()
     setPosts(response.posts)
   }
+
+  const visibleVisitors = useMemo(() => {
+    const visitorIds = new Set<string>()
+
+    return visitors.filter((visitor) => {
+      if (visitor.id === currentUserId || visitorIds.has(visitor.id)) {
+        return false
+      }
+      visitorIds.add(visitor.id)
+      return true
+    })
+  }, [currentUserId, visitors])
 
   useEffect(() => {
     let cancelled = false
@@ -82,7 +96,7 @@ export function Plaza({ avatar, onNavigate }: Props) {
       <div className={styles.plazaScene}>
         <Plaza2D
           avatar={avatar}
-          visitors={visitors}
+          visitors={visibleVisitors}
           posts={posts}
           onOpenBulletinBoard={() => onNavigate('bulletinBoard')}
           onVisitorTap={(id) => setSelectedVisitorId((current) => (id === null || current === id ? null : id))}

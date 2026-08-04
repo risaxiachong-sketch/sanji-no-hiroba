@@ -11,7 +11,7 @@ const MAX_LENGTH = 60
 const REACTIONS: ReactionOption[] = [
   { value: 'wakaru', label: 'わかるよ', emoji: '🫶' },
   { value: 'otsukare', label: 'おつかれさま', emoji: '☕' },
-  { value: 'kokoniiruyo', label: 'ここにいるよ', emoji: '🌿' },
+  { value: 'kokoniiruyo', label: '無理しないでね', emoji: '🌿' },
   { value: 'watashimo', label: '私も同じ', emoji: '🙋' },
   { value: 'ouen', label: '応援してるよ', emoji: '📣' },
   { value: 'kyoumo', label: '今日もおつかれさま', emoji: '🌙' },
@@ -171,7 +171,9 @@ export function PostArea({ avatar, onClose, onNavigate }: Props) {
                   return (
                     <div key={reaction.value} className={styles.reactionWrapper}>
                       <button type="button" className={`${styles.postReactionBtn} ${isMine ? styles.myReaction : ''}`} data-sfx="select" onClick={() => handleReaction(post.id, reaction.value)} aria-pressed={isMine} aria-label={reaction.label + (count ? '（' + count + '件）' : '')}>
-                        <span aria-hidden="true">{reaction.emoji}</span>{count > 0 && <span className={styles.reactionCount}>{count}</span>}
+                        <span className={styles.reactionEmoji} aria-hidden="true">{reaction.emoji}</span>
+                        <span className={styles.reactionLabel}>{reaction.label}</span>
+                        {count > 0 && <span className={styles.reactionCount}>{count}</span>}
                       </button>
                       {count > 0 && <button type="button" className={styles.groupToggle} onClick={() => toggleReactionGroup(post.id, reaction.value)} aria-expanded={isExpanded} aria-label={reaction.label + 'をした人を表示'}>▾</button>}
                       {isExpanded && (
