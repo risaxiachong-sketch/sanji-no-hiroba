@@ -11,7 +11,7 @@ export const EVENTS: Event[] = [
   // ── 公民館 ──────────────────────────────────────
   {
     id: 'ev-01',
-    title: '親子でリトミック♪ はじめてのリズム遊び',
+    title: '親子でリトミック♪ はじめての音あそび',
     date: dateOffset(0), // 今日
     time: '10:00〜11:00',
     ageMin: 0,
@@ -30,13 +30,13 @@ export const EVENTS: Event[] = [
     source: '宮崎市中央公民館',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/education/culture/public_hall/',
     lastConfirmed: dateOffset(0),
-    description: '音楽に合わせて体を動かし、親子でリズムを楽しむ初心者向けリトミック教室です。歩く前の赤ちゃんも参加できます。',
+    description: '音楽に合わせて歌ったり体を動かしたりする、はじめての親子向けリトミックです。途中参加や泣いてしまったときの退出も大丈夫です。',
     status: 'scheduled',
     imageUrl: 'https://placehold.co/400x200/e8f5e9/2e7d32?text=リトミック教室',
   },
   {
     id: 'ev-02',
-    title: '子育て広場「もこもこ」',
+    title: '子育て広場「もこもこ」親子でゆったり遊ぼう',
     date: dateOffset(1), // 明日
     time: '10:00〜12:00',
     ageMin: 0,
@@ -55,12 +55,12 @@ export const EVENTS: Event[] = [
     source: '宮崎市大宮公民館',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/education/culture/public_hall/',
     lastConfirmed: dateOffset(0),
-    description: '自由に遊べる子育て広場です。毎週開催しており、保育士が常駐しています。お気軽にどうぞ。',
+    description: 'おもちゃや絵本で自由に遊べる親子の居場所です。保育士さんに子育てのちょっとした相談もでき、初めての方も気軽に参加できます。',
     status: 'scheduled',
   },
   {
     id: 'ev-03',
-    title: '親子クッキング教室（1歳から）',
+    title: '親子でつくるやさしいおやつ教室',
     date: dateOffset(7), // 来週
     time: '10:30〜12:00',
     ageMin: 1,
@@ -79,7 +79,7 @@ export const EVENTS: Event[] = [
     source: '宮崎市大塚公民館',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/education/culture/public_hall/',
     lastConfirmed: dateOffset(0),
-    description: '親子で簡単なおやつ作りを楽しむ料理教室です。事前予約が必要です。定員は8組です。',
+    description: '1歳から参加できる、親子のおやつ作り体験です。親子で一緒に混ぜたり盛り付けたりしながら楽しめます。定員8組、事前予約制です。',
     status: 'canceled',
     imageUrl: 'https://placehold.co/400x200/fff3e0/e65100?text=クッキング教室',
   },
@@ -87,7 +87,7 @@ export const EVENTS: Event[] = [
   // ── 図書館 ──────────────────────────────────────
   {
     id: 'ev-04',
-    title: 'おはなし会「ぴよぴよ」〜赤ちゃんと絵本〜',
+    title: 'おはなし会「ぴよぴよ」赤ちゃんと絵本',
     date: dateOffset(0), // 今日
     time: '11:00〜11:30',
     ageMin: 0,
@@ -106,13 +106,13 @@ export const EVENTS: Event[] = [
     source: '宮崎市立図書館',
     officialUrl: 'https://www.lib-citymiyazaki.jp/',
     lastConfirmed: dateOffset(0),
-    description: '0〜1歳の赤ちゃんとその保護者を対象にした読み聞かせの会です。わらべうたや手遊びも行います。',
+    description: '0〜1歳の赤ちゃんと楽しむ読み聞かせの会です。わらべうたや手遊びもあり、赤ちゃんが途中で泣いても気兼ねなく参加できます。',
     status: 'scheduled',
     imageUrl: 'https://placehold.co/400x200/e3f2fd/1565c0?text=おはなし会',
   },
   {
     id: 'ev-05',
-    title: 'よちよちおはなし会',
+    title: 'よちよちおはなし会♪ 絵本と手遊び',
     date: dateOffset(2),
     time: '10:30〜11:00',
     ageMin: 1,
@@ -131,14 +131,14 @@ export const EVENTS: Event[] = [
     source: '宮崎県立図書館',
     officialUrl: 'https://www2.lib.pref.miyazaki.lg.jp/',
     lastConfirmed: dateOffset(0),
-    description: 'ちょっぴりよちよち歩きが始まった子どもたちへの読み聞かせの会です。絵本3〜4冊と手遊びを楽しみます。',
+    description: '歩き始めのお子さんと、絵本3〜4冊や手遊びを楽しむ会です。親子で座って過ごせるので、雨の日のお出かけにもおすすめです。',
     status: 'postponed',
   },
 
   // ── 博物館・科学館 ───────────────────────────────
   {
     id: 'ev-06',
-    title: 'こどもサイエンス体験「水ってなあに？」',
+    title: '親子でわくわく科学体験「水ってなあに？」',
     date: dateOffset(1), // 明日
     time: '13:00〜14:00',
     ageMin: 2,
@@ -157,12 +157,12 @@ export const EVENTS: Event[] = [
     source: '宮崎科学技術館',
     officialUrl: 'https://cosmoland.miyabunkyo.com/',
     lastConfirmed: dateOffset(0),
-    description: '水の不思議を体験する幼児向けサイエンスワークショップです。入館料は別途必要です。要予約（定員10組）。',
+    description: '水の動きや浮かぶものを親子で楽しく試す、幼児向けの体験教室です。入館料とは別に参加費が必要で、定員10組の予約制です。',
     status: 'scheduled',
   },
   {
     id: 'ev-07',
-    title: '親子で楽しむ展示ツアー「むかしのくらし」',
+    title: '親子で楽しむ展示ツアー「むかしの暮らし」',
     date: dateOffset(8),
     time: '10:30〜11:30',
     ageMin: 2,
@@ -181,7 +181,7 @@ export const EVENTS: Event[] = [
     source: '宮崎県総合博物館',
     officialUrl: 'https://www.miyazaki-archive.jp/museum/',
     lastConfirmed: dateOffset(0),
-    description: '博物館スタッフが展示をわかりやすく案内する親子向けツアーです。子どもの目線で楽しめます。要予約。',
+    description: '博物館スタッフと一緒に、昔の道具や暮らしを見て回る親子向けツアーです。子どもの目線で楽しめる内容で、事前予約が必要です。',
     status: 'closed',
     imageUrl: 'https://placehold.co/400x200/f3e5f5/6a1b9a?text=展示ツアー',
   },
@@ -208,12 +208,12 @@ export const EVENTS: Event[] = [
     source: '宮崎市子育て支援センター「あおぞら」',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/health/child_care/',
     lastConfirmed: dateOffset(0),
-    description: '0〜1歳の赤ちゃんとその保護者が自由に集える場です。保育士が常駐し、子育ての不安や悩みも気軽に話せます。',
+    description: '0〜1歳の赤ちゃんと保護者が自由に過ごせる広場です。保育士さんに、離乳食や生活リズムなどの相談も気軽にできます。',
     status: 'scheduled',
   },
   {
     id: 'ev-09',
-    title: '親子遊び場「のびのびひろば」',
+    title: '親子遊び場「のびのびひろば」雨の日も安心',
     date: dateOffset(1), // 明日
     time: '10:00〜16:00',
     ageMin: 0,
@@ -232,14 +232,14 @@ export const EVENTS: Event[] = [
     source: '宮崎市中央児童センター',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/health/child_care/facility/',
     lastConfirmed: dateOffset(0),
-    description: '室内で安心して遊べる親子の遊び場です。おもちゃや絵本が充実しており、天候に関わらず利用できます。',
+    description: '室内で安心して遊べる親子の遊び場です。おもちゃや絵本が揃っていて、天気を気にせず子どもを遊ばせられます。',
     status: 'scheduled',
   },
 
   // ── 子育て相談会 ─────────────────────────────────
   {
     id: 'ev-10',
-    title: '子育て相談会（保健師・栄養士に聞いてみよう）',
+    title: '子育て相談会♪ 保健師・栄養士に聞いてみよう',
     date: dateOffset(3),
     time: '13:00〜16:00',
     ageMin: 0,
@@ -258,14 +258,14 @@ export const EVENTS: Event[] = [
     source: '宮崎市総合福祉保健センター',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/health/child_care/consultation/',
     lastConfirmed: dateOffset(0),
-    description: '保健師・栄養士・歯科衛生士などに子育てや発育・離乳食などを気軽に相談できます。予約不要で当日参加できます。',
+    description: '保健師や栄養士、歯科衛生士に、発育や離乳食について気軽に相談できます。小さな疑問でも大丈夫です。予約不要で参加できます。',
     status: 'scheduled',
   },
 
   // ── 無料・予約不要の追加イベント ───────────────────
   {
     id: 'ev-11',
-    title: '室内プレイスペース開放日',
+    title: '室内プレイスペース開放日「きらきら」',
     date: dateOffset(0), // 今日
     time: '9:30〜15:30',
     ageMin: 0,
@@ -284,12 +284,12 @@ export const EVENTS: Event[] = [
     source: '地域子育て支援センター「きらきら」',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/health/child_care/facility/',
     lastConfirmed: dateOffset(0),
-    description: '大型遊具やおもちゃが充実した室内プレイスペースを自由に利用できます。雨の日も安心です。',
+    description: '大型遊具やおもちゃで自由に遊べる室内スペースです。ベビーカー置き場もあり、雨の日のお出かけ先にもぴったりです。',
     status: 'scheduled',
   },
   {
     id: 'ev-12',
-    title: '絵本と音楽のあそびじかん',
+    title: '絵本と音楽のあそびじかん♪',
     date: dateOffset(2),
     time: '11:00〜11:45',
     ageMin: 1,
@@ -308,7 +308,7 @@ export const EVENTS: Event[] = [
     source: '宮崎市生目公民館',
     officialUrl: 'https://www.city.miyazaki.miyazaki.jp/education/culture/public_hall/',
     lastConfirmed: dateOffset(0),
-    description: '絵本の読み聞かせと音楽に合わせた手遊びを組み合わせた楽しいあそびじかんです。予約不要でご参加いただけます。',
+    description: '絵本の読み聞かせと、音楽に合わせた手遊びを親子で楽しむ時間です。予約不要なので、お子さんの様子に合わせて気軽に参加できます。',
     status: 'scheduled',
   },
 ];

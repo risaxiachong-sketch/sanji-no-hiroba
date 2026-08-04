@@ -4,6 +4,7 @@
   height: 100dvh;
   overflow: hidden;
   overscroll-behavior: none;
+  touch-action: pan-x pan-y;
   background:
     radial-gradient(circle at 0 0, rgba(242, 166, 160, 0.2), transparent 28%),
     radial-gradient(circle at 100% 100%, rgba(131, 191, 176, 0.2), transparent 30%),

@@ -671,9 +671,7 @@ export function Plaza2D({
         data-sfx="navigate"
         aria-label="まちの掲示板を開く"
         onClick={openBulletinBoard}
-      >
-        <span>掲示板を見る</span>
-      </button>
+      />
 
       <div className={styles.guide} aria-hidden="true">
         <span>↔</span> ドラッグで見渡せます

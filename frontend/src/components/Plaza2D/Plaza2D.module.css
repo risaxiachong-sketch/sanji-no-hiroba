@@ -46,32 +46,16 @@
   padding: 0;
   border: 2px solid transparent;
   border-radius: 18px;
-  color: #68442f;
   background: transparent;
   cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
-.boardHotspot span {
-  position: absolute;
-  top: 12%;
-  left: 50%;
-  padding: 5px 10px;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  border-radius: 999px;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #ffd49e, #f7a99d);
-  box-shadow: 0 5px 14px rgba(102, 68, 44, 0.2);
-  font-size: clamp(0.56rem, 2.4vw, 0.72rem);
-  font-weight: 800;
-  white-space: nowrap;
-  opacity: 0.92;
-  transition: opacity 160ms ease, transform 160ms ease;
-}
-
-.boardHotspot:hover span,
-.boardHotspot:focus-visible span {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-2px);
+.boardHotspot:hover,
+.boardHotspot:focus-visible {
+  border-color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 244, 211, 0.12);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.24), inset 0 0 18px rgba(255, 255, 255, 0.2);
 }
 
 .boardHotspot:focus-visible {
@@ -190,7 +174,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .boardHotspot span {
+  .boardHotspot {
     transition: none;
   }
 }
