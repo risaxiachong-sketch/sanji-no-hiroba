@@ -1,5 +1,6 @@
 import type { Event } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
+import { getEventImageUrl } from '../../data/eventImages'
 import styles from './EventCard.module.css'
 
 interface Props {
@@ -26,6 +27,7 @@ function getStatusStyle(status: Event['status']): string {
 }
 
 export function EventCard({ event, onClick }: Props) {
+  const imageUrl = getEventImageUrl(event)
   const tags: string[] = []
   if (!event.reservationRequired) tags.push('予約不要')
   if (event.indoor) tags.push('屋内')
@@ -43,10 +45,10 @@ export function EventCard({ event, onClick }: Props) {
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
     >
       {/* イベント画像 */}
-      {event.imageUrl && (
+      {imageUrl && (
         <div className={styles.imageWrapper}>
           <img
-            src={event.imageUrl}
+            src={imageUrl}
             alt={`${event.title}のイメージ`}
             className={styles.image}
             loading="lazy"

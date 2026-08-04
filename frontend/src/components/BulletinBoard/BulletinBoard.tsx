@@ -3,7 +3,7 @@ import type { Event as BoardEvent, FacilityType, FilterCondition, Page } from '.
 import { EVENT_STATUS_LABELS } from '../../types'
 import { fetchEvents } from '../../api/events'
 import boardAlpaca from '../../assets/bulletin-board/board-alpaca.png'
-import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
+import { getEventImageUrl } from '../../data/eventImages'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './BulletinBoard.module.css'
 
@@ -110,9 +110,7 @@ function buildTags(event: BoardEvent): Array<{ label: string; tone: TagTone }> {
 }
 
 function getDisplayImageUrl(event: BoardEvent, featured: boolean) {
-  if (featured) return rhythmEventImage
-  if (event.imageUrl && !event.imageUrl.includes('placehold.co')) return event.imageUrl
-  return rhythmEventImage
+  return featured ? getEventImageUrl({ ...event, id: 'ev-01' }) : getEventImageUrl(event)
 }
 
 interface BoardEventCardProps {

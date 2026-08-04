@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Event, FacilityType, Page } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
 import { fetchEvents } from '../../api/events'
-import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
+import { getEventImageUrl } from '../../data/eventImages'
 import { BottomNav } from '../BottomNav/BottomNav'
 import styles from './SavedEvents.module.css'
 
@@ -34,8 +34,7 @@ function formatEventDate(dateString: string) {
 }
 
 function getDisplayImageUrl(event: Event) {
-  if (event.imageUrl && !event.imageUrl.includes('placehold.co')) return event.imageUrl
-  return rhythmEventImage
+  return getEventImageUrl(event)
 }
 
 function getLeadTimeLabel(dateString: string) {

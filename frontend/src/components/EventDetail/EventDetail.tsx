@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { fetchEvent } from '../../api/events'
 import { EVENT_STATUS_LABELS } from '../../types'
 import type { Event, FacilityType } from '../../types'
-import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
+import { getEventImageUrl } from '../../data/eventImages'
 import {
   buildAppleCalendarIcs,
   buildGoogleCalendarUrl,
@@ -42,8 +42,7 @@ function formatEventDate(dateString: string) {
 }
 
 function getDisplayImageUrl(event: Event) {
-  if (event.imageUrl && !event.imageUrl.includes('placehold.co')) return event.imageUrl
-  return rhythmEventImage
+  return getEventImageUrl(event)
 }
 
 function buildTags(event: Event): Array<{ label: string; tone: TagTone }> {
