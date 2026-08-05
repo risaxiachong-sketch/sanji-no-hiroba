@@ -43,6 +43,7 @@
 .boardHotspot {
   position: absolute;
   z-index: 5;
+  pointer-events: auto;
   padding: 0;
   border: 2px solid transparent;
   border-radius: 18px;

@@ -614,8 +614,8 @@ export function Plaza2D({
     clampCamera(cameraRef.current, viewportRef.current, map)
   }
 
-  const openBulletinBoard = () => {
-    if (gestureRef.current.moved) return
+  const openBulletinBoard = (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.stopPropagation()
     onOpenBulletinBoard()
   }
 
@@ -668,6 +668,7 @@ export function Plaza2D({
         className={styles.boardHotspot}
         data-sfx="navigate"
         aria-label="まちの掲示板を開く"
+        onPointerDown={(event) => event.stopPropagation()}
         onClick={openBulletinBoard}
       />
 
