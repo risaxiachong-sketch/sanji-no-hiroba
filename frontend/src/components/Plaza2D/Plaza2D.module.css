@@ -108,21 +108,24 @@
 .reactionBar {
   position: absolute;
   z-index: 9;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
   justify-content: center;
   gap: 4px;
-  width: 176px;
+  width: min(280px, calc(100% - 24px));
   transform: translate(-50%, 0);
   pointer-events: auto;
 }
 
 .reactionBtn {
+  min-width: 0;
   min-height: 30px;
+  width: max-content;
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 4px 7px;
+  padding: 3px 6px;
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 999px;
   background: rgba(255, 253, 248, 0.92);
@@ -130,10 +133,18 @@
   box-shadow: 0 6px 14px rgba(96, 65, 43, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(6px);
   cursor: pointer;
-  font-size: 0.76rem;
+  font-size: 0.68rem;
   font-weight: 800;
   line-height: 1.2;
   transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.reactionLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.66rem;
 }
 
 .reactionBtn:hover {
@@ -151,8 +162,17 @@
 }
 
 .reactionCount {
+  flex: 0 0 auto;
+  margin-left: 2px;
   font-size: 0.66rem;
   font-weight: 900;
+}
+
+@media (max-width: 360px) {
+  .reactionBar {
+    grid-template-columns: max-content;
+    width: min(260px, calc(100% - 16px));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

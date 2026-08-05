@@ -23,8 +23,8 @@ const SHADOW_RADIUS_Y_IDLE_RATIO = 12 / 148
 const BUBBLE_OFFSET_RATIO = 141 / 148
 const LABEL_OFFSET_RATIO = 153 / 148
 const REACTION_BAR_OFFSET_RATIO = 0.12
-const REACTION_BAR_WIDTH = 176
-const REACTION_BAR_HEIGHT = 64
+const REACTION_BAR_WIDTH = 280
+const REACTION_BAR_HEIGHT = 140
 const REACTION_BAR_MARGIN = 8
 
 const REACTIONS: ReactionOption[] = [
@@ -701,6 +701,7 @@ export function Plaza2D({
                 onClick={() => onReact(selectedPost.id, reaction.value)}
               >
                 <span aria-hidden="true">{reaction.emoji}</span>
+                <span className={styles.reactionLabel}>{reaction.label}</span>
                 {count > 0 && <span className={styles.reactionCount}>{count}</span>}
               </button>
             )
