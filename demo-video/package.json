@@ -1,0 +1,35 @@
+{
+  "name": "@sanji-no-hiroba/demo-video",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "capture": "tsx scripts/capture.ts",
+    "render": "tsx scripts/render.ts",
+    "render:draft": "tsx scripts/render.ts --draft",
+    "check": "tsx scripts/check.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0"
+  },
+  "dependencies": {
+    "@remotion/media": "4.0.505",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.505"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@remotion/cli": "4.0.505",
+    "@remotion/eslint-plugin": "4.0.505",
+    "@types/node": "22.20.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.5",
+    "globals": "15.15.0",
+    "playwright": "1.62.1",
+    "tsx": "4.23.1",
+    "typescript": "5.6.3",
+    "typescript-eslint": "8.64.0"
+  }
+}

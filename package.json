@@ -5,7 +5,8 @@
   "workspaces": [
     "frontend",
     "backend",
-    "infra"
+    "infra",
+    "demo-video"
   ],
   "scripts": {
     "dev": "npm run dev --workspace=frontend",
@@ -20,6 +21,11 @@
     "deploy": "npm run build:backend && npm run deploy --workspace=infra",
     "preflight": "npm run preflight --workspace=backend",
     "deploy:safe": "npm run deploy:safe --workspace=backend",
-    "rollback": "npm run rollback --workspace=backend"
+    "rollback": "npm run rollback --workspace=backend",
+    "demo:studio": "npm run studio --workspace=@sanji-no-hiroba/demo-video",
+    "demo:capture": "npm run capture --workspace=@sanji-no-hiroba/demo-video",
+    "demo:render": "npm run render --workspace=@sanji-no-hiroba/demo-video",
+    "demo:render:draft": "npm run render:draft --workspace=@sanji-no-hiroba/demo-video",
+    "demo:check": "npm run check --workspace=@sanji-no-hiroba/demo-video"
   }
 }
