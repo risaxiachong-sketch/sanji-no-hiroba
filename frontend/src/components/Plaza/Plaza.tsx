@@ -27,6 +27,8 @@ function latestPostFor(posts: Post[], userId: string | null) {
   })
 }
 
+const MAX_PLAZA_VISITORS = 6
+
 export function Plaza({ avatar, onNavigate }: Props) {
   const { play } = useSoundEffects()
   const { map } = useMap()
@@ -42,15 +44,28 @@ export function Plaza({ avatar, onNavigate }: Props) {
 
   const visibleVisitors = useMemo(() => {
     const visitorIds = new Set<string>()
+    const postOrder = new Map<string, number>()
+    ;[...posts]
+      .sort((left, right) => {
+        const leftTime = new Date(left.createdAt ?? left.timestamp ?? 0).getTime()
+        const rightTime = new Date(right.createdAt ?? right.timestamp ?? 0).getTime()
+        return rightTime - leftTime
+      })
+      .forEach((post, index) => {
+        if (!postOrder.has(post.userId)) postOrder.set(post.userId, index)
+      })
 
-    return visitors.filter((visitor) => {
-      if (visitor.id === currentUserId || visitorIds.has(visitor.id)) {
-        return false
-      }
-      visitorIds.add(visitor.id)
-      return true
-    })
-  }, [currentUserId, visitors])
+    return visitors
+      .filter((visitor) => {
+        if (visitor.id === currentUserId || visitorIds.has(visitor.id)) {
+          return false
+        }
+        visitorIds.add(visitor.id)
+        return true
+      })
+      .sort((left, right) => (postOrder.get(left.id) ?? Number.MAX_SAFE_INTEGER) - (postOrder.get(right.id) ?? Number.MAX_SAFE_INTEGER))
+      .slice(0, MAX_PLAZA_VISITORS)
+  }, [currentUserId, posts, visitors])
 
   useEffect(() => {
     let cancelled = false
