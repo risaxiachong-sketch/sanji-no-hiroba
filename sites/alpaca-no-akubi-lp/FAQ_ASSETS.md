@@ -1,9 +1,9 @@
 # 雲の上のQ&A：追加の挿絵
 
-- 保存先：`dist/assets/soft/alpaca-book.png`
+- 保存先：`art/soft/alpaca-book.png`
 - 生成方法：組み込み image_gen ツール。透過PNG。
 - 用途：はじめての方向けの案内。質問の開閉に合わせて、親子のアルパカが反応する。
-- 参照画像：同サイトの `dist/assets/soft/alpaca-rest.png`。キャラクターと水彩の画風を合わせるために使用。
+- 参照画像：同サイトの `art/soft/alpaca-rest.png`。キャラクターと水彩の画風を合わせるために使用。
 
 最終プロンプト：
 

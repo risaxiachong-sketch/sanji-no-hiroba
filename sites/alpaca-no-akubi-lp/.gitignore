@@ -6,3 +6,4 @@
 # This buildless LP keeps its editable HTML/CSS/JS in dist/.
 !dist/
 !dist/**
+.venv/

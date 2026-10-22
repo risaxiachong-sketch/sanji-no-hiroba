@@ -3,15 +3,22 @@
 生成方法：組み込み image_gen ツール。生成画像9点をプロジェクトへ保存。追加分の詳細は `MOTION_ASSETS.md` と `FAQ_ASSETS.md` を参照。
 表紙のロゴとアルパカは、ユーザー提供PowerPointの1枚目に埋め込まれた元画像をそのまま使用。CSSで表紙と同様に表示範囲を調整しており、文字やキャラクターは描き直していません。
 
+## 元画像と公開用画像
+
+- 元画像（透過PNG・フルサイズ）は `art/soft/` に置き、公開フォルダーには含めません。
+- 公開するのは `tools/make-images.py` で書き出したWebPです（`dist/assets/soft/*-<幅>.webp`）。画面幅に合わせて小さい版も用意し、`srcset` で選ばせています。スマホの表紙の空は、中央だけを切り出した `hero-sky-620.webp` を使います。
+- 共有用カード `dist/assets/og-image.jpg`（1200×630）と、アイコン `dist/apple-touch-icon.png`・`dist/favicon-48.png` も同じスクリプトで、表紙の元画像から作ります。
+- `dist/assets/soft/cover-original.png` は、以前に共有されたリンクのカード画像として残しています。ページ本体では使っていません。
+
 ## 元画像
 
-- `dist/assets/soft/cover-original.png`：PowerPoint表紙の元画像（1536×1024、透過PNG）
+- `art/soft/cover-original.png`：PowerPoint表紙の元画像（1536×1024、透過PNG）
 
 ## 生成画像と最終プロンプト
 
 ### cloud-hero
 
-保存先：`dist/assets/soft/cloud-hero.png`
+保存先：`art/soft/cloud-hero.png`
 
 透過背景：なし
 
@@ -21,7 +28,7 @@ Use case: illustration-story. The attached image is a CHARACTER AND PALETTE REFE
 
 ### alpaca-rest
 
-保存先：`dist/assets/soft/alpaca-rest.png`
+保存先：`art/soft/alpaca-rest.png`
 
 透過背景：あり
 
@@ -31,7 +38,7 @@ Use case: illustration-story. The attached image is a CHARACTER AND PALETTE REFE
 
 ### alpaca-town
 
-保存先：`dist/assets/soft/alpaca-town.png`
+保存先：`art/soft/alpaca-town.png`
 
 透過背景：なし
 
@@ -41,7 +48,7 @@ Use case: illustration-story. The attached image is a CHARACTER AND PALETTE REFE
 
 ### alpaca-goodnight
 
-保存先：`dist/assets/soft/alpaca-goodnight.png`
+保存先：`art/soft/alpaca-goodnight.png`
 
 透過背景：あり
 
@@ -51,7 +58,7 @@ Use case: illustration-story. The attached image is a CHARACTER AND PALETTE REFE
 
 ### cloud-button
 
-保存先：`dist/assets/soft/cloud-button.png`
+保存先：`art/soft/cloud-button.png`
 
 透過背景：あり
 

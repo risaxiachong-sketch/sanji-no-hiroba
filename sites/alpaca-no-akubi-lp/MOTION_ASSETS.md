@@ -3,7 +3,7 @@
 
 ### alpaca-wave
 
-保存先：`dist/assets/soft/alpaca-wave.png`
+保存先：`art/soft/alpaca-wave.png`
 
 生成方法：組み込み image_gen ツール。透過PNG。
 
@@ -13,7 +13,7 @@ Use case: illustration-story. Create a NEW isolated watercolor illustration on a
 
 ### alpaca-heart
 
-保存先：`dist/assets/soft/alpaca-heart.png`
+保存先：`art/soft/alpaca-heart.png`
 
 生成方法：組み込み image_gen ツール。透過PNG。
 
@@ -23,7 +23,7 @@ Use case: illustration-story. Create a NEW isolated watercolor illustration on a
 
 ### cloud-flowers
 
-保存先：`dist/assets/soft/cloud-flowers.png`
+保存先：`art/soft/cloud-flowers.png`
 
 生成方法：組み込み image_gen ツール。透過PNG。
 
@@ -41,4 +41,4 @@ Zen Maru Gothic の Bold（700）と Black（900）を、掲載テキストに�
 - 一次配布元：https://github.com/google/fonts/tree/main/ofl/zenmarugothic
 - ライセンス：SIL Open Font License 1.1
 
-文字を追加した場合、フォントに含まれない文字は端末の丸ゴシック等へフォールバックします。
+サブセットには、ページ・スクリプトで使う全文字に加えて、ひらがな・カタカナ・ASCIIを全部含めています。新しい漢字や記号を足したときは、`tools/subset-fonts.py` を実行し直してください（手順はスクリプト冒頭に記載）。フォントに含まれない文字は、端末の丸ゴシック等へフォールバックします。
