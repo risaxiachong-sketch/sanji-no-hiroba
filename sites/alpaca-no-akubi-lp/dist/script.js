@@ -103,6 +103,28 @@
   document.querySelectorAll('.illustrated-friend').forEach(function (friend) {
     friend.addEventListener('click', function () { greet(friend); });
   });
+  var faqAlpaca = document.getElementById('faq-alpaca');
+  var faqMessage = document.getElementById('faq-companion-message');
+  var faqQuestions = document.querySelectorAll('.faq-cloud-question');
+  var faqMessageTimer;
+  function answerWithAlpaca(message) {
+    window.clearTimeout(faqMessageTimer);
+    faqMessage.textContent = message;
+    faqMessage.classList.remove('is-answering');
+    void faqMessage.offsetWidth;
+    faqMessage.classList.add('is-answering');
+    greet(faqAlpaca);
+    faqMessageTimer = window.setTimeout(function () { faqMessage.classList.remove('is-answering'); }, 900);
+  }
+  // Native details retain keyboard controls and work without JavaScript.
+  faqQuestions.forEach(function (question) {
+    question.addEventListener('toggle', function () {
+      if (question.open) answerWithAlpaca(question.getAttribute('data-companion'));
+    });
+  });
+  faqAlpaca.addEventListener('click', function () {
+    answerWithAlpaca('いっしょに、のんびり読もうね。');
+  });
   toggle.addEventListener('click', function () {
     var paused = document.body.classList.toggle('motion-paused');
     toggle.setAttribute('aria-pressed', String(paused));

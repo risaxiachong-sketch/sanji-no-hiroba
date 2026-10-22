@@ -133,21 +133,54 @@
       </div>
     </section>
 
-    <section id="faq" class="faq section content-width">
-      <div class="faq-heading">
-        <h2>はじめての方へ。</h2>
-        <img src="assets/soft/alpaca-rest.png" width="1536" height="1024" alt="" loading="lazy">
+    <section id="faq" class="faq-garden section" aria-labelledby="faq-title">
+      <div class="faq-scenery" aria-hidden="true">
+        <img class="faq-cloud faq-cloud-one" src="assets/soft/cloud-button.png" width="2172" height="724" alt="" loading="lazy">
+        <img class="faq-cloud faq-cloud-two" src="assets/soft/cloud-button.png" width="2172" height="724" alt="" loading="lazy">
+        <span class="floating-blossom blossom-one">✿</span><span class="floating-blossom blossom-two">✿</span><span class="floating-blossom blossom-three">✦</span>
       </div>
-      <div class="faq-list">
-        <details><summary>見るだけでも、大丈夫？<span aria-hidden="true"></span></summary><p>はい。投稿やリアクションは、自分がしたいときだけ。広場を眺めて過ごしたり、まちの掲示板からお出かけ先を探したりできます。</p></details>
-        <details><summary>子育て中の学生も使えますか？<span aria-hidden="true"></span></summary><p>はい。子育て中の学生を含め、親・保護者の方に向けたオンライン広場です。学業や家事など、日々の暮らしの合間にご利用ください。</p></details>
-        <details><summary>アプリのインストールは必要？<span aria-hidden="true"></span></summary><p>インストールは不要です。スマホやPCのブラウザで利用できます。初めて広場に入るときは、画面の案内に沿ってニックネームなどを設定してください。</p></details>
-        <details><summary>どこのお出かけ情報がありますか？<span aria-hidden="true"></span></summary><p>宮崎の親子向けイベントや地域の居場所を紹介します。掲載されている情報の範囲や最新の内容は、アプリの「まちの掲示板」でご確認ください。</p></details>
-        <details><summary>「行ってみたい」で予約できますか？<span aria-hidden="true"></span></summary><p>「行ってみたい」は、気になったイベントを保存する機能です。参加予約ではありません。開催日時、料金、予約方法などは、主催者の公式情報をご確認ください。</p></details>
+      <div class="faq-nook content-width">
+        <div class="faq-host">
+          <p class="little-label">気になることも、ひとつずつ。</p>
+          <h2 id="faq-title">はじめての方へ。</h2>
+          <p class="faq-invitation">雲の上で、ひと休み。<br>どんなことが、気になりますか？</p>
+          <div class="faq-host-picture">
+            <button id="faq-alpaca" class="faq-alpaca" type="button" aria-label="本を読むアルパカにあいさつする">
+              <img src="assets/soft/alpaca-book.png" width="1536" height="1024" alt="雲の上で、親子のアルパカがいっしょに絵本をひらく挿絵" loading="lazy">
+            </button>
+            <span class="faq-book-flower" aria-hidden="true">✿</span>
+          </div>
+          <p id="faq-companion-message" class="faq-companion-message" aria-live="polite">ゆっくり、読んでいってね。</p>
+        </div>
+        <div class="faq-cloud-list">
+          <p class="faq-open-hint">気になる雲を、ちょん。</p>
+          <details class="faq-cloud-question" data-companion="眺めているだけでも、だいじょうぶ。" open>
+            <summary><span class="faq-question-text">見るだけでも、大丈夫？</span><span class="faq-flower-toggle" aria-hidden="true">✿</span></summary>
+            <div class="faq-answer"><p>はい。投稿やリアクションは、自分がしたいときだけ。広場を眺めて過ごしたり、まちの掲示板からお出かけ先を探したりできます。</p></div>
+          </details>
+          <details class="faq-cloud-question" data-companion="授業の合間にも、ふらっとどうぞ。">
+            <summary><span class="faq-question-text">子育て中の学生も使えますか？</span><span class="faq-flower-toggle" aria-hidden="true">✿</span></summary>
+            <div class="faq-answer"><p>はい。子育て中の学生を含め、親・保護者の方に向けたオンライン広場です。学業や家事など、日々の暮らしの合間にご利用ください。</p></div>
+          </details>
+          <details class="faq-cloud-question" data-companion="ブラウザから、こんにちは。">
+            <summary><span class="faq-question-text">アプリのインストールは必要？</span><span class="faq-flower-toggle" aria-hidden="true">✿</span></summary>
+            <div class="faq-answer"><p>インストールは不要です。スマホやPCのブラウザで利用できます。初めて広場に入るときは、画面の案内に沿ってニックネームなどを設定してください。</p></div>
+          </details>
+          <details class="faq-cloud-question" data-companion="親子のお出かけが、楽しみだね。">
+            <summary><span class="faq-question-text">どこのお出かけ情報がありますか？</span><span class="faq-flower-toggle" aria-hidden="true">✿</span></summary>
+            <div class="faq-answer"><p>宮崎の親子向けイベントや地域の居場所を紹介します。掲載されている情報の範囲や最新の内容は、アプリの「まちの掲示板」でご確認ください。</p></div>
+          </details>
+          <details class="faq-cloud-question" data-companion="気になる予定を、そっと残してね。">
+            <summary><span class="faq-question-text">「行ってみたい」で予約できますか？</span><span class="faq-flower-toggle" aria-hidden="true">✿</span></summary>
+            <div class="faq-answer"><p>「行ってみたい」は、気になったイベントを保存する機能です。参加予約ではありません。開催日時、料金、予約方法などは、主催者の公式情報をご確認ください。</p></div>
+          </details>
+        </div>
       </div>
+      <div class="faq-flower-path" aria-hidden="true"><img src="assets/soft/cloud-flowers.png" width="2172" height="724" alt="" loading="lazy"></div>
     </section>
 
     <section class="closing">
+      <div class="closing-breeze" aria-hidden="true"><img src="assets/soft/cloud-button.png" width="2172" height="724" alt="" loading="lazy"><span>♡</span><span>✿</span></div>
       <div class="closing-copy prose">
         <h2>今日も、おつかれさま。</h2>
         <p>少しだけ、肩の力をぬいて。<br>ひろばで、お待ちしています。</p>
