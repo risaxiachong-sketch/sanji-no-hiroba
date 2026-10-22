@@ -1,0 +1,9 @@
+.DS_Store
+.sites-runtime/
+.sites-checkout/
+*.log
+
+# This buildless LP keeps its editable HTML/CSS/JS in dist/.
+!dist/
+!dist/**
+.venv/
