@@ -1,4 +1,5 @@
 import { USE_MOCK } from '../../api/client'
+import { DUMMY_USERS } from '../../data/dummyUsers'
 import homeHero from '../../assets/branding/home-hero.png'
 import homeHeroWide from '../../assets/branding/home-hero-wide.png'
 import styles from './TopPage.module.css'
@@ -45,7 +46,7 @@ function EntryActions({
         </button>
       </div>
 
-      {USE_MOCK && <p className={styles.demoNote}>体験デモ · 35人のサンプル住人が待っています<br />投稿や保存はこの端末でお試しいただけます</p>}
+      {USE_MOCK && <p className={styles.demoNote}>体験デモ · {DUMMY_USERS.length}人のサンプル住人が待っています<br />投稿や保存はこの端末でお試しいただけます</p>}
 
       {onAdminAccess ? (
         <button
