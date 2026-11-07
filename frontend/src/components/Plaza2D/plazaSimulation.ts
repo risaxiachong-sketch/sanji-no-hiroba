@@ -1,3 +1,4 @@
+import { parentReplyFor } from '../../data/parentConversations'
 import type { MapPoint, WalkGrid } from './pathfinding'
 import { findPath, nearestWalkablePoint, randomWalkablePoint } from './pathfinding'
 
@@ -47,13 +48,7 @@ type Conversation = {
 const WALK_SPEED = 58
 const MAX_CONVERSATIONS = 2
 const TALK_TURN_SECONDS = 2.7
-const ACKNOWLEDGEMENTS = [
-  'わかるよ、うちも同じです',
-  '今日も本当におつかれさま',
-  '話してくれてありがとう',
-  'ここではゆっくりしてね',
-  'それは大変だったね',
-]
+
 
 function createRandom(seed: number) {
   let state = seed >>> 0
@@ -259,14 +254,15 @@ export class PlazaSimulation {
     first.partnerId = second.id
     second.partnerId = first.id
 
+    const post = this.nextPost()
     this.conversations.push({
       firstId: first.id,
       secondId: second.id,
       state: 'approach',
       timer: 0,
       elapsed: 0,
-      post: this.nextPost(),
-      reply: ACKNOWLEDGEMENTS[Math.floor(this.random() * ACKNOWLEDGEMENTS.length)],
+      post,
+      reply: parentReplyFor(post),
     })
   }
 
@@ -312,7 +308,7 @@ export class PlazaSimulation {
 
   private nextPost() {
     const messages = this.posts.length > 0 ? this.posts : this.fallbackMessages
-    if (messages.length === 0) return '今日はここで、ひと休みしています'
+    if (messages.length === 0) return '赤ちゃんがお昼寝したので、私もちょっとひと休みです'
     const message = messages[this.postCursor % messages.length]
     this.postCursor += 1
     return message
