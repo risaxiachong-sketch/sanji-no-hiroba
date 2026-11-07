@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import type { Event as BoardEvent, FacilityType, FilterCondition, Page } from '../../types'
 import { EVENT_STATUS_LABELS } from '../../types'
+import { USE_MOCK } from '../../api/client'
 import { fetchEvents } from '../../api/events'
 import boardAlpaca from '../../assets/bulletin-board/board-alpaca.png'
 import rhythmEventImage from '../../assets/bulletin-board/rhythm-event.png'
@@ -295,7 +296,7 @@ export function BulletinBoard({ onSelectEvent, onNavigate, isSaved, onToggleSave
         <div className={styles.titleBlock}>
           <h1 className={styles.title}>まちの掲示板</h1>
           <span className={styles.titleRule} aria-hidden="true" />
-          <p className={styles.subtitle}>地域のイベントや<br />子育て情報をみつけよう</p>
+          <p className={styles.subtitle}>地域のイベントや<br />子育て情報をみつけよう{USE_MOCK && <><br /><small>体験用のサンプルイベントです</small></>}</p>
         </div>
         <img src={boardAlpaca} alt="" className={styles.alpacaImage} aria-hidden="true" />
       </header>

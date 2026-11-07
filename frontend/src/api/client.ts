@@ -1,7 +1,31 @@
 import { authHeaders } from './identity'
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '')
-export const USE_MOCK = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK === 'true'
+const firebaseRequiredEnv = [
+  import.meta.env.VITE_FIREBASE_API_KEY,
+  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  import.meta.env.VITE_FIREBASE_APP_ID,
+]
+
+const hasFirebaseConfig = firebaseRequiredEnv.every((value) => {
+  return typeof value === 'string' && value.trim().length > 0
+})
+
+export type DataMode = 'api' | 'firebase' | 'mock'
+
+// An explicitly configured AWS API remains the first choice. Firebase is the
+// card-free hosted fallback, and a static mock keeps local/demo builds usable.
+export const DATA_MODE: DataMode = import.meta.env.VITE_USE_MOCK === 'true'
+  ? 'mock'
+  : API_BASE
+    ? 'api'
+    : hasFirebaseConfig
+      ? 'firebase'
+      : 'mock'
+
+export const USE_FIREBASE = DATA_MODE === 'firebase'
+export const USE_MOCK = DATA_MODE === 'mock'
 
 export class ApiError extends Error {
   status: number

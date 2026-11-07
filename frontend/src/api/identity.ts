@@ -39,6 +39,17 @@ export function completeIdentity(userId: string) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...identity, userId }))
 }
 
+export function clearCompletedIdentity() {
+  try {
+    const identity = getIdentity()
+    if (!identity) return
+    const { installationId, deviceToken } = identity
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ installationId, deviceToken }))
+  } catch {
+    // Firebase has already signed out even if this legacy cache is unavailable.
+  }
+}
+
 export function authHeaders(): Record<string, string> {
   const identity = getIdentity()
   return identity?.userId

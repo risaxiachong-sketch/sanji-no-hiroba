@@ -756,3 +756,5 @@
     transition: none;
   }
 }
+
+.demoNote { margin: 16px 8px 0; color: #766659; font-size: 12px; line-height: 1.8; text-align: center; }

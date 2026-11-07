@@ -1,8 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { avatarCacheKey, legacyAvatarCacheKey } from '../api/accountCache';
+import { USE_FIREBASE } from '../api/client';
+import { useAuth } from '../auth/AuthContext';
 import type { Avatar } from '../types';
 import { AVATARS } from '../data/avatars';
+import { useProfile } from './useProfile';
 
-const STORAGE_KEY = 'sanji-avatar-id';
 const LEGACY_AVATAR_IDS: Record<string, string> = {
   bear: 'mint-bear',
   bunny: 'lavender-bunny',
@@ -12,22 +15,23 @@ const LEGACY_AVATAR_IDS: Record<string, string> = {
   koala: 'cream-sheep',
 };
 
-function loadFromStorage(): Avatar | null {
+function loadFromStorage(userId?: string): Avatar | null {
   try {
-    const id = localStorage.getItem(STORAGE_KEY);
+    const key = userId ? avatarCacheKey(userId) : legacyAvatarCacheKey();
+    const id = localStorage.getItem(key);
     if (!id) return null;
     const resolvedId = LEGACY_AVATAR_IDS[id] ?? id;
     const avatar = AVATARS.find((option) => option.id === resolvedId) ?? null;
-    if (avatar && resolvedId !== id) localStorage.setItem(STORAGE_KEY, resolvedId);
+    if (avatar && resolvedId !== id) localStorage.setItem(key, resolvedId);
     return avatar;
   } catch {
     return null;
   }
 }
 
-function saveToStorage(avatar: Avatar): void {
+function saveToStorage(avatar: Avatar, userId?: string): void {
   try {
-    localStorage.setItem(STORAGE_KEY, avatar.id);
+    localStorage.setItem(userId ? avatarCacheKey(userId) : legacyAvatarCacheKey(), avatar.id);
   } catch {
     // localStorage が使えない環境ではサイレントに失敗
   }
@@ -43,12 +47,37 @@ interface UseSelectedAvatarReturn {
  * stays in sync if AVATARS' colors/emoji ever change.
  */
 export function useSelectedAvatar(): UseSelectedAvatarReturn {
-  const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(loadFromStorage);
+  const auth = useAuth();
+  const { profile } = useProfile();
+  const firebaseUserId = auth.status === 'google' ? auth.user?.uid : undefined;
+  const [selection, setSelection] = useState<{ userId?: string; avatar: Avatar | null }>(() => ({
+    userId: undefined,
+    avatar: USE_FIREBASE ? null : loadFromStorage(),
+  }));
+  const profileAvatar = profile?.avatarId
+    ? AVATARS.find((option) => option.id === profile.avatarId) ?? null
+    : null;
+
+  useEffect(() => {
+    if (!USE_FIREBASE) return;
+    if (!firebaseUserId) {
+      setSelection({ userId: undefined, avatar: null });
+      return;
+    }
+    const nextAvatar = profileAvatar ?? loadFromStorage(firebaseUserId);
+    if (profileAvatar) saveToStorage(profileAvatar, firebaseUserId);
+    setSelection({ userId: firebaseUserId, avatar: nextAvatar });
+  }, [firebaseUserId, profileAvatar]);
 
   const selectAvatar = useCallback((avatar: Avatar) => {
-    saveToStorage(avatar);
-    setSelectedAvatar(avatar);
-  }, []);
+    const ownerId = USE_FIREBASE ? firebaseUserId : undefined;
+    saveToStorage(avatar, ownerId);
+    setSelection({ userId: ownerId, avatar });
+  }, [firebaseUserId]);
+
+  const selectedAvatar = USE_FIREBASE
+    ? profileAvatar ?? (selection.userId === firebaseUserId ? selection.avatar : null)
+    : selection.avatar;
 
   return { selectedAvatar, selectAvatar };
 }

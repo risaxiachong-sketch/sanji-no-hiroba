@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Avatar, Page, Profile } from './types'
 import { getIdentity } from './api/identity'
-import { registerUser, updateMyProfile } from './api/users'
+import { USE_FIREBASE, USE_MOCK } from './api/client'
+import { registerUser } from './api/users'
+import { useAuth } from './auth/AuthContext'
 import { useSoundEffects } from './audio/SoundContext'
 import { useProfile } from './hooks/useProfile'
 import { useSavedEvents } from './hooks/useSavedEvents'
 import { useSelectedAvatar } from './hooks/useSelectedAvatar'
 import { TopPage } from './components/TopPage/TopPage'
+import { GoogleSignIn } from './components/GoogleSignIn/GoogleSignIn'
 import { ProfileSetup } from './components/ProfileSetup/ProfileSetup'
 import { AvatarSelect } from './components/AvatarSelect/AvatarSelect'
 import { Plaza } from './components/Plaza/Plaza'
@@ -22,16 +25,29 @@ import { AdminEventForm } from './components/AdminEventForm/AdminEventForm'
 import { AppShell } from './components/AppShell/AppShell'
 import './App.css'
 
+const MEMBER_PAGES = new Set<Page>([
+  'plaza',
+  'postArea',
+  'savedEvents',
+  'settings',
+  'settingsNickname',
+  'settingsChildAge',
+  'settingsAvatar',
+])
+
 function App() {
+  const auth = useAuth()
   const { play } = useSoundEffects()
   const [currentPage, setCurrentPage] = useState<Page>('top')
   const [previousPage, setPreviousPage] = useState<Page | null>(null)
+  const [postAuthDestination, setPostAuthDestination] = useState<Page | null>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const { selectedAvatar, selectAvatar } = useSelectedAvatar()
-  const { profile, saveDraft } = useProfile()
+  const { profile, profileStatus, saveDraft, saveProfile } = useProfile()
   const { savedIds, toggleSave, isSaved } = useSavedEvents(profile?.userId)
 
   useEffect(() => {
+    if (USE_FIREBASE) return
     if (!profile || !selectedAvatar || getIdentity()?.userId) return
     registerUser({
       nickname: profile.nickname,
@@ -52,12 +68,29 @@ function App() {
     }
   }, [previousPage])
 
+  const leaveGoogleSignIn = useCallback(() => {
+    setPostAuthDestination(null)
+    if (previousPage) {
+      setCurrentPage(previousPage)
+      setPreviousPage(null)
+    } else {
+      setCurrentPage('top')
+    }
+  }, [previousPage])
+
   const openEvent = useCallback((id: string, from?: Page) => {
     setSelectedEventId(id)
     navigate('eventDetail', from)
   }, [navigate])
 
   const navigateToMemberPage = useCallback((page: 'plaza' | 'postArea', from: Page) => {
+    if (USE_FIREBASE) {
+      setPostAuthDestination(page)
+      if (auth.status !== 'google' || profileStatus === 'loading' || profileStatus === 'error') {
+        navigate('signIn', from)
+        return
+      }
+    }
     if (!profile) {
       navigate('profileSetup', from)
       return
@@ -66,18 +99,46 @@ function App() {
       navigate('avatarSelect', from)
       return
     }
+    if (USE_FIREBASE) setPostAuthDestination(null)
     navigate(page, from)
-  }, [navigate, profile, selectedAvatar])
+  }, [auth.status, navigate, profile, profileStatus, selectedAvatar])
+
+  const navigateToProtectedPage = useCallback((page: Page, from: Page) => {
+    if (page === 'plaza' || page === 'postArea') {
+      navigateToMemberPage(page, from)
+      return
+    }
+    if (USE_FIREBASE && MEMBER_PAGES.has(page)) {
+      setPostAuthDestination(page)
+      if (auth.status !== 'google' || profileStatus === 'loading' || profileStatus === 'error') {
+        navigate('signIn', from)
+        return
+      }
+      if (!profile) {
+        navigate('profileSetup', from)
+        return
+      }
+      if (!selectedAvatar) {
+        navigate('avatarSelect', from)
+        return
+      }
+      setPostAuthDestination(null)
+    }
+    if (!USE_FIREBASE && MEMBER_PAGES.has(page)) {
+      if (!profile) { navigate('profileSetup', from); return }
+      if (!selectedAvatar) { navigate('avatarSelect', from); return }
+    }
+    navigate(page, from)
+  }, [auth.status, navigate, navigateToMemberPage, profile, profileStatus, selectedAvatar])
 
   const navigateFromPage = useCallback((page: Page, from: Page) => {
-    if (page === 'plaza' || page === 'postArea') navigateToMemberPage(page, from)
-    else navigate(page, from)
-  }, [navigate, navigateToMemberPage])
+    navigateToProtectedPage(page, from)
+  }, [navigateToProtectedPage])
 
   const completeProfileSetup = useCallback((draft: Profile) => {
-    saveDraft(draft)
+    saveDraft(USE_FIREBASE && auth.user ? { ...draft, userId: auth.user.uid } : draft)
     navigate('avatarSelect')
-  }, [navigate, saveDraft])
+  }, [auth.user, navigate, saveDraft])
 
   const selectInitialAvatar = useCallback(async (avatar: Avatar) => {
     selectAvatar(avatar)
@@ -93,20 +154,74 @@ function App() {
         avatarId: avatar.id,
       })
       saveDraft(remote)
-      navigate('plaza')
+      const destination = USE_FIREBASE ? postAuthDestination ?? 'plaza' : 'plaza'
+      setPostAuthDestination(null)
+      navigate(destination)
     } catch {
       play('error')
       alert('プロフィールを登録できませんでした。通信状況を確認して、もう一度お試しください。')
     }
-  }, [navigate, play, profile, saveDraft, selectAvatar])
+  }, [navigate, play, postAuthDestination, profile, saveDraft, selectAvatar])
 
   const changeAvatar = useCallback(async (avatar: Avatar) => {
-    await updateMyProfile({ avatarId: avatar.id })
+    if (!profile) return
+    await saveProfile({ ...profile, avatarId: avatar.id })
     selectAvatar(avatar)
-  }, [selectAvatar])
+  }, [profile, saveProfile, selectAvatar])
+
+  const toggleSavedEvent = useCallback((id: string, from: Page) => {
+    if (USE_FIREBASE) {
+      setPostAuthDestination(from)
+      if (auth.status !== 'google' || profileStatus === 'loading' || profileStatus === 'error') {
+        navigate('signIn', from)
+        return
+      }
+      if (!profile) {
+        navigate('profileSetup', from)
+        return
+      }
+      if (!selectedAvatar) {
+        navigate('avatarSelect', from)
+        return
+      }
+      setPostAuthDestination(null)
+    }
+    toggleSave(id)
+  }, [auth.status, navigate, profile, profileStatus, selectedAvatar, toggleSave])
+
+  const handleGoogleSignOut = useCallback(async () => {
+    await auth.signOutGoogle()
+    setPostAuthDestination(null)
+    setPreviousPage(null)
+    setCurrentPage('top')
+  }, [auth])
+
+  useEffect(() => {
+    if (!USE_FIREBASE || currentPage !== 'signIn' || auth.status !== 'google') return
+    if (profileStatus === 'missing') {
+      navigate('profileSetup', 'signIn')
+      return
+    }
+    if (profileStatus !== 'ready' || !profile || !selectedAvatar) return
+    const destination = postAuthDestination ?? 'plaza'
+    setPostAuthDestination(null)
+    navigate(destination, 'signIn')
+  }, [auth.status, currentPage, navigate, postAuthDestination, profile, profileStatus, selectedAvatar])
 
   if (currentPage === 'top') {
-    return <TopPage onEnter={() => navigateToMemberPage('plaza', 'top')} onOpenBulletinBoard={() => navigate('bulletinBoard', 'top')} onAdminAccess={() => navigate('adminEvent', 'top')} />
+    return (
+      <TopPage
+        onEnter={() => navigateToMemberPage('plaza', 'top')}
+        onOpenBulletinBoard={() => navigate('bulletinBoard', 'top')}
+        onAdminAccess={USE_FIREBASE || USE_MOCK ? undefined : () => navigate('adminEvent', 'top')}
+      />
+    )
+  }
+  if (currentPage === 'signIn') {
+    return <GoogleSignIn onBack={leaveGoogleSignIn} />
+  }
+  if (USE_FIREBASE && MEMBER_PAGES.has(currentPage) && auth.status !== 'google') {
+    return <GoogleSignIn onBack={() => setCurrentPage('top')} />
   }
   if (currentPage === 'profileSetup') {
     return <ProfileSetup onComplete={completeProfileSetup} />
@@ -142,7 +257,7 @@ function App() {
           onSelectEvent={(id) => openEvent(id, 'bulletinBoard')}
           onNavigate={(page) => navigateFromPage(page, 'bulletinBoard')}
           isSaved={isSaved}
-          onToggleSave={toggleSave}
+          onToggleSave={(id) => toggleSavedEvent(id, 'bulletinBoard')}
         />
       </AppShell>
     )
@@ -157,7 +272,7 @@ function App() {
         <EventDetail
           eventId={selectedEventId!}
           isSaved={isSaved(selectedEventId ?? '')}
-          onToggleSave={() => toggleSave(selectedEventId!)}
+          onToggleSave={() => toggleSavedEvent(selectedEventId!, 'eventDetail')}
           onBack={goBack}
         />
       </AppShell>
@@ -181,7 +296,9 @@ function App() {
         <Settings
           avatar={selectedAvatar!}
           onBack={() => navigate('plaza')}
-          onNavigate={(page) => navigate(page, 'settings')}
+          onNavigate={(page) => navigateFromPage(page, 'settings')}
+          accountEmail={USE_FIREBASE ? auth.user?.email ?? undefined : undefined}
+          onSignOut={USE_FIREBASE ? handleGoogleSignOut : undefined}
         />
       </AppShell>
     )

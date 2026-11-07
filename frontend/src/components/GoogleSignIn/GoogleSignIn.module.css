@@ -1,0 +1,245 @@
+.page {
+  width: 100%;
+  max-width: 430px;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  overflow-y: auto;
+  color: #56392f;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.96) 0 8%, transparent 22%),
+    radial-gradient(circle at 90% 22%, rgba(255, 229, 203, 0.78) 0 10%, transparent 24%),
+    linear-gradient(180deg, #fff8ee 0%, #fffdf8 44%, #f9efe3 100%);
+}
+
+.header {
+  min-height: 215px;
+  padding: 18px 18px 50px;
+}
+
+.backButton {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: #795b4d;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.backButton span:first-child {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.backButton:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.titleBlock {
+  width: min(100%, 350px);
+  margin: 13px auto 0;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #ef8798;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.title {
+  margin: 0;
+  color: #5a4035;
+  font-size: 1.65rem;
+  font-weight: 900;
+  line-height: 1.28;
+}
+
+.titleRule {
+  width: 100%;
+  height: 2px;
+  display: block;
+  margin: 10px auto;
+  border-radius: 999px;
+  background-image: linear-gradient(90deg, rgba(226, 193, 151, 0.85) 50%, transparent 50%);
+  background-size: 14px 2px;
+}
+
+.subtitle {
+  margin: 0;
+  color: #68473a;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.card {
+  width: calc(100% - 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: -34px auto 24px;
+  padding: 24px 18px 20px;
+  border: 1px solid rgba(218, 186, 147, 0.42);
+  border-radius: 28px;
+  background: rgba(255, 253, 248, 0.97);
+  box-shadow:
+    0 16px 30px rgba(132, 93, 63, 0.12),
+    0 3px 8px rgba(132, 93, 63, 0.06);
+}
+
+.googleMark,
+.buttonGoogleMark {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #fff;
+  color: #4285f4;
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(67, 72, 78, 0.14);
+}
+
+.googleMark {
+  width: 58px;
+  height: 58px;
+  border: 1px solid #e4e7eb;
+  font-size: 1.65rem;
+}
+
+.copy {
+  margin: 14px 0 19px;
+  text-align: center;
+}
+
+.copy h2,
+.conflict h3 {
+  margin: 0;
+  color: #5a4035;
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.copy p,
+.conflict p {
+  margin: 8px 0 0;
+  color: #7a6257;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+.primaryButton,
+.secondaryButton {
+  width: 100%;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.primaryButton {
+  border: 1px solid #d9dde3;
+  background: #fff;
+  color: #4d4f53;
+  box-shadow: 0 9px 18px rgba(67, 72, 78, 0.12);
+}
+
+.primaryButton:hover {
+  border-color: #b9c7da;
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: wait;
+  opacity: 0.58;
+  transform: none;
+}
+
+.buttonGoogleMark {
+  width: 27px;
+  height: 27px;
+  border: 1px solid #edf0f3;
+  font-size: 0.92rem;
+}
+
+.conflict {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid rgba(225, 143, 94, 0.38);
+  border-radius: 20px;
+  background: #fff7ee;
+}
+
+.conflict .primaryButton {
+  margin-top: 15px;
+}
+
+.secondaryButton {
+  min-height: 46px;
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: #9a654c;
+  box-shadow: none;
+}
+
+.feedback {
+  width: 100%;
+  min-height: 26px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.success,
+.error {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.success {
+  color: #3e7f66;
+}
+
+.error {
+  color: #b14e4e;
+}
+
+.note {
+  margin: 6px 0 0;
+  color: #967e72;
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-align: center;
+}
+
+@media (min-width: 431px) {
+  .page {
+    max-width: none;
+  }
+
+  .header,
+  .card {
+    width: min(100% - 32px, 620px);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .card {
+    margin-top: -34px;
+  }
+}

@@ -1,5 +1,6 @@
 export type Page =
   | 'top'
+  | 'signIn'
   | 'profileSetup'
   | 'avatarSelect'
   | 'plaza'

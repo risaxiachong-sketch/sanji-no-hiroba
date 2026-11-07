@@ -1,3 +1,4 @@
+import { USE_MOCK } from '../../api/client'
 import homeHero from '../../assets/branding/home-hero.png'
 import homeHeroWide from '../../assets/branding/home-hero-wide.png'
 import styles from './TopPage.module.css'
@@ -5,7 +6,7 @@ import styles from './TopPage.module.css'
 interface Props {
   onEnter: () => void
   onOpenBulletinBoard: () => void
-  onAdminAccess: () => void
+  onAdminAccess?: () => void
 }
 
 interface EntryActionsProps extends Props {
@@ -44,16 +45,20 @@ function EntryActions({
         </button>
       </div>
 
-      <button
-        type="button"
-        className={styles.adminBtn}
-        data-sfx="navigate"
-        onClick={onAdminAccess}
-        aria-label="施設担当者向けイベント登録画面へ"
-      >
-        <span className={styles.adminIcon} aria-hidden="true" />
-        施設担当者はこちら
-      </button>
+      {USE_MOCK && <p className={styles.demoNote}>体験デモ · 35人のサンプル住人が待っています<br />投稿や保存はこの端末でお試しいただけます</p>}
+
+      {onAdminAccess ? (
+        <button
+          type="button"
+          className={styles.adminBtn}
+          data-sfx="navigate"
+          onClick={onAdminAccess}
+          aria-label="施設担当者向けイベント登録画面へ"
+        >
+          <span className={styles.adminIcon} aria-hidden="true" />
+          施設担当者はこちら
+        </button>
+      ) : null}
     </div>
   )
 }

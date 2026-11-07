@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Avatar, DummyUser, Page, Post, ReactionType } from '../../types'
+import { USE_MOCK } from '../../api/client'
+import { DUMMY_USERS } from '../../data/dummyUsers'
 import { fetchPosts } from '../../api/posts'
 import { fetchRecentPlazaUsers } from '../../api/plaza'
 import { addReaction, removeReaction } from '../../api/reactions'
 import { useSoundEffects } from '../../audio/SoundContext'
 import postStarButton from '../../assets/navigation/post-star-button.png'
-import { loadCachedProfile } from '../../hooks/useProfile'
+import { useProfile } from '../../hooks/useProfile'
 import { BottomNav } from '../BottomNav/BottomNav'
 import { Plaza2D } from '../Plaza2D/Plaza2D'
 import styles from './Plaza.module.css'
@@ -28,7 +30,8 @@ function latestPostFor(posts: Post[], userId: string | null) {
 
 export function Plaza({ avatar, onNavigate }: Props) {
   const { play } = useSoundEffects()
-  const currentUserId = loadCachedProfile()?.userId
+  const { profile } = useProfile()
+  const currentUserId = profile?.userId
   const [posts, setPosts] = useState<Post[]>([])
   const [visitors, setVisitors] = useState<DummyUser[]>([])
   const [selectedVisitorId, setSelectedVisitorId] = useState<string | null>(null)
@@ -93,6 +96,7 @@ export function Plaza({ avatar, onNavigate }: Props) {
 
   return (
     <div className={styles.page}>
+      {USE_MOCK && <p className={styles.demoBadge}>体験デモ · サンプル住人 {DUMMY_USERS.length}人</p>}
       <div className={styles.plazaScene}>
         <Plaza2D
           avatar={avatar}
@@ -106,12 +110,12 @@ export function Plaza({ avatar, onNavigate }: Props) {
         />
       </div>
 
-      <button type="button" className={styles.postButton} data-sfx="navigate" data-testid="plaza-post-button" aria-label="つぶやく" onClick={() => onNavigate('postArea')}>
+      {!selectedPost && <button type="button" className={styles.postButton} data-sfx="navigate" data-testid="plaza-post-button" aria-label="つぶやく" onClick={() => onNavigate('postArea')}>
         <span className={styles.postButtonVisual} aria-hidden="true">
           <img className={styles.postButtonArt} src={postStarButton} alt="" />
           <span className={styles.postButtonLabel}>つぶやく</span>
         </span>
-      </button>
+      </button>}
 
       <BottomNav active="plaza" onNavigate={onNavigate} />
     </div>

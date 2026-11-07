@@ -106,33 +106,69 @@
 
 .reactionBar {
   position: absolute;
-  z-index: 9;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-  width: 176px;
+  z-index: 45;
+  box-sizing: border-box;
+  width: min(340px, calc(100% - 32px));
+  padding: 12px;
+  border: 1px solid rgba(230, 191, 171, 0.9);
+  border-radius: 18px;
+  background: rgba(255, 253, 248, 0.98);
+  box-shadow: 0 8px 22px rgba(96, 65, 43, 0.18);
   transform: translate(-50%, 0);
   pointer-events: auto;
 }
 
-.reactionBtn {
-  min-height: 30px;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 7px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 999px;
-  background: rgba(255, 253, 248, 0.92);
-  color: #74584e;
-  box-shadow: 0 6px 14px rgba(96, 65, 43, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(6px);
-  cursor: pointer;
-  font-size: 0.76rem;
+.reactionNickname {
+  margin: 0 0 5px;
+  color: #9a6d58;
+  font-size: 11px;
   font-weight: 800;
-  line-height: 1.2;
+}
+
+.reactionPostText {
+  margin: 0 0 10px;
+  color: #634738;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.reactionOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.reactionBtn {
+  min-width: 0;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid #ead7c5;
+  border-radius: 12px;
+  background: #fffdf8;
+  color: #74584e;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
   transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.reactionEmoji {
+  flex: 0 0 auto;
+  font-size: 17px;
+}
+
+.reactionLabel {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
 
 .reactionBtn:hover {

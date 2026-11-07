@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { USE_MOCK } from '../../api/client'
 import { fetchEvent } from '../../api/events'
 import { EVENT_STATUS_LABELS } from '../../types'
 import type { Event, FacilityType } from '../../types'
@@ -280,7 +281,7 @@ export function EventDetail({ eventId, isSaved, onToggleSave, onBack }: Props) {
           <div className={`${styles.detailSection} ${styles.sourceSection}`}>
             <h3 className={styles.sectionTitle}>確認先</h3>
             <p>情報提供元：{event.source}</p>
-            <p>最終確認日：{formatEventDate(event.lastConfirmed)}</p>
+            {USE_MOCK ? <p>体験用のサンプルです。開催日・内容は実際の予定と異なります。</p> : <p>最終確認日：{formatEventDate(event.lastConfirmed)}</p>}
             <a
               href={event.officialUrl}
               target="_blank"

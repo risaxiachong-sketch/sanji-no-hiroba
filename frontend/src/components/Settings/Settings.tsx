@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Avatar, Page } from '../../types'
 import { AGE_GROUPS } from '../../data/ageGroups'
 import { useSoundEffects } from '../../audio/SoundContext'
@@ -12,6 +12,8 @@ interface Props {
   avatar: Avatar
   onBack: () => void
   onNavigate: (page: Page) => void
+  accountEmail?: string
+  onSignOut?: () => Promise<void>
 }
 
 const CHARACTER_SCALE_OPTIONS: { value: CharacterScale; label: string }[] = [
@@ -27,7 +29,7 @@ const CHARACTER_SCALE_LABEL: Record<CharacterScale, string> = {
 }
 
 /** Settings is a menu of editable fields; tapping a row opens its own editor screen. */
-export function Settings({ avatar, onNavigate }: Props) {
+export function Settings({ avatar, onNavigate, accountEmail, onSignOut }: Props) {
   const { profile } = useProfile()
   const { enabled: soundEnabled, setEnabled: setSoundEnabled } = useSoundEffects()
   const { scale: characterScale, setScale: setCharacterScale } = useCharacterScale()
@@ -36,10 +38,24 @@ export function Settings({ avatar, onNavigate }: Props) {
     ?? profile?.childAgeGroup
     ?? '未設定'
   const pageRef = useRef<HTMLDivElement>(null)
+  const [isSigningOut, setIsSigningOut] = useState(false)
+  const [signOutError, setSignOutError] = useState<string | null>(null)
 
   useEffect(() => {
     pageRef.current?.scrollTo({ top: 0, behavior: 'auto' })
   }, [])
+
+  const handleSignOut = async () => {
+    if (!onSignOut || isSigningOut) return
+    setIsSigningOut(true)
+    setSignOutError(null)
+    try {
+      await onSignOut()
+    } catch {
+      setSignOutError('ログアウトできませんでした。通信状況を確認して、もう一度お試しください。')
+      setIsSigningOut(false)
+    }
+  }
 
   return (
     <div className={styles.page} ref={pageRef}>
@@ -69,6 +85,25 @@ export function Settings({ avatar, onNavigate }: Props) {
             <p className={styles.profileMeta}>{childAgeLabel} / {avatar.label}</p>
           </div>
         </section>
+
+        {onSignOut ? (
+          <section className={styles.accountCard} aria-label="Googleアカウント">
+            <span className={styles.googleMark} aria-hidden="true">G</span>
+            <span className={styles.accountText}>
+              <span className={styles.accountLabel}>Googleアカウント</span>
+              <span className={styles.accountEmail}>{accountEmail ?? 'ログイン中'}</span>
+            </span>
+            <button
+              type="button"
+              className={styles.signOutButton}
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+            >
+              {isSigningOut ? '処理中…' : 'ログアウト'}
+            </button>
+            {signOutError ? <p className={styles.accountError} role="alert">{signOutError}</p> : null}
+          </section>
+        ) : null}
 
         <ul className={styles.menu}>
           <li>

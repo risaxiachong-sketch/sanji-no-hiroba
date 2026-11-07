@@ -27,8 +27,6 @@ const SHADOW_RADIUS_Y_IDLE_RATIO = 12 / 148
 const BUBBLE_OFFSET_RATIO = 141 / 148
 const LABEL_OFFSET_RATIO = 153 / 148
 const REACTION_BAR_OFFSET_RATIO = 0.12
-const REACTION_BAR_WIDTH = 176
-const REACTION_BAR_HEIGHT = 64
 const REACTION_BAR_MARGIN = 8
 
 const REACTIONS: ReactionOption[] = [
@@ -125,6 +123,8 @@ function roundedRect(
   context.roundRect(x, y, width, height, safeRadius)
 }
 
+type SpeechBubbleBounds = { left: number; top: number; width: number; height: number }
+
 function drawSpeechBubble(
   context: CanvasRenderingContext2D,
   x: number,
@@ -133,14 +133,15 @@ function drawSpeechBubble(
   viewportWidth: number,
   viewportHeight: number,
   insets: Pick<Viewport, 'topInset' | 'bottomInset' | 'leftInset' | 'rightInset'>,
+  occupied: SpeechBubbleBounds[],
 ) {
   const fontSize = 12
-  const lineHeight = 17
+  const lineHeight = 18
   const horizontalPadding = 14
   const verticalPadding = 9
-  const maxWidth = Math.min(220, viewportWidth - insets.leftInset - insets.rightInset - 16)
+  const maxWidth = Math.min(260, viewportWidth - insets.leftInset - insets.rightInset - 16)
   context.font = '700 12px "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif'
-  const lines = wrapSpeechText(context, text, Math.max(112, maxWidth - horizontalPadding * 2))
+  const lines = wrapSpeechText(context, text, Math.max(1, maxWidth - horizontalPadding * 2))
   const textWidth = Math.max(...lines.map((line) => context.measureText(line).width), 0)
   const width = Math.min(maxWidth, Math.max(92, textWidth + horizontalPadding * 2))
   const height = lines.length * lineHeight + verticalPadding * 2
@@ -151,12 +152,20 @@ function drawSpeechBubble(
   const bottomLimit = Math.max(insets.topInset + height, viewportHeight - insets.bottomInset)
   const preferredTop = y - height - 10
   const placeBelow = preferredTop < insets.topInset
-  const top = Math.max(
+  let top = Math.max(
     insets.topInset,
     placeBelow
       ? Math.min(y + 10, bottomLimit - height)
       : Math.min(preferredTop, bottomLimit - height),
   )
+  for (const previous of occupied) {
+    const overlaps = left < previous.left + previous.width + 8 && left + width + 8 > previous.left
+      && top < previous.top + previous.height + 8 && top + height + 8 > previous.top
+    if (!overlaps) continue
+    const above = previous.top - height - 10
+    top = above >= insets.topInset ? above : Math.min(bottomLimit - height, previous.top + previous.height + 10)
+  }
+  occupied.push({ left, top, width, height })
   const tailX = Math.max(left + 18, Math.min(left + width - 18, x))
 
   context.save()
@@ -188,44 +197,19 @@ function drawSpeechBubble(
 }
 
 function wrapSpeechText(context: CanvasRenderingContext2D, text: string, maxTextWidth: number) {
-  // 改行は段落の区切りとして扱う（空行は詰めて2行分の表示枠を無駄にしない）。
-  const paragraphs = text.trim().split('\n').filter((paragraph) => paragraph.length > 0)
-  const totalContentLength = paragraphs.reduce((sum, paragraph) => sum + Array.from(paragraph).length, 0)
   const lines: string[] = []
-  let consumedLength = 0
-
-  for (const paragraph of paragraphs) {
-    if (lines.length >= 2) break
-    let currentLine = ''
-
-    for (const character of Array.from(paragraph)) {
-      const candidate = currentLine + character
-      if (currentLine && context.measureText(candidate).width > maxTextWidth) {
-        lines.push(currentLine)
-        consumedLength += Array.from(currentLine).length
-        currentLine = character
-        if (lines.length === 2) break
+  for (const paragraph of text.trim().split('\n')) {
+    let line = ''
+    for (const character of paragraph) {
+      if (line && context.measureText(line + character).width > maxTextWidth) {
+        lines.push(line)
+        line = character
       } else {
-        currentLine = candidate
+        line += character
       }
     }
-
-    if (lines.length < 2) {
-      lines.push(currentLine)
-      consumedLength += Array.from(currentLine).length
-    }
+    lines.push(line)
   }
-
-  if (lines.length === 0) lines.push('…')
-
-  if (consumedLength < totalContentLength) {
-    let lastLine = lines[lines.length - 1]
-    while (lastLine && context.measureText(`${lastLine}…`).width > maxTextWidth) {
-      lastLine = lastLine.slice(0, -1)
-    }
-    lines[lines.length - 1] = `${lastLine}…`
-  }
-
   return lines
 }
 
@@ -309,12 +293,16 @@ export function Plaza2D({
       const navSize = Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height'),
       ) || 0
+      const navigation = document.querySelector('nav[aria-label="メインナビゲーション"]')
+      const navigationTop = navigation
+        ? Math.min(navigation.getBoundingClientRect().top, ...Array.from(navigation.querySelectorAll('button, img'), (element) => element.getBoundingClientRect().top))
+        : bounds.bottom - navSize
       const viewport = {
         width: Math.max(1, bounds.width),
         height: Math.max(1, bounds.height),
         dpr,
         topInset: 8,
-        bottomInset: isDesktopNav ? 8 : navSize,
+        bottomInset: isDesktopNav ? 8 : Math.max(navSize, bounds.bottom - navigationTop + 12),
         leftInset: 8,
         rightInset: isDesktopNav ? navSize : 8,
       }
@@ -449,6 +437,9 @@ export function Plaza2D({
         context.restore()
 
         context.setTransform(viewport.dpr, 0, 0, viewport.dpr, 0, 0)
+        const currentUser = simulation.userVisitor()
+        if (currentUser) drawUserMarker(context, currentUser, camera, viewport, spriteSize)
+        const occupiedBubbles: SpeechBubbleBounds[] = []
         for (const bubble of simulation.bubbles()) {
           const visitor = simulation.visitors.find((item) => item.id === bubble.visitorId)
           if (!visitor) continue
@@ -467,24 +458,14 @@ export function Plaza2D({
             viewport.width,
             viewport.height,
             viewport,
+            occupiedBubbles,
           )
         }
 
         const selectedVisitor2D = selectedVisitorIdRef.current
           ? simulation.visitors.find((item) => item.id === selectedVisitorIdRef.current)
           : undefined
-        if (selectedVisitor2D) {
-          const fallbackMessage = visitors.find((item) => item.id === selectedVisitor2D.id)?.message ?? ''
-          const bubbleText = selectedPostRef.current?.text ?? fallbackMessage
-          if (bubbleText) {
-            const position = worldToScreen(
-              { x: selectedVisitor2D.x, y: selectedVisitor2D.y - spriteSize * BUBBLE_OFFSET_RATIO },
-              camera,
-              viewport,
-            )
-            drawSpeechBubble(context, position.x, position.y, bubbleText, viewport.width, viewport.height, viewport)
-          }
-        }
+        // The selected post is shown in full inside the reaction panel below.
         positionReactionBar(
           reactionBarRef.current,
           selectedPostRef.current ? selectedVisitor2D : undefined,
@@ -493,8 +474,6 @@ export function Plaza2D({
           spriteSize,
         )
 
-        const currentUser = simulation.userVisitor()
-        if (currentUser) drawUserMarker(context, currentUser, camera, viewport, spriteSize)
         positionBoardButton(boardButtonRef.current, camera, viewport)
         animationFrameRef.current = window.requestAnimationFrame(draw)
       }
@@ -677,10 +656,10 @@ export function Plaza2D({
         <span>↔</span> ドラッグで見渡せます
       </div>
 
-      <button type="button" className={styles.recenterButton} data-sfx="select" onClick={recenterOnUser}>
+      {!selectedPost && <button type="button" className={styles.recenterButton} data-sfx="select" onClick={recenterOnUser}>
         <span aria-hidden="true">⌖</span>
         あなたを探す
-      </button>
+      </button>}
 
       {selectedPost && (
         <div
@@ -688,6 +667,9 @@ export function Plaza2D({
           className={styles.reactionBar}
           aria-label={`${selectedPost.nickname}の投稿へのリアクション`}
         >
+          <p className={styles.reactionNickname}>{selectedPost.nickname}</p>
+          <p className={styles.reactionPostText}>{selectedPost.text}</p>
+          <div className={styles.reactionOptions}>
           {REACTIONS.map((reaction) => {
             const count = selectedPost.reactions[reaction.value]
             const isMine = selectedPost.myReactions.includes(reaction.value)
@@ -701,11 +683,13 @@ export function Plaza2D({
                 aria-label={reaction.label + (count ? `（${count}件）` : '')}
                 onClick={() => onReact(selectedPost.id, reaction.value)}
               >
-                <span aria-hidden="true">{reaction.emoji}</span>
+                <span className={styles.reactionEmoji} aria-hidden="true">{reaction.emoji}</span>
+                <span className={styles.reactionLabel}>{reaction.label}</span>
                 {count > 0 && <span className={styles.reactionCount}>{count}</span>}
               </button>
             )
           })}
+          </div>
         </div>
       )}
 
@@ -762,7 +746,8 @@ function positionReactionBar(
     camera,
     viewport,
   )
-  const halfWidth = REACTION_BAR_WIDTH / 2
+  const halfWidth = element.offsetWidth / 2
+  const barHeight = element.offsetHeight
   const clampedX = Math.max(
     viewport.leftInset + REACTION_BAR_MARGIN + halfWidth,
     Math.min(viewport.width - viewport.rightInset - REACTION_BAR_MARGIN - halfWidth, position.x),
@@ -770,7 +755,7 @@ function positionReactionBar(
   const clampedY = Math.max(
     viewport.topInset + REACTION_BAR_MARGIN,
     Math.min(
-      viewport.height - viewport.bottomInset - REACTION_BAR_HEIGHT - REACTION_BAR_MARGIN,
+      viewport.height - viewport.bottomInset - barHeight - REACTION_BAR_MARGIN,
       position.y,
     ),
   )

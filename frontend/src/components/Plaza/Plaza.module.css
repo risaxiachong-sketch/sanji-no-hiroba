@@ -204,3 +204,5 @@
     transform: translateY(1px) scale(0.97);
   }
 }
+
+.demoBadge { position: absolute; z-index: 15; top: 10px; left: 12px; margin: 0; padding: 7px 12px; border: 1px solid #e6dbc8; border-radius: 20px; background: #fffcf3ed; color: #705b42; font-size: 11px; pointer-events: none; }
